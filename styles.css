@@ -923,7 +923,34 @@ body {
   transition: transform .3s cubic-bezier(.2,.8,.2,1), opacity .2s ease;
   background: #f6efd9;
 }
-.image-frame img.is-loading { opacity: 0.4; }
+/* Hide the img while the real scan is loading so the browser's broken-image
+   glyph (from the transparent placeholder src) never flashes. */
+.image-frame.is-loading img { visibility: hidden; }
+
+.image-frame__spinner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .18s ease;
+}
+.image-frame.is-loading .image-frame__spinner { opacity: 1; }
+.image-frame__spinner::before {
+  content: "";
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.22);
+  border-top-color: rgba(255,255,255,0.85);
+  animation: jtc-spin 0.9s linear infinite;
+}
+@keyframes jtc-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .image-frame__spinner::before { animation-duration: 2.5s; }
+}
 
 .image-pane__meta {
   font-family: var(--font-mono);

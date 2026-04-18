@@ -660,41 +660,39 @@
       src.appendChild(el("a", { href: info.download, target: "_blank", rel: "noopener" }, "High-res ↗"));
     }
 
-    if (img) {
-      img.classList.add("is-loading");
+    const frame = document.getElementById("image-frame");
+    if (img && frame) {
+      // Spinner on the frame, img hidden by CSS until it actually loads.
+      frame.classList.add("is-loading");
       img.dataset.pageKey = pageKey;
-      // Try local webp first, fallback to remote jpg
-      const testImg = new Image();
-      testImg.onload = () => {
-        img.src = info.local;
-        img.style.display = "";
-        if (placeholder) placeholder.style.display = "none";
-        img.classList.remove("is-loading");
+      img.style.display = "";
+      if (placeholder) placeholder.style.display = "none";
+
+      let triedFallback = false;
+      img.onload = () => {
+        // Transparent 1×1 placeholder fires onload too; ignore it.
+        if (img.currentSrc && img.currentSrc.startsWith("data:")) return;
+        frame.classList.remove("is-loading");
       };
-      testImg.onerror = () => {
-        // No local optimised image; use remote fallback (works online; in offline demo, show placeholder)
-        const remote = new Image();
-        remote.onload = () => {
+      img.onerror = () => {
+        if (!triedFallback && info.fallback) {
+          triedFallback = true;
           img.src = info.fallback;
-          img.style.display = "";
-          if (placeholder) placeholder.style.display = "none";
-          img.classList.remove("is-loading");
-        };
-        remote.onerror = () => {
-          img.style.display = "none";
-          if (placeholder) {
-            placeholder.style.display = "";
-            placeholder.innerHTML = `
-              <b>${info.title}</b>
-              <div>Missing <code>${info.local}</code>. Run <code>optimize-images.ps1</code> from the repo root to generate it.</div>
-              <div>Or view the <a href="${info.download}" target="_blank" rel="noopener">high-res originals</a> on the National Archives.</div>
-            `;
-          }
-          img.classList.remove("is-loading");
-        };
-        remote.src = info.fallback;
+          return;
+        }
+        // Both local and remote failed — reveal the placeholder.
+        frame.classList.remove("is-loading");
+        img.style.display = "none";
+        if (placeholder) {
+          placeholder.style.display = "";
+          placeholder.innerHTML = `
+            <b>${info.title}</b>
+            <div>Couldn't load <code>${info.local}</code>.</div>
+            <div>View the <a href="${info.download}" target="_blank" rel="noopener">high-res originals</a> on the National Archives.</div>
+          `;
+        }
       };
-      testImg.src = info.local;
+      img.src = info.local;
     }
   }
 
