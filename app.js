@@ -450,7 +450,19 @@
   // ---- TOC ----
   function renderToc(container) {
     container.innerHTML = "";
-    container.appendChild(el("h3", {}, "Main Document"));
+    // "Main Document" subheader + inline download-transcript button.
+    const head = el("div", { class: "toc-head" });
+    head.appendChild(el("h3", {}, "Main Document"));
+    const dlBtn = el("button", {
+      class: "toc-download",
+      type: "button",
+      "aria-label": "Download Markdown transcript",
+      title: "Download transcript",
+      onClick: (e) => { e.preventDefault(); downloadMarkdown(); }
+    });
+    dlBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>';
+    head.appendChild(dlBtn);
+    container.appendChild(head);
     const mainList = el("ul");
     mainList.appendChild(tocLink({ id: "preamble", label: "Preamble" }));
     C.articles.forEach(a => {
@@ -1155,7 +1167,6 @@
     });
 
     initShare();
-    document.getElementById("download-btn").addEventListener("click", downloadMarkdown);
 
     // Image pane controls
     document.getElementById("img-zoom").addEventListener("click", openLightbox);
