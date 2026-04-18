@@ -2,12 +2,15 @@
 (() => {
   const C = window.CONSTITUTION;
 
-  // ---- Flat chapter list for progress bar (chapters = articles + amendments group) ----
+  // ---- Flat chapter list for progress bar ----
+  // Each article, the signatures block, and each of the 27 amendments gets its own
+  // segment. Roman numerals for articles (I–VII); Arabic 1–27 for amendment short
+  // labels so the two ranges don't collide visually.
   const chapters = [
     { id: "preamble", label: "Preamble", short: "Pre" },
     ...C.articles.map(a => ({ id: a.id, label: a.label, short: a.label.replace("Article ", "") })),
     { id: "signatures", label: "Signatures", short: "Sig" },
-    { id: "amendments", label: "Amendments", short: "Am" }
+    ...C.amendments.map((am, i) => ({ id: am.id, label: `Amendment ${am.num}`, short: String(i + 1) }))
   ];
 
   // Section list for TOC
@@ -57,12 +60,43 @@
     },
     bor: {
       title: "Bill of Rights",
+      tag: "BILL OF RIGHTS",
       caption: "Ratified December 15, 1791 — Amendments I–X",
       local: "images/Bill_of_Rights_Pg1of1_AC.webp",
       fallback: "https://www.archives.gov/files/founding-docs/bill-of-rights.jpg",
       download: "https://www.archives.gov/founding-docs/downloads"
     }
   };
+
+  // Extend PAGE_IMAGES with individual amendment scans for XI–XXVII. Amendments
+  // I–X share the Bill of Rights image above. Multi-page amendments use page 1
+  // as the primary view; users can open the lightbox for the full set.
+  const AMENDMENT_PAGE_COUNT = { 14: 2, 20: 2, 25: 2, 27: 3 };
+  function ordinalSuffix(n) {
+    const m100 = n % 100;
+    if (m100 >= 11 && m100 <= 13) return "th";
+    const m10 = n % 10;
+    return m10 === 1 ? "st" : m10 === 2 ? "nd" : m10 === 3 ? "rd" : "th";
+  }
+  C.amendments.forEach(am => {
+    const n = parseInt(am.id.slice(3), 10);
+    if (n < 11) return;
+    const ordinal = `${n}${ordinalSuffix(n)}`;
+    const total = AMENDMENT_PAGE_COUNT[n] || 1;
+    PAGE_IMAGES[am.id] = {
+      title: am.label,
+      tag: `AMENDMENT ${am.num}`,
+      caption: `Ratified ${am.year} — ${am.subtitle}`,
+      local: `images/${ordinal}_Amendment_Pg1of${total}_AC.webp`,
+      download: "https://www.archives.gov/founding-docs/downloads"
+    };
+  });
+
+  // Linear order for manual prev/next cycling through the parchments.
+  const PAGE_ORDER = [1, 2, 3, 4, "bor", ...C.amendments
+    .filter(am => parseInt(am.id.slice(3), 10) >= 11)
+    .map(am => am.id)];
+
 
   // ---- Build DOM ----
 
@@ -82,6 +116,114 @@
     return e;
   }
 
+  // ---- Clipboard + toast (shared by share popover and per-section copy) ----
+  async function copyText(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      let ok = false;
+      try { ok = document.execCommand("copy"); } catch {}
+      document.body.removeChild(ta);
+      return ok;
+    }
+  }
+  let _toastTimer = null;
+  function showToast(msg) {
+    const t = document.getElementById("share-toast");
+    if (!t) return;
+    t.textContent = msg;
+    t.hidden = false;
+    clearTimeout(_toastTimer);
+    _toastTimer = setTimeout(() => { t.hidden = true; }, 1600);
+  }
+
+  // ---- Copy-to-clipboard for sections/paragraphs ----
+  const COPY_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+  const SITE_URL = "https://justtheconstitution.org";
+
+  function formatCopyPayload(text, cite, mode) {
+    if (mode === "plain") return text;
+    return `"${text}"\n\n— ${cite}\nSource: ${SITE_URL}`;
+  }
+
+  function addCopyButton(host, getText, cite) {
+    const btn = el("button", {
+      class: "copy-btn",
+      type: "button",
+      "aria-label": `Copy — ${cite}`,
+      title: "Copy to clipboard"
+    });
+    btn.innerHTML = COPY_SVG;
+    btn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const text = (typeof getText === "function" ? getText() : getText).trim();
+      const payload = formatCopyPayload(text, cite, getTweaks().copyMode);
+      const ok = await copyText(payload);
+      showToast(ok ? "Copied" : "Copy failed");
+    });
+    host.appendChild(btn);
+    return btn;
+  }
+
+  // Citation builders
+  function citeArticle(art, sectionLabel, sectionHeading, paraIndex, totalParas) {
+    const parts = ["U.S. Constitution", `Article ${art}`];
+    if (sectionLabel) parts.push(sectionLabel); // "Section 1", "Section 2", …
+    else if (sectionHeading) parts.push(sectionHeading);
+    if (paraIndex && totalParas > 1) parts.push(`¶ ${paraIndex}`);
+    return parts.join(", ");
+  }
+  function citeAmendment(num, paraIndex, totalParas) {
+    const parts = ["U.S. Constitution", `Amendment ${num}`];
+    if (paraIndex && totalParas > 1) parts.push(`¶ ${paraIndex}`);
+    return parts.join(", ");
+  }
+
+  // Flatten helpers — build text blobs at render time
+  function articleFullText(a) {
+    const lines = [`${a.label} — ${a.subtitle}`];
+    a.sections.forEach(s => {
+      if (s.label || s.heading) {
+        lines.push("");
+        lines.push([s.label, s.heading].filter(Boolean).join(" — "));
+      }
+      s.paragraphs.forEach(p => { lines.push(""); lines.push(p); });
+    });
+    return lines.join("\n");
+  }
+  function sectionFullText(s) {
+    const lines = [];
+    if (s.label || s.heading) lines.push([s.label, s.heading].filter(Boolean).join(" — "));
+    s.paragraphs.forEach(p => { if (lines.length) lines.push(""); lines.push(p); });
+    return lines.join("\n");
+  }
+  function amendmentFullText(am) {
+    const lines = [`Amendment ${am.num} — ${am.subtitle}`];
+    am.paragraphs.forEach(p => { lines.push(""); lines.push(p); });
+    return lines.join("\n");
+  }
+  function signaturesFullText() {
+    const S = C.signatures;
+    const lines = [`${S.president.signed}, ${S.president.role}`, ""];
+    S.groups.forEach(g => {
+      lines.push(g.state + ":");
+      g.names.forEach(n => {
+        const name = typeof n === "string" ? n : n.signed;
+        lines.push(`  ${name}`);
+      });
+      lines.push("");
+    });
+    return lines.join("\n").trim();
+  }
+
   // ---- Text pane ----
   function renderText() {
     const pane = document.getElementById("text-pane");
@@ -92,21 +234,33 @@
 
     // Preamble
     const pre = el("section", { id: "preamble", class: "anchor", "data-chapter": "preamble" });
-    pre.appendChild(el("p", { class: "preamble" }, C.preamble.text));
+    const preP = el("p", { class: "preamble" }, C.preamble.text);
+    addCopyButton(preP, C.preamble.text, "U.S. Constitution, Preamble");
+    pre.appendChild(preP);
     pane.appendChild(pre);
 
     // Articles
     C.articles.forEach(a => {
+      const artNum = a.label.replace("Article ", "");
       const art = el("section", { id: a.id, class: "anchor", "data-chapter": a.id });
       const head = el("div", { class: "section-drop" });
+      const h2 = el("h2", {}, a.label);
+      addCopyButton(h2, () => articleFullText(a), `U.S. Constitution, Article ${artNum}`);
       const headText = el("div", { class: "article-head" }, [
-        el("h2", {}, a.label),
+        h2,
         a.subtitle ? el("div", { class: "article-sub" }, a.subtitle) : null
       ]);
       const pageBtn = el("button", {
         class: "page-chip",
         title: "View original page",
-        onClick: () => setCurrentPage(a.page)
+        onClick: () => {
+          // Explicit click in text resumes auto-follow.
+          manualImageMode = false;
+          setCurrentPage(a.page);
+          // On mobile the side pane is hidden; open the lightbox directly so
+          // the parchment still pops up on tap.
+          if (window.matchMedia("(max-width: 960px)").matches) openLightbox();
+        }
       }, `Page ${a.page} →`);
       head.append(headText, pageBtn);
       art.appendChild(head);
@@ -116,32 +270,74 @@
         if (s.label || s.heading) {
           const sh = el("div", { class: "section-head" });
           if (s.label) sh.appendChild(el("span", { class: "section-num" }, s.label));
-          if (s.heading) sh.appendChild(el("h3", {}, s.heading));
+          if (s.heading) {
+            const h3 = el("h3", {}, s.heading);
+            addCopyButton(h3, () => sectionFullText(s), citeArticle(artNum, s.label, s.heading));
+            sh.appendChild(h3);
+          } else {
+            // Only a section label (no heading) — attach copy to the label itself.
+            addCopyButton(sh, () => sectionFullText(s), citeArticle(artNum, s.label, ""));
+          }
           sec.appendChild(sh);
         }
-        s.paragraphs.forEach(p => sec.appendChild(el("p", {}, p)));
+        const total = s.paragraphs.length;
+        s.paragraphs.forEach((p, i) => {
+          const paraEl = el("p", {}, p);
+          const paraCite = citeArticle(artNum, s.label, s.heading, i + 1, total);
+          addCopyButton(paraEl, p, paraCite);
+          sec.appendChild(paraEl);
+        });
         if (s.page && s.page !== a.page) sec.dataset.page = s.page;
         art.appendChild(sec);
       });
       pane.appendChild(art);
     });
 
-    // Signatures
+    // Signatures — parchment-first, with a footnote block for common names
     const sig = el("section", { id: "signatures", class: "anchor signatures", "data-chapter": "signatures" });
-    sig.appendChild(el("div", { class: "signatures__pres" }, [
-      el("div", { class: "name" }, C.signatures.president.name),
-      el("div", { class: "role" }, C.signatures.president.role)
-    ]));
+    const footnotes = []; // [{ signed, common }] — 1-indexed display order
+
+    // Helper: render one signatory. Returns { node, footnoteNum|null }
+    function renderSigner(entry) {
+      if (typeof entry === "string") return { text: entry, num: null };
+      footnotes.push({ signed: entry.signed, common: entry.common });
+      return { text: entry.signed, num: footnotes.length };
+    }
+    function signerLine(entry, tag) {
+      const r = renderSigner(entry);
+      const node = el(tag, {});
+      node.appendChild(document.createTextNode(r.text));
+      if (r.num) node.appendChild(el("sup", {}, String(r.num)));
+      return node;
+    }
+
+    const pres = C.signatures.president;
+    const presBlock = el("div", { class: "signatures__pres" });
+    presBlock.appendChild(signerLine(pres, "div"));
+    presBlock.querySelector("div").classList.add("name");
+    presBlock.appendChild(el("div", { class: "role" }, pres.role));
+    addCopyButton(presBlock, signaturesFullText, "U.S. Constitution, Signatures");
+    sig.appendChild(presBlock);
+
     const grid = el("div", { class: "signatures__grid" });
     C.signatures.groups.forEach(g => {
       const grp = el("div", { class: "sig-group" });
       grp.appendChild(el("div", { class: "state" }, g.state));
       const ul = el("ul");
-      g.names.forEach(n => ul.appendChild(el("li", {}, n)));
+      g.names.forEach(n => ul.appendChild(signerLine(n, "li")));
       grp.appendChild(ul);
       grid.appendChild(grp);
     });
     sig.appendChild(grid);
+
+    if (footnotes.length) {
+      const ol = el("ol", { class: "sig-footnotes" });
+      footnotes.forEach(f => {
+        const end = f.common.endsWith(".") ? "" : ".";
+        ol.appendChild(el("li", {}, `Commonly known as ${f.common}${end}`));
+      });
+      sig.appendChild(ol);
+    }
     pane.appendChild(sig);
 
     // Amendments heading
@@ -157,11 +353,98 @@
         el("span", { class: "amendment__num" }, `Amendment ${am.num}`),
         el("span", { class: "amendment__year" }, `Ratified ${am.year}`)
       ]));
-      box.appendChild(el("h3", {}, am.label));
+      const amH3 = el("h3", {}, am.label);
+      addCopyButton(amH3, () => amendmentFullText(am), `U.S. Constitution, Amendment ${am.num}`);
+      box.appendChild(amH3);
       box.appendChild(el("div", { class: "amendment__sub" }, am.subtitle));
-      am.paragraphs.forEach(p => box.appendChild(el("p", {}, p)));
+      const totalAm = am.paragraphs.length;
+      am.paragraphs.forEach((p, i) => {
+        const paraEl = el("p", {}, p);
+        addCopyButton(paraEl, p, citeAmendment(am.num, i + 1, totalAm));
+        box.appendChild(paraEl);
+      });
       pane.appendChild(box);
     });
+
+    renderDownloadCta(pane);
+  }
+
+  // ---- Download (Markdown) ----
+  function renderDownloadCta(pane) {
+    const cta = el("section", { class: "download-cta" });
+    cta.appendChild(el("h2", {}, "Take it with you."));
+    cta.appendChild(el("p", {}, "The full document — preamble, articles, signatures, all twenty-seven amendments — as a single Markdown file. Readable anywhere."));
+    const btn = el("button", { class: "download-cta__btn", type: "button", onClick: downloadMarkdown });
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg><span>Download Markdown</span>';
+    cta.appendChild(btn);
+    cta.appendChild(el("div", { class: "download-cta__hint" }, "us-constitution.md"));
+    pane.appendChild(cta);
+  }
+
+  function buildMarkdown() {
+    const L = [];
+    L.push("# The Constitution of the United States", "");
+    L.push("*We the People · September 17, 1787*", "");
+    L.push("## Preamble", "");
+    L.push(C.preamble.text, "");
+
+    C.articles.forEach(a => {
+      L.push(`## ${a.label}${a.subtitle ? ` — ${a.subtitle}` : ""}`, "");
+      a.sections.forEach(s => {
+        if (s.label || s.heading) {
+          const head = [s.label, s.heading].filter(Boolean).join(" — ");
+          L.push(`### ${head}`, "");
+        }
+        s.paragraphs.forEach(p => L.push(p, ""));
+      });
+    });
+
+    // Signatures: parchment-first, with numbered footnotes for common names
+    L.push("## Signatures", "");
+    const fns = [];
+    const sigMd = (entry) => {
+      if (typeof entry === "string") return entry;
+      fns.push(entry);
+      return `${entry.signed}[^sig${fns.length}]`;
+    };
+    const pres = C.signatures.president;
+    L.push(`**${sigMd(pres)}** — *${pres.role}*`, "");
+    C.signatures.groups.forEach(g => {
+      L.push(`### ${g.state}`, "");
+      g.names.forEach(n => L.push(`- ${sigMd(n)}`));
+      L.push("");
+    });
+    if (fns.length) {
+      fns.forEach((f, i) => {
+        const end = f.common.endsWith(".") ? "" : ".";
+        L.push(`[^sig${i + 1}]: Commonly known as ${f.common}${end}`);
+      });
+      L.push("");
+    }
+
+    L.push("## Amendments", "");
+    L.push("Twenty-seven amendments ratified between 1791 and 1992. The first ten form the Bill of Rights.", "");
+    C.amendments.forEach(am => {
+      L.push(`### Amendment ${am.num} — ${am.subtitle}`, "");
+      L.push(`*Ratified ${am.year}*`, "");
+      am.paragraphs.forEach(p => L.push(p, ""));
+    });
+
+    L.push("---", "");
+    L.push("Source: [justtheconstitution.org](https://justtheconstitution.org)", "");
+    return L.join("\n");
+  }
+
+  function downloadMarkdown() {
+    const blob = new Blob([buildMarkdown()], { type: "text/markdown;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "us-constitution.md";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 500);
   }
 
   // ---- TOC ----
@@ -209,71 +492,88 @@
   }
 
   // ---- Progress bar ----
+  // Cached content-space measurements shared between renderProgress (segment
+  // layout) and updateProgress (fill + seen). Keeps them perfectly in sync.
+  let progressGeom = null;
+
   function renderProgress() {
     const track = document.getElementById("progress-track");
     track.innerHTML = "";
     track.appendChild(el("div", { class: "progress__fill", id: "progress-fill" }));
 
-    // Weight chapters by content length so the ticks line up with real reading effort.
-    const weights = chapters.map(ch => {
+    // Measure each chapter's top position once. Everything below (segment
+    // layout, fill width, seen markers, labels) shares the same content-space
+    // so they all stay in lockstep as the reader scrolls.
+    const positions = chapters.map(ch => {
       const sec = document.getElementById(ch.id);
-      if (!sec) return 1;
-      // end = next chapter start
-      const nextIdx = chapters.indexOf(ch) + 1;
-      const nextEl = nextIdx < chapters.length ? document.getElementById(chapters[nextIdx].id) : null;
-      const start = sec.getBoundingClientRect().top + window.scrollY;
-      const end = nextEl ? nextEl.getBoundingClientRect().top + window.scrollY : (document.documentElement.scrollHeight);
-      return Math.max(1, end - start);
+      return sec ? sec.getBoundingClientRect().top + window.scrollY : null;
     });
-    const totalWeight = weights.reduce((a,b) => a + b, 0);
+    const firstIdx = positions.findIndex(p => p !== null);
+    if (firstIdx < 0) return;
 
-    let acc = 0;
+    const startY = positions[firstIdx];
+    const endY = document.documentElement.scrollHeight;
+    const range = endY - startY;
+    if (range <= 0) return;
+
+    progressGeom = { positions, startY, endY, range };
+
+    const labels = document.getElementById("progress-labels");
+    if (labels) labels.innerHTML = "";
+
     chapters.forEach((ch, i) => {
-      const w = weights[i] / totalWeight * 100;
+      if (positions[i] === null) return;
+      const top = positions[i];
+      // Next chapter's start is this chapter's right edge. Fall back to doc end.
+      let bottom = endY;
+      for (let j = i + 1; j < chapters.length; j++) {
+        if (positions[j] !== null) { bottom = positions[j]; break; }
+      }
+      const left = (top - startY) / range * 100;
+      const width = (bottom - top) / range * 100;
+
       const chapEl = el("div", {
         class: "progress__chapter",
         "data-chapter-id": ch.id,
         onClick: () => scrollToId(ch.id)
       });
-      chapEl.style.left = `${acc}%`;
-      chapEl.style.width = `${w}%`;
+      chapEl.style.left = `${left}%`;
+      chapEl.style.width = `${width}%`;
       chapEl.appendChild(el("div", { class: "progress__tip" }, ch.label));
       track.appendChild(chapEl);
-      acc += w;
-    });
 
-    // Labels under track
-    const labels = document.getElementById("progress-labels");
-    if (labels) {
-      labels.innerHTML = "";
-      chapters.forEach(ch => {
-        labels.appendChild(el("span", {}, ch.short));
-      });
-    }
+      // Align each label to its segment's centre, so what you see above a
+      // label is what you'll hover/click.
+      if (labels) {
+        const span = el("span", {}, ch.short);
+        span.style.left = `${left + width / 2}%`;
+        labels.appendChild(span);
+      }
+    });
   }
 
   function updateProgress() {
-    const doc = document.documentElement;
-    const total = doc.scrollHeight - window.innerHeight;
-    const pct = Math.max(0, Math.min(1, window.scrollY / total));
     const fill = document.getElementById("progress-fill");
-    if (fill) fill.style.width = `${pct * 100}%`;
+    if (!fill || !progressGeom) return;
+    const { startY, endY, range, positions } = progressGeom;
 
-    // Mark seen chapters
-    const scrollMid = window.scrollY + window.innerHeight * 0.25;
-    let activeId = chapters[0].id;
-    chapters.forEach(ch => {
-      const sec = document.getElementById(ch.id);
-      if (!sec) return;
-      const top = sec.getBoundingClientRect().top + window.scrollY;
-      if (top <= scrollMid) activeId = ch.id;
-    });
+    // Fill = how much of the content is above the viewport bottom, expressed
+    // in the same content-space the segments live in. The edge of the fill
+    // therefore tracks segment boundaries exactly.
+    const viewportBottom = window.scrollY + window.innerHeight;
+    const pct = Math.max(0, Math.min(1, (viewportBottom - startY) / range));
+    fill.style.width = `${pct * 100}%`;
 
+    // Seen markers: mark a chapter once the fill has fully covered it.
     document.querySelectorAll(".progress__chapter").forEach(ce => {
-      const id = ce.dataset.chapterId;
-      const chIdx = chapters.findIndex(c => c.id === id);
-      const actIdx = chapters.findIndex(c => c.id === activeId);
-      ce.classList.toggle("progress__chapter--seen", chIdx < actIdx);
+      const idx = chapters.findIndex(c => c.id === ce.dataset.chapterId);
+      if (idx < 0) return;
+      let nextStart = endY;
+      for (let j = idx + 1; j < positions.length; j++) {
+        if (positions[j] !== null) { nextStart = positions[j]; break; }
+      }
+      const rightPct = (nextStart - startY) / range;
+      ce.classList.toggle("progress__chapter--seen", pct >= rightPct);
     });
 
     // Persist reading position
@@ -282,7 +582,10 @@
 
   // ---- Active TOC & current page tracking ----
   let currentActiveId = null;
-  let userOverridePage = null;
+  // When true, the image pane stays on whatever the user last picked manually
+  // (prev/next buttons). Cleared by clicking a page-chip in the text or by
+  // reloading. Scrolling does NOT auto-clear — that was the old bug.
+  let manualImageMode = false;
 
   function updateActive() {
     const scrollMid = window.scrollY + window.innerHeight * 0.25;
@@ -296,13 +599,17 @@
         activeId = sec.id;
         // Page inference
         const chapter = sec.dataset.chapter;
-        const chapterObj = chapters.find(c => c.id === chapter);
-        if (chapterObj) {
+        const amMatch = sec.id.match(/^am-(\d+)$/);
+        if (amMatch) {
+          // Amendments I–X share the Bill of Rights scan; XI–XXVII each have their own page.
+          const amNum = parseInt(amMatch[1], 10);
+          activePage = amNum <= 10 ? "bor" : sec.id;
+        } else {
           const art = C.articles.find(a => a.id === chapter);
           if (art) activePage = art.page;
           else if (chapter === "preamble") activePage = 1;
           else if (chapter === "signatures") activePage = 4;
-          else if (chapter === "amendments") activePage = "bor";
+          else if (chapter === "amendments") activePage = "bor"; // the "Amendments" heading section
         }
         if (sec.dataset.page) activePage = parseInt(sec.dataset.page, 10);
       }
@@ -326,16 +633,18 @@
       });
     }
 
-    if (userOverridePage === null) setCurrentPage(activePage, /*auto*/ true);
+    if (!manualImageMode) setCurrentPage(activePage, /*auto*/ true);
   }
 
   // ---- Image pane ----
   let currentPage = 1;
   function setCurrentPage(pageKey, auto = false) {
-    if (currentPage === pageKey && !auto) return;
+    // Ignore auto-tracking while the user has taken manual control of the pane.
+    if (auto && manualImageMode) return;
+    if (currentPage === pageKey) return;
     currentPage = pageKey;
-    if (!auto) userOverridePage = pageKey;
     const info = PAGE_IMAGES[pageKey] || PAGE_IMAGES[1];
+    updateImageNavButtons();
     const label = document.getElementById("img-label-title");
     const tag = document.getElementById("img-label-tag");
     const caption = document.getElementById("img-caption");
@@ -344,7 +653,7 @@
     const placeholder = document.getElementById("img-placeholder");
 
     if (label) label.textContent = info.title;
-    if (tag) tag.textContent = typeof pageKey === "number" ? `PAGE 0${pageKey}` : "BILL OF RIGHTS";
+    if (tag) tag.textContent = info.tag || (typeof pageKey === "number" ? `PAGE 0${pageKey}` : "");
     if (caption) caption.textContent = info.caption;
     if (src) {
       src.innerHTML = "";
@@ -387,6 +696,23 @@
       };
       testImg.src = info.local;
     }
+  }
+
+  // Manual prev/next cycling through PAGE_ORDER.
+  function cycleImage(direction) {
+    const idx = PAGE_ORDER.indexOf(currentPage);
+    if (idx < 0) return;
+    const nextIdx = Math.max(0, Math.min(PAGE_ORDER.length - 1, idx + direction));
+    if (nextIdx === idx) return;
+    manualImageMode = true;
+    setCurrentPage(PAGE_ORDER[nextIdx]);
+  }
+  function updateImageNavButtons() {
+    const idx = PAGE_ORDER.indexOf(currentPage);
+    const prev = document.getElementById("img-prev");
+    const next = document.getElementById("img-next");
+    if (prev) prev.disabled = idx <= 0;
+    if (next) next.disabled = idx < 0 || idx >= PAGE_ORDER.length - 1;
   }
 
   // ---- Lightbox ----
@@ -452,8 +778,30 @@
     reader: "default",
     toc: "open",
     pane: "open",
-    fontSize: 17
+    fontSize: 17,
+    copyMode: "full"
   };
+
+  // Old theme ids → new ids for the 12-theme palette rollout.
+  const THEME_MIGRATIONS = {
+    parchment: "warm",
+    sepia:     "amber",
+    clay:      "burgundy",
+    olive:     "amber",
+    moss:      "forest",
+    pine:      "forest",
+    indigo:    "electric",
+    plum:      "orchid",
+    rose:      "burgundy",
+    paper:     "neutral"
+  };
+  const VALID_THEMES = new Set([
+    "neutral", "cool", "warm",
+    "burgundy", "mango", "amber",
+    "forest", "ocean", "slate",
+    "poppy", "electric", "orchid"
+  ]);
+  const VALID_OLED_THEMES = new Set(["neutral", "amber", "green"]);
 
   function getTweaks() {
     const saved = JSON.parse(localStorage.getItem("jtc:tweaks") || "{}");
@@ -464,6 +812,23 @@
     if (!["simple", "traditional", "technical"].includes(merged.font)) merged.font = "simple";
     if (!["open", "closed"].includes(merged.toc)) merged.toc = "open";
     if (!["open", "closed"].includes(merged.pane)) merged.pane = "open";
+    if (merged.theme === "oled") { merged.mode = "oled"; merged.theme = "neutral"; }
+    if (!["light", "dark", "oled"].includes(merged.mode)) merged.mode = "light";
+    if (!["full", "plain"].includes(merged.copyMode)) merged.copyMode = "full";
+    // Theme migration: map retired palettes onto the new 12-theme set, then
+    // clamp anything still unknown to the default neutral.
+    if (THEME_MIGRATIONS[merged.theme]) merged.theme = THEME_MIGRATIONS[merged.theme];
+    if (merged.mode === "oled") {
+      if (!VALID_OLED_THEMES.has(merged.theme)) merged.theme = "neutral";
+    } else {
+      if (!VALID_THEMES.has(merged.theme)) merged.theme = "neutral";
+    }
+    // One-shot default reset: force the typeface back to "simple" on first load
+    // after this migration runs. Lets everyone start on the intended default.
+    if (merged.schemaVersion !== 2) {
+      merged.font = "simple";
+      merged.schemaVersion = 2;
+    }
     delete merged.layout;
     return merged;
   }
@@ -500,79 +865,116 @@
     document.querySelectorAll("[data-reader-toggle]").forEach(b => {
       b.classList.toggle("is-active", b.dataset.readerToggle === t.reader);
     });
+    document.querySelectorAll("[data-mode-toggle]").forEach(b => {
+      b.classList.toggle("is-active", b.dataset.modeToggle === t.mode);
+    });
+    document.querySelectorAll("[data-copy-toggle]").forEach(b => {
+      b.classList.toggle("is-active", b.dataset.copyToggle === t.copyMode);
+    });
     const fs = document.getElementById("fs-slider");
     if (fs) { fs.value = t.fontSize; document.getElementById("fs-val").textContent = `${t.fontSize}px`; }
 
-    // Mode toggle icon (sun in light, moon in dark)
+    // Mode toggle icon (sun in light, moon in dark, monospace "O" in oled)
     const mi = document.getElementById("mode-icon");
     if (mi) {
-      if (t.mode === "dark") {
+      if (t.mode === "oled") {
+        mi.innerHTML = '<text x="12" y="17" text-anchor="middle" fill="currentColor" stroke="none" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="16" font-weight="700">O</text>';
+      } else if (t.mode === "dark") {
         mi.innerHTML = '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/>';
       } else {
         mi.innerHTML = '<circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/>';
       }
     }
     const mb = document.getElementById("mode-toggle");
-    if (mb) mb.setAttribute("aria-label", t.mode === "dark" ? "Switch to light mode" : "Switch to dark mode");
+    if (mb) {
+      const next = t.mode === "light" ? "dark" : t.mode === "dark" ? "OLED" : "light";
+      mb.setAttribute("aria-label", `Switch to ${next} mode`);
+      mb.setAttribute("title", `Switch to ${next}`);
+    }
 
     // Reader toggle state
     const rb = document.getElementById("reader-toggle");
     if (rb) rb.setAttribute("aria-pressed", t.reader === "pure" ? "true" : "false");
 
-    // Pane collapse icon direction
-    const tcb = document.getElementById("toc-collapse");
-    if (tcb) tcb.setAttribute("aria-expanded", t.toc === "open" ? "true" : "false");
+    // Image pane collapse icon direction
     const pcb = document.getElementById("pane-collapse");
     if (pcb) pcb.setAttribute("aria-expanded", t.pane === "open" ? "true" : "false");
   }
 
-  // Earthy rainbow — ordered as a muted rainbow; paper/oled tacked on the end of each row
+  // 12 themes × 2 modes (light, dark), grouped into 4 categories of 3.
+  // `group` is the label shown above each row of 3 swatches.
+  // Vibrant themes include an `accent` so the swatch preview shows their
+  // saturated colour alongside the base bg/ink.
   const LIGHT_THEMES = [
-    { id: "neutral",   name: "Neutral",   bg: "#ffffff", ink: "#111111" },
-    { id: "parchment", name: "Parchment", bg: "#f3efe3", ink: "#1f1a10" },
-    { id: "sepia",     name: "Sepia",     bg: "#ede1cc", ink: "#2a1e0c" },
-    { id: "clay",      name: "Clay",      bg: "#eadcd3", ink: "#2a140d" },
-    { id: "amber",     name: "Amber",     bg: "#ecdec2", ink: "#2a1d04" },
-    { id: "olive",     name: "Olive",     bg: "#e3ddc3", ink: "#1f1e08" },
-    { id: "moss",      name: "Moss",      bg: "#dbe0cf", ink: "#122414" },
-    { id: "pine",      name: "Pine",      bg: "#d7ddd4", ink: "#0d1d18" },
-    { id: "slate",     name: "Slate",     bg: "#dbdee2", ink: "#121a22" },
-    { id: "ocean",     name: "Ocean",     bg: "#d6dde2", ink: "#0c1e2c" },
-    { id: "indigo",    name: "Indigo",    bg: "#d9d7e0", ink: "#141031" },
-    { id: "plum",      name: "Plum",      bg: "#e0d7de", ink: "#221129" },
-    { id: "rose",      name: "Rose",      bg: "#e9d9d5", ink: "#2a0f16" },
-    { id: "paper",     name: "Paper",     bg: "#ffffff", ink: "#000000" }
+    { id: "neutral",  name: "Pure",     group: "Neutral",      bg: "#ffffff", ink: "#111111" },
+    { id: "cool",     name: "Cool",     group: "Neutral",      bg: "#f6f7f9", ink: "#13161c" },
+    { id: "warm",     name: "Warm",     group: "Neutral",      bg: "#faf7f1", ink: "#1b1812" },
+    { id: "burgundy", name: "Burgundy", group: "Earthy warm",  bg: "#ebd7d7", ink: "#2c0912" },
+    { id: "mango",    name: "Mango",    group: "Earthy warm",  bg: "#f2d3a8", ink: "#3a1802" },
+    { id: "amber",    name: "Amber",    group: "Earthy warm",  bg: "#ecdec2", ink: "#2a1d04" },
+    { id: "forest",   name: "Forest",   group: "Earthy cool",  bg: "#d0dbc8", ink: "#0b1d14" },
+    { id: "ocean",    name: "Ocean",    group: "Earthy cool",  bg: "#d6dde2", ink: "#0c1e2c" },
+    { id: "slate",    name: "Slate",    group: "Earthy cool",  bg: "#dbdee2", ink: "#121a22" },
+    { id: "poppy",    name: "Poppy",    group: "Vibrant",      bg: "#fffbf4", ink: "#0c0c10", accent: "#c1123f" },
+    { id: "electric", name: "Electric", group: "Vibrant",      bg: "#faf6d4", ink: "#171935", accent: "#1d4ed8" },
+    { id: "orchid",   name: "Orchid",   group: "Vibrant",      bg: "#f8efef", ink: "#1d0a21", accent: "#a020b0" }
   ];
   const DARK_THEMES = [
-    { id: "neutral",   name: "Neutral",   bg: "#121212", ink: "#ededed" },
-    { id: "parchment", name: "Parchment", bg: "#1a1712", ink: "#e8e2d1" },
-    { id: "sepia",     name: "Sepia",     bg: "#1a140b", ink: "#e5d5b4" },
-    { id: "clay",      name: "Clay",      bg: "#180e0a", ink: "#ecd1c2" },
-    { id: "amber",     name: "Amber",     bg: "#1a1408", ink: "#ebd69a" },
-    { id: "olive",     name: "Olive",     bg: "#121208", ink: "#d6d39a" },
-    { id: "moss",      name: "Moss",      bg: "#0e160f", ink: "#c7d6b8" },
-    { id: "pine",      name: "Pine",      bg: "#0a120f", ink: "#bccfc4" },
-    { id: "slate",     name: "Slate",     bg: "#0c1016", ink: "#c9d0db" },
-    { id: "ocean",     name: "Ocean",     bg: "#081219", ink: "#bccfda" },
-    { id: "indigo",    name: "Indigo",    bg: "#0e0c18", ink: "#c9c5dd" },
-    { id: "plum",      name: "Plum",      bg: "#160d16", ink: "#d6c6d4" },
-    { id: "rose",      name: "Rose",      bg: "#170c0f", ink: "#ebc9cc" },
-    { id: "oled",      name: "OLED",      bg: "#000000", ink: "#ffffff" }
+    { id: "neutral",  name: "Pure",     group: "Neutral",      bg: "#121212", ink: "#ededed" },
+    { id: "cool",     name: "Cool",     group: "Neutral",      bg: "#10141a", ink: "#e8edf3" },
+    { id: "warm",     name: "Warm",     group: "Neutral",      bg: "#16130d", ink: "#eee9dd" },
+    { id: "burgundy", name: "Burgundy", group: "Earthy warm",  bg: "#170a0d", ink: "#ebc9cd" },
+    { id: "mango",    name: "Mango",    group: "Earthy warm",  bg: "#1b1006", ink: "#f0cb9a" },
+    { id: "amber",    name: "Amber",    group: "Earthy warm",  bg: "#1a1408", ink: "#ebd69a" },
+    { id: "forest",   name: "Forest",   group: "Earthy cool",  bg: "#0a150f", ink: "#c4d7c5" },
+    { id: "ocean",    name: "Ocean",    group: "Earthy cool",  bg: "#081219", ink: "#bccfda" },
+    { id: "slate",    name: "Slate",    group: "Earthy cool",  bg: "#0c1016", ink: "#c9d0db" },
+    { id: "poppy",    name: "Poppy",    group: "Vibrant",      bg: "#0f0a0d", ink: "#f5e5e8", accent: "#ff6b88" },
+    { id: "electric", name: "Electric", group: "Vibrant",      bg: "#0d0e1a", ink: "#e8e8f0", accent: "#60a5fa" },
+    { id: "orchid",   name: "Orchid",   group: "Vibrant",      bg: "#150e17", ink: "#e9d8e8", accent: "#e879f9" }
   ];
+  // OLED mode — pure black bg across all variants; accent varies
+  const OLED_THEMES = [
+    { id: "neutral",  name: "Neutral",  group: "OLED", bg: "#000000", ink: "#ffffff" },
+    { id: "amber",    name: "Amber",    group: "OLED", bg: "#000000", ink: "#ebd69a" },
+    { id: "green",    name: "Green",    group: "OLED", bg: "#000000", ink: "#c7d6b8" }
+  ];
+  const MODE_THEMES = { light: LIGHT_THEMES, dark: DARK_THEMES, oled: OLED_THEMES };
 
   function buildGrid(mode, themes) {
     const grid = el("div", { class: "theme-grid", "data-mode": mode });
+    // Bucket by `group` preserving array order
+    const groups = [];
+    const byName = {};
     themes.forEach(th => {
-      const sw = el("button", {
-        class: "theme-swatch",
-        "data-theme": th.id,
-        "data-mode": mode,
-        title: th.name,
-        "aria-label": `${mode} · ${th.name}`,
-        onClick: () => { setTweaks({ mode, theme: th.id }); }
+      if (!byName[th.group]) {
+        byName[th.group] = { label: th.group, themes: [] };
+        groups.push(byName[th.group]);
+      }
+      byName[th.group].themes.push(th);
+    });
+
+    groups.forEach(g => {
+      grid.appendChild(el("div", { class: "theme-group__label" }, g.label));
+      const row = el("div", { class: "theme-row" });
+      g.themes.forEach(th => {
+        const sw = el("button", {
+          class: "theme-swatch",
+          "data-theme": th.id,
+          "data-mode": mode,
+          title: th.name,
+          "aria-label": `${mode} · ${g.label} · ${th.name}`,
+          onClick: () => { setTweaks({ mode, theme: th.id }); }
+        });
+        // Vibrant themes get a 3-stop slice showing bg, ink, and the saturated accent.
+        if (th.accent) {
+          sw.style.background = `linear-gradient(135deg, ${th.bg} 0 40%, ${th.ink} 40% 70%, ${th.accent} 70% 100%)`;
+        } else {
+          sw.style.background = `linear-gradient(135deg, ${th.bg} 50%, ${th.ink} 50%)`;
+        }
+        row.appendChild(sw);
       });
-      sw.style.background = `linear-gradient(135deg, ${th.bg} 50%, ${th.ink} 50%)`;
-      grid.appendChild(sw);
+      grid.appendChild(row);
     });
     return grid;
   }
@@ -581,11 +983,23 @@
     const body = document.getElementById("tweaks-body");
     body.innerHTML = "";
 
-    // Themes — one grid per mode, only active mode is visible
+    // Mode — light / dark / oled segmented control
+    const modeRow = el("div", { class: "tweak-row" });
+    modeRow.appendChild(el("label", {}, "Mode"));
+    const modeToggle = el("div", { class: "toggle-row" }, [
+      el("button", { class: "toggle-chip", "data-mode-toggle": "light", onClick: () => setMode("light") }, "Light"),
+      el("button", { class: "toggle-chip", "data-mode-toggle": "dark",  onClick: () => setMode("dark")  }, "Dark"),
+      el("button", { class: "toggle-chip", "data-mode-toggle": "oled",  onClick: () => setMode("oled")  }, "OLED")
+    ]);
+    modeRow.appendChild(modeToggle);
+    body.appendChild(modeRow);
+
+    // Color — one grid per mode, only active mode is visible
     const themeRow = el("div", { class: "tweak-row" });
     themeRow.appendChild(el("label", {}, "Color"));
     themeRow.appendChild(buildGrid("light", LIGHT_THEMES));
     themeRow.appendChild(buildGrid("dark", DARK_THEMES));
+    themeRow.appendChild(buildGrid("oled", OLED_THEMES));
     body.appendChild(themeRow);
 
     // Typeface
@@ -610,6 +1024,16 @@
     rdrRow.appendChild(rdrToggle);
     body.appendChild(rdrRow);
 
+    // Copy to clipboard behaviour
+    const copyRow = el("div", { class: "tweak-row" });
+    copyRow.appendChild(el("label", {}, "Copy to clipboard"));
+    const copyToggle = el("div", { class: "toggle-row" }, [
+      el("button", { class: "toggle-chip", "data-copy-toggle": "full",  onClick: () => setTweak("copyMode", "full")  }, "With citation"),
+      el("button", { class: "toggle-chip", "data-copy-toggle": "plain", onClick: () => setTweak("copyMode", "plain") }, "Plain text")
+    ]);
+    copyRow.appendChild(copyToggle);
+    body.appendChild(copyRow);
+
     // Font size
     const fsRow = el("div", { class: "tweak-row slider-row" });
     fsRow.appendChild(el("label", {}, [document.createTextNode("Text size "), el("span", { id: "fs-val", class: "val" }, "17px")]));
@@ -627,14 +1051,74 @@
     applyTweaks();
   }
 
-  // Toggle light/dark on quick button
+  // Switch mode and pick a theme valid for that mode.
+  // Preserves the current theme id if it exists in the target mode; otherwise falls back to "neutral".
+  function setMode(mode) {
+    const themes = MODE_THEMES[mode] || LIGHT_THEMES;
+    const t = getTweaks();
+    const theme = themes.some(th => th.id === t.theme) ? t.theme : "neutral";
+    setTweaks({ mode, theme });
+  }
+
+  // Cycle Light → Dark → OLED → Light on the quick header button
   function toggleMode() {
     const t = getTweaks();
-    setTweak("mode", t.mode === "dark" ? "light" : "dark");
+    const next = t.mode === "light" ? "dark" : t.mode === "dark" ? "oled" : "light";
+    setMode(next);
   }
   function toggleReader() {
     const t = getTweaks();
     setTweak("reader", t.reader === "pure" ? "default" : "pure");
+  }
+
+  // ---- Share popover ----
+  function initShare() {
+    const btn = document.getElementById("share-btn");
+    const pop = document.getElementById("share-pop");
+    if (!btn || !pop) return;
+
+    // Reveal native share row on supported browsers (mostly mobile)
+    if (typeof navigator !== "undefined" && "share" in navigator) {
+      const native = pop.querySelector('[data-action="native"]');
+      if (native) native.hidden = false;
+    }
+
+    const closePop = () => { pop.hidden = true; };
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      pop.hidden = !pop.hidden;
+    });
+    document.addEventListener("click", (e) => {
+      if (pop.hidden) return;
+      if (!pop.contains(e.target) && e.target !== btn && !btn.contains(e.target)) closePop();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (!pop.hidden && e.key === "Escape") closePop();
+    });
+
+    pop.addEventListener("click", async (e) => {
+      const row = e.target.closest(".share-row");
+      if (!row) return;
+      const action = row.dataset.action;
+      const url = location.href;
+      const title = document.title;
+
+      if (action === "copy") {
+        const ok = await copyText(url);
+        showToast(ok ? "Link copied" : "Copy failed");
+        closePop();
+      } else if (action === "email") {
+        const subject = encodeURIComponent(title);
+        const body = encodeURIComponent(`Thought you might find this useful:\n\n${url}`);
+        location.href = `mailto:?subject=${subject}&body=${body}`;
+        closePop();
+      } else if (action === "native") {
+        try {
+          await navigator.share({ title, url });
+        } catch { /* user cancelled or unsupported */ }
+        closePop();
+      }
+    });
   }
 
   // ---- Init ----
@@ -648,6 +1132,8 @@
     setCurrentPage(1, true);
 
     // Wiring
+    // Menu button opens the TOC drawer — only surfaced on narrower viewports
+    // where the inline sidebar is auto-hidden by CSS.
     document.getElementById("menu-btn").addEventListener("click", openDrawer);
     document.getElementById("drawer-close").addEventListener("click", closeDrawer);
     document.getElementById("toc-drawer").addEventListener("click", e => {
@@ -657,8 +1143,6 @@
     document.getElementById("mode-toggle").addEventListener("click", toggleMode);
     document.getElementById("reader-toggle").addEventListener("click", toggleReader);
     document.getElementById("reader-exit").addEventListener("click", () => setTweak("reader", "default"));
-    document.getElementById("toc-collapse").addEventListener("click", () => { const t = getTweaks(); setTweak("toc", t.toc === "open" ? "closed" : "open"); });
-    document.getElementById("toc-expand").addEventListener("click", () => setTweak("toc", "open"));
     document.getElementById("pane-collapse").addEventListener("click", () => { const t = getTweaks(); setTweak("pane", t.pane === "open" ? "closed" : "open"); });
     document.getElementById("pane-expand").addEventListener("click", () => setTweak("pane", "open"));
     document.getElementById("tweaks-btn").addEventListener("click", () => {
@@ -668,9 +1152,14 @@
       document.getElementById("tweaks").classList.remove("is-open");
     });
 
+    initShare();
+    document.getElementById("download-btn").addEventListener("click", downloadMarkdown);
+
     // Image pane controls
     document.getElementById("img-zoom").addEventListener("click", openLightbox);
     document.getElementById("img-download").addEventListener("click", downloadCurrent);
+    document.getElementById("img-prev").addEventListener("click", () => cycleImage(-1));
+    document.getElementById("img-next").addEventListener("click", () => cycleImage(1));
     document.getElementById("image-frame").addEventListener("click", (e) => {
       // Only trigger if clicking on the frame itself or the image, not buttons
       if (e.target.closest("button")) return;
@@ -716,11 +1205,6 @@
         requestAnimationFrame(() => {
           updateProgress();
           updateActive();
-          // Let auto page-tracking take over once user scrolls away
-          if (userOverridePage !== null) {
-            // Release override when user scrolls ~1 viewport away
-            userOverridePage = null;
-          }
           ticking = false;
         });
         ticking = true;
@@ -731,6 +1215,13 @@
       renderProgress();
       updateProgress();
     });
+
+    // Re-measure after fonts swap in (line heights change — invalidates section positions)
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => { renderProgress(); updateProgress(); });
+    }
+    // And once more on full load (images, async CSS, etc.)
+    window.addEventListener("load", () => { renderProgress(); updateProgress(); });
 
     // Apply tweaks (theme, layout, fs)
     applyTweaks();

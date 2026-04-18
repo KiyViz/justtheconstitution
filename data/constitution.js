@@ -195,22 +195,76 @@ window.CONSTITUTION = {
     }
   ],
 
+  // Names are shown as inscribed on the parchment. Where the signed form differs
+  // from the common full name, a `common` field provides the historical full name
+  // for an auto-numbered footnote beneath the signatures grid. Names recorded
+  // in their full form on the parchment stay as plain strings.
   signatures: {
     id: "signatures", label: "Signatures", page: 4,
-    president: { name: "G°. Washington", role: "Presidt and deputy from Virginia" },
+    president: { signed: "G°. Washington", common: "George Washington", role: "Presidt and deputy from Virginia" },
     groups: [
-      { state: "Delaware",       names: ["Geo: Read","Gunning Bedford jun","John Dickinson","Richard Bassett","Jaco: Broom"] },
-      { state: "Maryland",       names: ["James McHenry","Dan of St Thos. Jenifer","Danl. Carroll"] },
-      { state: "Virginia",       names: ["John Blair","James Madison Jr."] },
-      { state: "North Carolina", names: ["Wm. Blount","Richd. Dobbs Spaight","Hu Williamson"] },
-      { state: "South Carolina", names: ["J. Rutledge","Charles Cotesworth Pinckney","Charles Pinckney","Pierce Butler"] },
-      { state: "Georgia",        names: ["William Few","Abr Baldwin"] },
-      { state: "New Hampshire",  names: ["John Langdon","Nicholas Gilman"] },
-      { state: "Massachusetts",  names: ["Nathaniel Gorham","Rufus King"] },
-      { state: "Connecticut",    names: ["Wm. Saml. Johnson","Roger Sherman"] },
-      { state: "New York",       names: ["Alexander Hamilton"] },
-      { state: "New Jersey",     names: ["Wil: Livingston","David Brearley","Wm. Paterson","Jona: Dayton"] },
-      { state: "Pennsylvania",   names: ["B Franklin","Thomas Mifflin","Robt. Morris","Geo. Clymer","Thos. FitzSimons","Jared Ingersoll","James Wilson","Gouv Morris"] }
+      { state: "Delaware", names: [
+        { signed: "Geo: Read", common: "George Read" },
+        { signed: "Gunning Bedford jun", common: "Gunning Bedford Jr." },
+        "John Dickinson",
+        "Richard Bassett",
+        { signed: "Jaco: Broom", common: "Jacob Broom" }
+      ]},
+      { state: "Maryland", names: [
+        "James McHenry",
+        { signed: "Dan of St Thos. Jenifer", common: "Daniel of St. Thomas Jenifer" },
+        { signed: "Danl. Carroll", common: "Daniel Carroll" }
+      ]},
+      { state: "Virginia", names: [
+        "John Blair",
+        "James Madison Jr."
+      ]},
+      { state: "North Carolina", names: [
+        { signed: "Wm. Blount", common: "William Blount" },
+        { signed: "Richd. Dobbs Spaight", common: "Richard Dobbs Spaight" },
+        { signed: "Hu Williamson", common: "Hugh Williamson" }
+      ]},
+      { state: "South Carolina", names: [
+        { signed: "J. Rutledge", common: "John Rutledge" },
+        "Charles Cotesworth Pinckney",
+        "Charles Pinckney",
+        "Pierce Butler"
+      ]},
+      { state: "Georgia", names: [
+        "William Few",
+        { signed: "Abr Baldwin", common: "Abraham Baldwin" }
+      ]},
+      { state: "New Hampshire", names: [
+        "John Langdon",
+        "Nicholas Gilman"
+      ]},
+      { state: "Massachusetts", names: [
+        "Nathaniel Gorham",
+        "Rufus King"
+      ]},
+      { state: "Connecticut", names: [
+        { signed: "Wm. Saml. Johnson", common: "William Samuel Johnson" },
+        "Roger Sherman"
+      ]},
+      { state: "New York", names: [
+        "Alexander Hamilton"
+      ]},
+      { state: "New Jersey", names: [
+        { signed: "Wil: Livingston", common: "William Livingston" },
+        "David Brearley",
+        { signed: "Wm. Paterson", common: "William Paterson" },
+        { signed: "Jona: Dayton", common: "Jonathan Dayton" }
+      ]},
+      { state: "Pennsylvania", names: [
+        { signed: "B Franklin", common: "Benjamin Franklin" },
+        "Thomas Mifflin",
+        { signed: "Robt. Morris", common: "Robert Morris" },
+        { signed: "Geo. Clymer", common: "George Clymer" },
+        { signed: "Thos. FitzSimons", common: "Thomas FitzSimons" },
+        "Jared Ingersoll",
+        "James Wilson",
+        { signed: "Gouv Morris", common: "Gouverneur Morris" }
+      ]}
     ]
   },
 
