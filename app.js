@@ -637,7 +637,10 @@
   }
 
   // ---- Image pane ----
-  let currentPage = 1;
+  // Intentionally `null` so the first setCurrentPage call is never treated as
+  // a no-op — init() calls setCurrentPage(1, true) and we need the img.src
+  // assignment (and .is-loading lifecycle) to actually run on that call.
+  let currentPage = null;
   function setCurrentPage(pageKey, auto = false) {
     // Ignore auto-tracking while the user has taken manual control of the pane.
     if (auto && manualImageMode) return;
@@ -669,11 +672,7 @@
       if (placeholder) placeholder.style.display = "none";
 
       let triedFallback = false;
-      img.onload = () => {
-        // Transparent 1×1 placeholder fires onload too; ignore it.
-        if (img.currentSrc && img.currentSrc.startsWith("data:")) return;
-        frame.classList.remove("is-loading");
-      };
+      img.onload = () => { frame.classList.remove("is-loading"); };
       img.onerror = () => {
         if (!triedFallback && info.fallback) {
           triedFallback = true;
@@ -693,6 +692,11 @@
         }
       };
       img.src = info.local;
+      // Safety net: if the browser serves from cache, onload may already have
+      // fired (or may fire before the next paint). Clear is-loading now.
+      if (img.complete && img.naturalWidth > 0) {
+        frame.classList.remove("is-loading");
+      }
     }
   }
 

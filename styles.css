@@ -943,8 +943,10 @@ body {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  border: 2px solid rgba(255,255,255,0.22);
-  border-top-color: rgba(255,255,255,0.85);
+  /* Derive from the theme's ink so the ring is readable on every palette,
+     not just the dark ones. */
+  border: 2px solid color-mix(in srgb, var(--ink) 22%, transparent);
+  border-top-color: color-mix(in srgb, var(--ink) 75%, transparent);
   animation: jtc-spin 0.9s linear infinite;
 }
 @keyframes jtc-spin { to { transform: rotate(360deg); } }
