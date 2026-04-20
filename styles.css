@@ -526,6 +526,11 @@
 /* ===== Base ===== */
 *,*::before,*::after { box-sizing: border-box; }
 html, body { margin:0; padding:0; }
+/* Clip (not hide — clip doesn't create a scroll container, so sticky/fixed
+   positioning upstream still works) any horizontal overflow. Stops iOS from
+   letting the user drag the page sideways when the header cluster or any
+   stray absolute element is wider than the viewport; swipes now rubber-band. */
+html, body { overflow-x: clip; }
 body {
   background: var(--bg);
   color: var(--ink);
