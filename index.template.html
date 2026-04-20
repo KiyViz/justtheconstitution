@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en" data-mode="light" data-theme="neutral" data-font="simple" data-reader="default" data-toc="open" data-pane="open">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <title>Just the Constitution</title>
+  <meta name="description" content="The full text of the United States Constitution and its twenty-seven amendments, paired with the original National Archives parchment. No ads. No commentary. Just the info." />
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)" />
+  <meta property="og:title" content="Just the Constitution" />
+  <meta property="og:description" content="The founding document, unabridged. Original text and facsimiles, side by side." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23ffffff'/%3E%3Ctext x='50' y='70' font-size='72' font-family='Helvetica,Arial,sans-serif' font-weight='700' text-anchor='middle' fill='%23111111'%3E§%3C/text%3E%3C/svg%3E" />
+  <!-- Fonts self-hosted in fonts/ — see @font-face rules at top of styles.css -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ===== Sticky header ===== -->
+  <header class="site-header" role="banner">
+    <div class="site-header__row">
+      <button class="icon-btn" id="menu-btn" aria-label="Open table of contents" title="Contents">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        <span class="menu-label">Contents</span>
+      </button>
+      <a class="wordmark" href="#">just<b>the</b>constitution<span class="dot">.org</span></a>
+      <div class="header-spacer"></div>
+
+      <button class="icon-btn" id="search-btn" aria-label="Search the document" title="Search (Ctrl/Cmd+F)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      </button>
+      <button class="icon-btn" id="share-btn" aria-label="Share" title="Share">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v14"/></svg>
+      </button>
+      <button class="icon-btn" id="reader-toggle" aria-label="Pure reader mode" title="Reader mode">
+        <svg id="reader-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>
+      </button>
+      <button class="icon-btn" id="mode-toggle" aria-label="Toggle dark mode" title="Dark / light">
+        <svg id="mode-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
+      </button>
+      <button class="icon-btn" id="tweaks-btn" aria-label="Open settings" title="Settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== Search bar (under header; hidden by default, owned by search.js) ===== -->
+  <div class="search-bar" id="search-bar" hidden role="search">
+    <svg class="search-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    <input type="text" id="search-input" class="search-bar__input" placeholder="Search the document" aria-label="Search the document" autocomplete="off" spellcheck="false" />
+    <span class="search-bar__count" id="search-count" aria-live="polite"></span>
+    <button class="icon-btn search-bar__nav" id="search-prev" aria-label="Previous match" title="Previous (Shift+Enter)" disabled>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+    </button>
+    <button class="icon-btn search-bar__nav" id="search-next" aria-label="Next match" title="Next (Enter)" disabled>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+    <button class="icon-btn search-bar__close" id="search-close" aria-label="Close search" title="Close (Esc)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+
+  <!-- ===== Progress bar (under header) ===== -->
+  <div class="progress" role="progressbar" aria-label="Reading progress">
+    <div class="progress__track" id="progress-track"></div>
+    <div class="progress__labels" id="progress-labels" aria-hidden="true"></div>
+  </div>
+
+  <!-- ===== Drawer (for mobile / compact) ===== -->
+  <div class="toc-drawer" id="toc-drawer" role="dialog" aria-label="Table of contents">
+    <div class="toc-drawer__panel">
+      <button class="icon-btn toc-drawer__close" id="drawer-close" aria-label="Close contents">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <nav class="toc" aria-label="Contents"></nav>
+    </div>
+  </div>
+
+  <!-- ===== Layout: inline TOC + reader ===== -->
+  <div class="layout">
+    <div class="toc-wrap">
+      <nav class="toc toc--inline" aria-label="Contents (sidebar)"></nav>
+    </div>
+
+    <main class="reader" id="reader">
+      <!-- Text pane — pre-rendered by build.js, hydrated by app.js. -->
+      <article class="text-pane" id="text-pane" aria-label="Constitution text">
+      <!-- BUILD:CONTENT -->
+      </article>
+
+      <!-- Image pane -->
+      <aside class="image-pane" id="image-pane" aria-label="Original parchment image">
+        <div class="image-pane__head">
+          <div class="image-pane__label">
+            <span class="tag" id="img-label-tag">PAGE 01</span>
+            <span class="title" id="img-label-title">Page 1 of 4</span>
+          </div>
+          <div class="image-pane__controls">
+            <button class="icon-btn" id="img-prev" aria-label="Previous page image" title="Previous image">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+            </button>
+            <button class="icon-btn" id="img-next" aria-label="Next page image" title="Next image">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+            </button>
+            <button class="icon-btn" id="img-zoom" aria-label="Zoom in" title="Zoom">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/></svg>
+            </button>
+            <button class="icon-btn" id="img-download" aria-label="Download high-res" title="Download">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            </button>
+            <button class="icon-btn" id="pane-collapse" aria-label="Hide parchment pane" title="Hide parchment">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="image-frame" id="image-frame" role="img" aria-label="Original Constitution parchment">
+          <img id="page-img" alt="Original parchment, current page" src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201%201%22%2F%3E" />
+          <div class="image-frame__spinner" aria-hidden="true"></div>
+          <div class="img-placeholder" id="img-placeholder" style="display:none">
+            <b>Page 1 of 4</b>
+            <div>Run <code>optimize-images.ps1</code> from the repo root to generate local webp files.</div>
+          </div>
+        </div>
+
+        <div class="image-pane__meta">
+          <span id="img-caption">Preamble through Article I, §7</span>
+          <span id="img-source"><a href="https://www.archives.gov/founding-docs/downloads" target="_blank" rel="noopener">High-res ↗</a></span>
+        </div>
+      </aside>
+      <button class="pane-expand pane-expand--img" id="pane-expand" aria-label="Show parchment pane" title="Show parchment">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+      </button>
+    </main>
+  </div>
+
+  <!-- ===== Footer ===== -->
+  <footer class="site-footer">
+    <p><b>Sources.</b> Transcription of Articles I–VII and signatures from the <a href="https://www.archives.gov/founding-docs/constitution-transcript" target="_blank" rel="noopener">National Archives</a>, preserving the original spelling and punctuation as inscribed by Jacob Shallus on the parchment on display in the Rotunda of the National Archives Museum. Amendments I–XXVII from the <a href="https://constitutioncenter.org/the-constitution/full-text" target="_blank" rel="noopener">National Constitution Center</a>. Both sources were compared; no substantive discrepancies were found.</p>
+    <p><b>Images.</b> Page scans are courtesy of the <a href="https://www.archives.gov/founding-docs/downloads" target="_blank" rel="noopener">National Archives — High Resolution Downloads</a>. Full-resolution TIFF and JPEG files for print are available there.</p>
+    <p>No ads. No commentary. Just the info.</p>
+  </footer>
+
+  <!-- ===== Lightbox ===== -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-label="Enlarged parchment">
+    <div class="lightbox__topbar">
+      <div class="lightbox__title">
+        <small id="lb-sub">Caption</small>
+        <span id="lb-title">Page 1 of 4</span>
+      </div>
+      <div class="lightbox__controls">
+        <button class="lightbox__btn" id="lb-zoom-out" aria-label="Zoom out" title="Zoom out">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+        </button>
+        <button class="lightbox__btn" id="lb-zoom-in" aria-label="Zoom in" title="Zoom in">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+        <button class="lightbox__btn" id="lb-reset" aria-label="Reset zoom" title="Reset">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+        </button>
+        <button class="lightbox__btn" id="lb-download" aria-label="Download full-res" title="Download">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          <span>Full res</span>
+        </button>
+        <button class="lightbox__btn" id="lb-close" aria-label="Close" title="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="lightbox__stage">
+      <img id="lb-img" class="lightbox__img" alt="Full-resolution parchment" draggable="false" />
+    </div>
+  </div>
+
+  <!-- ===== Reader mode exit ===== -->
+  <button class="reader-exit" id="reader-exit" aria-label="Exit reader mode">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    Exit reader
+  </button>
+
+  <!-- ===== Reader mode controls (mode cycle + settings) ===== -->
+  <div class="reader-controls" id="reader-controls">
+    <button class="reader-ctrl-btn" id="reader-mode-toggle" aria-label="Switch mode" title="Light / Dark / OLED">
+      <svg id="reader-mode-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"></svg>
+    </button>
+    <button class="reader-ctrl-btn" id="reader-settings-btn" aria-label="Open settings" title="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+  </div>
+
+  <!-- ===== Settings panel ===== -->
+  <aside class="tweaks" id="tweaks" aria-label="Settings">
+    <div class="tweaks__head">
+      <b>Settings</b>
+      <button class="icon-btn" id="tweaks-close" aria-label="Close settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="tweaks__body" id="tweaks-body"></div>
+  </aside>
+
+  <!-- ===== Share popover ===== -->
+  <aside class="share-pop" id="share-pop" role="menu" aria-label="Share" hidden>
+    <button class="share-row" data-action="copy" role="menuitem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      <span>Copy link</span>
+    </button>
+    <button class="share-row" data-action="email" role="menuitem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 7 9-7"/></svg>
+      <span>Email</span>
+    </button>
+    <button class="share-row" data-action="native" role="menuitem" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
+      <span>More…</span>
+    </button>
+  </aside>
+
+  <!-- ===== Toast (share feedback) ===== -->
+  <div class="share-toast" id="share-toast" role="status" aria-live="polite" hidden>Link copied</div>
+
+  <script src="data/constitution.js"></script>
+  <script src="core.js"></script>
+  <script src="tweaks.js"></script>
+  <script src="images.js"></script>
+  <script src="reader.js"></script>
+  <script src="progress.js"></script>
+  <script src="nav.js"></script>
+  <script src="search.js"></script>
+  <script src="app.js?v=v7"></script>
+</body>
+</html>

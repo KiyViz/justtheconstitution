@@ -1,0 +1,37 @@
+#!/bin/sh
+# justtheconstitution — pre-commit safety net
+#
+# Regenerates index.html + sitemap.xml from data/constitution.js and
+# index.template.html so you can't accidentally commit a stale bundle.
+# build.js is idempotent (~200 ms) — running it on every commit is cheap,
+# and if nothing changed the `git add` below is a no-op.
+#
+# Enable in a fresh clone with:
+#     git config core.hooksPath .githooks
+
+set -e
+
+# No-op if the build script isn't here (e.g. if someone forks and swaps it out).
+if [ ! -f build.js ]; then
+  exit 0
+fi
+
+# No-op if node isn't available — warn but don't block.
+if ! command -v node >/dev/null 2>&1; then
+  echo "[pre-commit] node not found on PATH — skipping build.js."
+  echo "[pre-commit] Install Node.js or run 'node build.js' manually before committing." >&2
+  exit 0
+fi
+
+printf '[pre-commit] node build.js ... '
+if ! node build.js >/dev/null 2>&1; then
+  echo "FAILED"
+  echo "[pre-commit] build.js failed. Fix the error, then retry the commit:" >&2
+  node build.js >&2 || true
+  exit 1
+fi
+echo "ok"
+
+# Stage the generated artefacts so they're part of this commit. No-op when
+# nothing regenerated (git add on an unchanged file doesn't dirty anything).
+git add index.html sitemap.xml 2>/dev/null || true
