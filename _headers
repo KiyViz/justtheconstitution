@@ -18,3 +18,10 @@
 
 /*.css
   Cache-Control: public, max-age=31536000, immutable
+
+# Per-locale pages and runtime strings — short cache so new builds propagate quickly
+/en/*
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/es/*
+  Cache-Control: public, max-age=3600, must-revalidate

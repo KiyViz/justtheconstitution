@@ -14,37 +14,37 @@
   // download links point to the National Archives' high-res downloads page (TIFFs etc).
   const PAGE_IMAGES = {
     1: {
-      title: "Page 1 of 4",
-      caption: "Preamble through Article I, §7",
+      title: JTC.t("image.page_caption_1"),
+      caption: JTC.t("image.page_caption_1"),
       local: "images/Constitution_Pg1of4_AC.webp",
       fallback: "images/constitution-page1.jpg",
       download: "https://www.archives.gov/founding-docs/downloads"
     },
     2: {
-      title: "Page 2 of 4",
-      caption: "Article I, §8 through Article II, §1",
+      title: JTC.t("image.page_caption_2"),
+      caption: JTC.t("image.page_caption_2"),
       local: "images/Constitution_Pg2of4_AC.webp",
       fallback: "images/constitution-page2.jpg",
       download: "https://www.archives.gov/founding-docs/downloads"
     },
     3: {
-      title: "Page 3 of 4",
-      caption: "Article II, §2 through Article IV",
+      title: JTC.t("image.page_caption_3"),
+      caption: JTC.t("image.page_caption_3"),
       local: "images/Constitution_Pg3of4_AC.webp",
       fallback: "images/constitution-page3.jpg",
       download: "https://www.archives.gov/founding-docs/downloads"
     },
     4: {
-      title: "Page 4 of 4",
-      caption: "Article V through signatures",
+      title: JTC.t("image.page_caption_4"),
+      caption: JTC.t("image.page_caption_4"),
       local: "images/Constitution_Pg4of4_AC.webp",
       fallback: "images/constitution-page4.jpg",
       download: "https://www.archives.gov/founding-docs/downloads"
     },
     bor: {
-      title: "Bill of Rights",
-      tag: "BILL OF RIGHTS",
-      caption: "Ratified December 15, 1791 — Amendments I–X",
+      title: JTC.t("image.bor_title"),
+      tag: JTC.t("image.bor_tag"),
+      caption: JTC.t("image.bor_caption"),
       local: "images/Bill_of_Rights_Pg1of1_AC.webp",
       fallback: "images/bill-of-rights.jpg",
       download: "https://www.archives.gov/founding-docs/downloads"
@@ -57,9 +57,9 @@
   const AMENDMENT_PAGE_COUNT = { 14: 2, 20: 2, 25: 2, 27: 3 };
   function ordinalSuffix(n) {
     const m100 = n % 100;
-    if (m100 >= 11 && m100 <= 13) return "th";
+    if (m100 >= 11 && m100 <= 13) return JTC.t("ordinal.th");
     const m10 = n % 10;
-    return m10 === 1 ? "st" : m10 === 2 ? "nd" : m10 === 3 ? "rd" : "th";
+    return m10 === 1 ? JTC.t("ordinal.st") : m10 === 2 ? JTC.t("ordinal.nd") : m10 === 3 ? JTC.t("ordinal.rd") : JTC.t("ordinal.th");
   }
   C.amendments.forEach(am => {
     const n = parseInt(am.id.slice(3), 10);
@@ -68,8 +68,8 @@
     const total = AMENDMENT_PAGE_COUNT[n] || 1;
     PAGE_IMAGES[am.id] = {
       title: am.label,
-      tag: `AMENDMENT ${am.num}`,
-      caption: `Ratified ${am.year} — ${am.subtitle}`,
+      tag: JTC.t("prefix.amendment").toUpperCase() + " " + am.num,
+      caption: `${JTC.t("prefix.ratified")} ${am.year} — ${am.subtitle}`,
       local: `images/${ordinal}_Amendment_Pg1of${total}_AC.webp`,
       download: "https://www.archives.gov/founding-docs/downloads"
     };
@@ -106,11 +106,11 @@
     const placeholder = document.getElementById("img-placeholder");
 
     if (label) label.textContent = info.title;
-    if (tag) tag.textContent = info.tag || (typeof pageKey === "number" ? `PAGE 0${pageKey}` : "");
+    if (tag) tag.textContent = info.tag || (typeof pageKey === "number" ? JTC.t("image.page_tag_prefix").replace("0", pageKey) : "");
     if (caption) caption.textContent = info.caption;
     if (src) {
       src.innerHTML = "";
-      src.appendChild(el("a", { href: info.download, target: "_blank", rel: "noopener" }, "High-res ↗"));
+      src.appendChild(el("a", { href: info.download, target: "_blank", rel: "noopener" }, JTC.t("image.source_link")));
     }
 
     const frame = document.getElementById("image-frame");
@@ -136,8 +136,8 @@
           placeholder.style.display = "";
           placeholder.innerHTML = `
             <b>${info.title}</b>
-            <div>Couldn't load <code>${info.local}</code>.</div>
-            <div>View the <a href="${info.download}" target="_blank" rel="noopener">high-res originals</a> on the National Archives.</div>
+            <div>${JTC.t("image.error_prefix")} <code>${info.local}</code>.</div>
+            <div>${JTC.t("image.error_view")} <a href="${info.download}" target="_blank" rel="noopener">${JTC.t("image.error_link")}</a> ${JTC.t("image.error_suffix")}</div>
           `;
         }
       };

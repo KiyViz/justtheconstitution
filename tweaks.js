@@ -126,9 +126,11 @@
     if (rmi) rmi.innerHTML = modeSvg;
     const mb = document.getElementById("mode-toggle");
     if (mb) {
-      const next = t.mode === "light" ? "dark" : t.mode === "dark" ? "OLED" : "light";
-      mb.setAttribute("aria-label", `Switch to ${next} mode`);
-      mb.setAttribute("title", `Switch to ${next}`);
+      const next = t.mode === "light" ? "dark" : t.mode === "dark" ? "oled" : "light";
+      const nextUpper = t.mode === "light" ? "Dark" : t.mode === "dark" ? "OLED" : "Light";
+      const ariaKey = t.mode === "light" ? "settings.switch_dark" : t.mode === "dark" ? "settings.switch_oled" : "settings.switch_light";
+      mb.setAttribute("aria-label", JTC.t(ariaKey));
+      mb.setAttribute("title", JTC.t(ariaKey + "_short"));
     }
 
     // Reader toggle state
@@ -224,18 +226,18 @@
 
     // Mode — light / dark / oled segmented control
     const modeRow = el("div", { class: "tweak-row" });
-    modeRow.appendChild(el("label", {}, "Mode"));
+    modeRow.appendChild(el("label", {}, JTC.t("settings.mode")));
     const modeToggle = el("div", { class: "toggle-row" }, [
-      el("button", { class: "toggle-chip", "data-mode-toggle": "light", onClick: () => setMode("light") }, "Light"),
-      el("button", { class: "toggle-chip", "data-mode-toggle": "dark",  onClick: () => setMode("dark")  }, "Dark"),
-      el("button", { class: "toggle-chip", "data-mode-toggle": "oled",  onClick: () => setMode("oled")  }, "OLED")
+      el("button", { class: "toggle-chip", "data-mode-toggle": "light", onClick: () => setMode("light") }, JTC.t("settings.mode_light")),
+      el("button", { class: "toggle-chip", "data-mode-toggle": "dark",  onClick: () => setMode("dark")  }, JTC.t("settings.mode_dark")),
+      el("button", { class: "toggle-chip", "data-mode-toggle": "oled",  onClick: () => setMode("oled")  }, JTC.t("settings.mode_oled"))
     ]);
     modeRow.appendChild(modeToggle);
     body.appendChild(modeRow);
 
     // Color — one grid per mode, only active mode is visible
     const themeRow = el("div", { class: "tweak-row" });
-    themeRow.appendChild(el("label", {}, "Color"));
+    themeRow.appendChild(el("label", {}, JTC.t("settings.color")));
     themeRow.appendChild(buildGrid("light", LIGHT_THEMES));
     themeRow.appendChild(buildGrid("dark", DARK_THEMES));
     themeRow.appendChild(buildGrid("oled", OLED_THEMES));
@@ -243,11 +245,11 @@
 
     // Typeface
     const fontRow = el("div", { class: "tweak-row" });
-    fontRow.appendChild(el("label", {}, "Typeface"));
+    fontRow.appendChild(el("label", {}, JTC.t("settings.typeface")));
     const fontToggle = el("div", { class: "toggle-row" }, [
-      el("button", { class: "toggle-chip", "data-font-toggle": "simple",      onClick: () => setTweak("font", "simple") },      "Simple"),
-      el("button", { class: "toggle-chip", "data-font-toggle": "traditional", onClick: () => setTweak("font", "traditional") }, "Traditional"),
-      el("button", { class: "toggle-chip", "data-font-toggle": "technical",   onClick: () => setTweak("font", "technical") },   "Technical")
+      el("button", { class: "toggle-chip", "data-font-toggle": "simple",      onClick: () => setTweak("font", "simple") },      JTC.t("settings.font_simple")),
+      el("button", { class: "toggle-chip", "data-font-toggle": "traditional", onClick: () => setTweak("font", "traditional") }, JTC.t("settings.font_traditional")),
+      el("button", { class: "toggle-chip", "data-font-toggle": "technical",   onClick: () => setTweak("font", "technical") },   JTC.t("settings.font_technical"))
     ]);
     fontRow.appendChild(fontToggle);
     body.appendChild(fontRow);
@@ -255,27 +257,27 @@
 
     // Reader mode
     const rdrRow = el("div", { class: "tweak-row" });
-    rdrRow.appendChild(el("label", {}, "Reading mode"));
+    rdrRow.appendChild(el("label", {}, JTC.t("settings.reading_mode")));
     const rdrToggle = el("div", { class: "toggle-row" }, [
-      el("button", { class: "toggle-chip", "data-reader-toggle": "default", onClick: () => setTweak("reader", "default") }, "Default"),
-      el("button", { class: "toggle-chip", "data-reader-toggle": "pure", onClick: () => setTweak("reader", "pure") }, "Pure reader")
+      el("button", { class: "toggle-chip", "data-reader-toggle": "default", onClick: () => setTweak("reader", "default") }, JTC.t("settings.reader_default")),
+      el("button", { class: "toggle-chip", "data-reader-toggle": "pure", onClick: () => setTweak("reader", "pure") }, JTC.t("settings.reader_pure"))
     ]);
     rdrRow.appendChild(rdrToggle);
     body.appendChild(rdrRow);
 
     // Copy to clipboard behaviour
     const copyRow = el("div", { class: "tweak-row" });
-    copyRow.appendChild(el("label", {}, "Copy to clipboard"));
+    copyRow.appendChild(el("label", {}, JTC.t("settings.copy_label")));
     const copyToggle = el("div", { class: "toggle-row" }, [
-      el("button", { class: "toggle-chip", "data-copy-toggle": "full",  onClick: () => setTweak("copyMode", "full")  }, "With citation"),
-      el("button", { class: "toggle-chip", "data-copy-toggle": "plain", onClick: () => setTweak("copyMode", "plain") }, "Plain text")
+      el("button", { class: "toggle-chip", "data-copy-toggle": "full",  onClick: () => setTweak("copyMode", "full")  }, JTC.t("settings.copy_citation")),
+      el("button", { class: "toggle-chip", "data-copy-toggle": "plain", onClick: () => setTweak("copyMode", "plain") }, JTC.t("settings.copy_plain"))
     ]);
     copyRow.appendChild(copyToggle);
     body.appendChild(copyRow);
 
     // Font size
     const fsRow = el("div", { class: "tweak-row slider-row" });
-    fsRow.appendChild(el("label", {}, [document.createTextNode("Text size "), el("span", { id: "fs-val", class: "val" }, "17px")]));
+    fsRow.appendChild(el("label", {}, [document.createTextNode(JTC.t("settings.text_size")), el("span", { id: "fs-val", class: "val" }, "17px")]));
     const slider = el("input", { type: "range", min: "14", max: "22", step: "1", id: "fs-slider" });
     slider.addEventListener("input", e => setTweak("fontSize", parseInt(e.target.value, 10)));
     fsRow.appendChild(slider);

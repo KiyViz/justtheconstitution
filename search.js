@@ -122,8 +122,8 @@
   function updateCount() {
     if (!countEl) return;
     if (!lastQuery) { countEl.textContent = ''; prevBtn.disabled = true; nextBtn.disabled = true; return; }
-    if (!matches.length) { countEl.textContent = 'No results'; prevBtn.disabled = true; nextBtn.disabled = true; return; }
-    countEl.textContent = `${currentIndex + 1} of ${matches.length}`;
+    if (!matches.length) { countEl.textContent = JTC.t("search.no_results"); prevBtn.disabled = true; nextBtn.disabled = true; return; }
+    countEl.textContent = JTC.t("search.counter").replace("{current}", currentIndex + 1).replace("{total}", matches.length);
     prevBtn.disabled = false;
     nextBtn.disabled = false;
   }

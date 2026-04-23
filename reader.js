@@ -21,7 +21,7 @@
       class: "copy-btn",
       type: "button",
       "aria-label": `Copy — ${cite}`,
-      title: "Copy to clipboard"
+      title: JTC.t("copy.to_clipboard")
     });
     btn.innerHTML = COPY_SVG;
     if (label) btn.appendChild(el("span", { class: "copy-label" }, label));
@@ -31,7 +31,7 @@
       const text = (typeof getText === "function" ? getText() : getText).trim();
       const payload = formatCopyPayload(text, cite, JTC.getTweaks().copyMode);
       const ok = await copyText(payload);
-      showToast(ok ? "Copied" : "Copy failed");
+      showToast(ok ? JTC.t("toast.copied") : JTC.t("toast.copy_failed"));
     });
     host.appendChild(btn);
     return btn;
@@ -39,15 +39,15 @@
 
   // Citation builders
   function citeArticle(art, sectionLabel, sectionHeading, paraIndex, totalParas) {
-    const parts = ["U.S. Constitution", `Article ${art}`];
+    const parts = [JTC.t("cite.us_constitution"), `${JTC.t("prefix.article")} ${art}`];
     if (sectionLabel) parts.push(sectionLabel); // "Section 1", "Section 2", …
     else if (sectionHeading) parts.push(sectionHeading);
-    if (paraIndex && totalParas > 1) parts.push(`¶ ${paraIndex}`);
+    if (paraIndex && totalParas > 1) parts.push(JTC.t("prefix.paragraph") + " " + paraIndex);
     return parts.join(", ");
   }
   function citeAmendment(num, paraIndex, totalParas) {
-    const parts = ["U.S. Constitution", `Amendment ${num}`];
-    if (paraIndex && totalParas > 1) parts.push(`¶ ${paraIndex}`);
+    const parts = [JTC.t("cite.us_constitution"), `${JTC.t("prefix.amendment")} ${num}`];
+    if (paraIndex && totalParas > 1) parts.push(JTC.t("prefix.paragraph") + " " + paraIndex);
     return parts.join(", ");
   }
 
@@ -101,13 +101,13 @@
     }
 
     // Title
-    pane.appendChild(el("h1", { class: "doc-title" }, "The Constitution of the United States"));
-    pane.appendChild(el("div", { class: "doc-tag" }, "We the People · September 17, 1787"));
+    pane.appendChild(el("h1", { class: "doc-title" }, JTC.t("doc.title")));
+    pane.appendChild(el("div", { class: "doc-tag" }, JTC.t("doc.tag")));
 
     // Preamble
     const pre = el("section", { id: "preamble", class: "anchor", "data-chapter": "preamble" });
     const preP = el("p", { class: "preamble" }, C.preamble.text);
-    addCopyButton(preP, C.preamble.text, "U.S. Constitution, Preamble", "Copy excerpt");
+    addCopyButton(preP, C.preamble.text, `${JTC.t("cite.us_constitution")}, ${JTC.t("section.preamble")}`, JTC.t("copy.excerpt"));
     pre.appendChild(preP);
     pane.appendChild(pre);
 
@@ -117,14 +117,14 @@
       const art = el("section", { id: a.id, class: "anchor", "data-chapter": a.id });
       const head = el("div", { class: "section-drop" });
       const h2 = el("h2", {}, a.label);
-      addCopyButton(h2, () => articleFullText(a), `U.S. Constitution, Article ${artNum}`, "Copy passage");
+      addCopyButton(h2, () => articleFullText(a), `${JTC.t("cite.us_constitution")}, ${JTC.t("prefix.article")} ${artNum}`, JTC.t("copy.passage"));
       const headText = el("div", { class: "article-head" }, [
         h2,
         a.subtitle ? el("div", { class: "article-sub" }, a.subtitle) : null
       ]);
       const pageBtn = el("button", {
         class: "page-chip",
-        title: "View original page",
+        title: JTC.t("image.view_original"),
         onClick: () => {
           // Explicit click in text resumes auto-follow.
           JTC.manualImageMode = false;
@@ -144,11 +144,11 @@
           if (s.label) sh.appendChild(el("span", { class: "section-num" }, s.label));
           if (s.heading) {
             const h3 = el("h3", {}, s.heading);
-            addCopyButton(h3, () => sectionFullText(s), citeArticle(artNum, s.label, s.heading), "Copy passage");
+            addCopyButton(h3, () => sectionFullText(s), citeArticle(artNum, s.label, s.heading), JTC.t("copy.passage"));
             sh.appendChild(h3);
           } else {
             // Only a section label (no heading) — attach copy to the label itself.
-            addCopyButton(sh, () => sectionFullText(s), citeArticle(artNum, s.label, ""), "Copy passage");
+            addCopyButton(sh, () => sectionFullText(s), citeArticle(artNum, s.label, ""), JTC.t("copy.passage"));
           }
           sec.appendChild(sh);
         }
@@ -156,7 +156,7 @@
         s.paragraphs.forEach((p, i) => {
           const paraEl = el("p", {}, p);
           const paraCite = citeArticle(artNum, s.label, s.heading, i + 1, total);
-          addCopyButton(paraEl, p, paraCite, "Copy excerpt");
+          addCopyButton(paraEl, p, paraCite, JTC.t("copy.excerpt"));
           sec.appendChild(paraEl);
         });
         if (s.page && s.page !== a.page) sec.dataset.page = s.page;
@@ -188,7 +188,7 @@
     presBlock.appendChild(signerLine(pres, "div"));
     presBlock.querySelector("div").classList.add("name");
     presBlock.appendChild(el("div", { class: "role" }, pres.role));
-    addCopyButton(presBlock, signaturesFullText, "U.S. Constitution, Signatures", "Copy all");
+    addCopyButton(presBlock, signaturesFullText, `${JTC.t("cite.us_constitution")}, ${JTC.t("section.signatures")}`, JTC.t("copy.all"));
     sig.appendChild(presBlock);
 
     const grid = el("div", { class: "signatures__grid" });
@@ -206,7 +206,7 @@
       const ol = el("ol", { class: "sig-footnotes" });
       footnotes.forEach(f => {
         const end = f.common.endsWith(".") ? "" : ".";
-        ol.appendChild(el("li", {}, `Commonly known as ${f.common}${end}`));
+        ol.appendChild(el("li", {}, JTC.t("prefix.commonly_known") + " " + f.common + end));
       });
       sig.appendChild(ol);
     }
@@ -214,25 +214,25 @@
 
     // Amendments heading
     const amHead = el("section", { id: "amendments", class: "anchor amendments-head", "data-chapter": "amendments" });
-    amHead.appendChild(el("h2", {}, "Amendments"));
-    amHead.appendChild(el("div", { class: "sub" }, "Twenty-seven amendments ratified between 1791 and 1992. The first ten form the Bill of Rights."));
+    amHead.appendChild(el("h2", {}, JTC.t("section.amendments")));
+    amHead.appendChild(el("div", { class: "sub" }, JTC.t("section.amendments_intro")));
     pane.appendChild(amHead);
 
     // Amendments
     C.amendments.forEach(am => {
       const box = el("section", { id: am.id, class: "anchor amendment", "data-chapter": "amendments", "data-amnum": am.num });
       box.appendChild(el("div", { class: "amendment__meta" }, [
-        el("span", { class: "amendment__num" }, `Amendment ${am.num}`),
-        el("span", { class: "amendment__year" }, `Ratified ${am.year}`)
+        el("span", { class: "amendment__num" }, `${JTC.t("prefix.amendment")} ${am.num}`),
+        el("span", { class: "amendment__year" }, `${JTC.t("prefix.ratified")} ${am.year}`)
       ]));
       const amH3 = el("h3", {}, am.label);
-      addCopyButton(amH3, () => amendmentFullText(am), `U.S. Constitution, Amendment ${am.num}`, "Copy passage");
+      addCopyButton(amH3, () => amendmentFullText(am), `${JTC.t("cite.us_constitution")}, ${JTC.t("prefix.amendment")} ${am.num}`, JTC.t("copy.passage"));
       box.appendChild(amH3);
       box.appendChild(el("div", { class: "amendment__sub" }, am.subtitle));
       const totalAm = am.paragraphs.length;
       am.paragraphs.forEach((p, i) => {
         const paraEl = el("p", {}, p);
-        addCopyButton(paraEl, p, citeAmendment(am.num, i + 1, totalAm), "Copy excerpt");
+        addCopyButton(paraEl, p, citeAmendment(am.num, i + 1, totalAm), JTC.t("copy.excerpt"));
         box.appendChild(paraEl);
       });
       pane.appendChild(box);
@@ -248,7 +248,7 @@
   function hydrateText(pane) {
     // Preamble
     const preP = pane.querySelector("#preamble > p.preamble");
-    if (preP) addCopyButton(preP, C.preamble.text, "U.S. Constitution, Preamble", "Copy excerpt");
+    if (preP) addCopyButton(preP, C.preamble.text, `${JTC.t("cite.us_constitution")}, ${JTC.t("section.preamble")}`, JTC.t("copy.excerpt"));
 
     // Articles
     C.articles.forEach(a => {
@@ -256,13 +256,13 @@
       const art = document.getElementById(a.id);
       if (!art) return;
       const h2 = art.querySelector(".article-head h2");
-      if (h2) addCopyButton(h2, () => articleFullText(a), `U.S. Constitution, Article ${artNum}`, "Copy passage");
+      if (h2) addCopyButton(h2, () => articleFullText(a), `${JTC.t("cite.us_constitution")}, ${JTC.t("prefix.article")} ${artNum}`, JTC.t("copy.passage"));
 
       const sectionDrop = art.querySelector(":scope > .section-drop");
       if (sectionDrop && !sectionDrop.querySelector(".page-chip")) {
         const pageBtn = el("button", {
           class: "page-chip",
-          title: "View original page",
+          title: JTC.t("image.view_original"),
           onClick: () => {
             JTC.manualImageMode = false;
             JTC.setCurrentPage(a.page);
@@ -279,9 +279,9 @@
         if (sh) {
           const h3 = sh.querySelector("h3");
           if (h3) {
-            addCopyButton(h3, () => sectionFullText(s), citeArticle(artNum, s.label, s.heading), "Copy passage");
+            addCopyButton(h3, () => sectionFullText(s), citeArticle(artNum, s.label, s.heading), JTC.t("copy.passage"));
           } else {
-            addCopyButton(sh, () => sectionFullText(s), citeArticle(artNum, s.label, ""), "Copy passage");
+            addCopyButton(sh, () => sectionFullText(s), citeArticle(artNum, s.label, ""), JTC.t("copy.passage"));
           }
         }
         const paras = sec.querySelectorAll(":scope > p");
@@ -289,26 +289,26 @@
         paras.forEach((paraEl, i) => {
           const p = s.paragraphs[i];
           const paraCite = citeArticle(artNum, s.label, s.heading, i + 1, total);
-          addCopyButton(paraEl, p, paraCite, "Copy excerpt");
+          addCopyButton(paraEl, p, paraCite, JTC.t("copy.excerpt"));
         });
       });
     });
 
     // Signatures
     const presBlock = pane.querySelector(".signatures__pres");
-    if (presBlock) addCopyButton(presBlock, signaturesFullText, "U.S. Constitution, Signatures", "Copy all");
+    if (presBlock) addCopyButton(presBlock, signaturesFullText, `${JTC.t("cite.us_constitution")}, ${JTC.t("section.signatures")}`, JTC.t("copy.all"));
 
     // Amendments
     C.amendments.forEach(am => {
       const box = document.getElementById(am.id);
       if (!box) return;
       const h3 = box.querySelector(":scope > h3");
-      if (h3) addCopyButton(h3, () => amendmentFullText(am), `U.S. Constitution, Amendment ${am.num}`, "Copy passage");
+      if (h3) addCopyButton(h3, () => amendmentFullText(am), `${JTC.t("cite.us_constitution")}, ${JTC.t("prefix.amendment")} ${am.num}`, JTC.t("copy.passage"));
       const paras = box.querySelectorAll(":scope > p");
       const totalAm = am.paragraphs.length;
       paras.forEach((paraEl, i) => {
         const p = am.paragraphs[i];
-        addCopyButton(paraEl, p, citeAmendment(am.num, i + 1, totalAm), "Copy excerpt");
+        addCopyButton(paraEl, p, citeAmendment(am.num, i + 1, totalAm), JTC.t("copy.excerpt"));
       });
     });
 
@@ -317,7 +317,7 @@
     const cta = pane.querySelector(".download-cta");
     if (cta && !cta.querySelector(".download-cta__btn")) {
       const btn = el("button", { class: "download-cta__btn", type: "button", onClick: downloadMarkdown });
-      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg><span>Download Markdown</span>';
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg><span>' + JTC.t("download.button") + '</span>';
       const hint = cta.querySelector(".download-cta__hint");
       if (hint) cta.insertBefore(btn, hint);
       else cta.appendChild(btn);
@@ -327,20 +327,20 @@
   // ---- Download (Markdown) ----
   function renderDownloadCta(pane) {
     const cta = el("section", { class: "download-cta" });
-    cta.appendChild(el("h2", {}, "Take it with you."));
-    cta.appendChild(el("p", {}, "The full document — preamble, articles, signatures, all twenty-seven amendments — as a single Markdown file. Readable anywhere."));
+    cta.appendChild(el("h2", {}, JTC.t("download.heading")));
+    cta.appendChild(el("p", {}, JTC.t("download.description")));
     const btn = el("button", { class: "download-cta__btn", type: "button", onClick: downloadMarkdown });
-    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg><span>Download Markdown</span>';
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg><span>' + JTC.t("download.button") + '</span>';
     cta.appendChild(btn);
-    cta.appendChild(el("div", { class: "download-cta__hint" }, "us-constitution.md"));
+    cta.appendChild(el("div", { class: "download-cta__hint" }, JTC.t("download.hint")));
     pane.appendChild(cta);
   }
 
   function buildMarkdown() {
     const L = [];
-    L.push("# The Constitution of the United States", "");
-    L.push("*We the People · September 17, 1787*", "");
-    L.push("## Preamble", "");
+    L.push(`# ${JTC.t("doc.title")}`, "");
+    L.push(`*${JTC.t("doc.tag")}*`, "");
+    L.push(`## ${JTC.t("section.preamble")}`, "");
     L.push(C.preamble.text, "");
 
     C.articles.forEach(a => {
@@ -355,7 +355,7 @@
     });
 
     // Signatures: parchment-first, with numbered footnotes for common names
-    L.push("## Signatures", "");
+    L.push(`## ${JTC.t("section.signatures")}`, "");
     const fns = [];
     const sigMd = (entry) => {
       if (typeof entry === "string") return entry;
@@ -372,21 +372,21 @@
     if (fns.length) {
       fns.forEach((f, i) => {
         const end = f.common.endsWith(".") ? "" : ".";
-        L.push(`[^sig${i + 1}]: Commonly known as ${f.common}${end}`);
+        L.push(`[^sig${i + 1}]: ${JTC.t("prefix.commonly_known")} ${f.common}${end}`);
       });
       L.push("");
     }
 
-    L.push("## Amendments", "");
-    L.push("Twenty-seven amendments ratified between 1791 and 1992. The first ten form the Bill of Rights.", "");
+    L.push(`## ${JTC.t("section.amendments")}`, "");
+    L.push(JTC.t("section.amendments_intro"), "");
     C.amendments.forEach(am => {
-      L.push(`### Amendment ${am.num} — ${am.subtitle}`, "");
-      L.push(`*Ratified ${am.year}*`, "");
+      L.push(`### ${JTC.t("prefix.amendment")} ${am.num} — ${am.subtitle}`, "");
+      L.push(`*${JTC.t("prefix.ratified")} ${am.year}*`, "");
       am.paragraphs.forEach(p => L.push(p, ""));
     });
 
     L.push("---", "");
-    L.push("Source: [justtheconstitution.org](https://justtheconstitution.org)", "");
+    L.push(JTC.t("md.source_footer"), "");
     return L.join("\n");
   }
 
@@ -395,7 +395,7 @@
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "us-constitution.md";
+    a.download = JTC.t("download.filename");
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

@@ -22,6 +22,9 @@
     // Wire URL-hash observer after .anchor elements exist.
     initHashSync();
 
+    // Initialize language system
+    if (JTC.initLang) JTC.initLang();
+
     // Image pane — initial
     setCurrentPage(1, true);
 
