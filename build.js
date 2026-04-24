@@ -408,6 +408,10 @@ function main() {
     // Set lang attribute
     html = html.replace('lang="en"', `lang="${locale}"`);
 
+    // Rewrite root-relative asset paths for locale subdirectory
+    // Pages live at /{locale}/index.html, so root assets need ../
+    html = html.replace('href="styles.css"', 'href="../styles.css"');
+
     // Inject locale metadata for lang switcher
     html = html.replace('<html', `<html data-locales='${esc(localesMeta)}' data-current-locale="${locale}"`);
     // Fix: the above creates <html data-locales="..." data-current-locale="..." lang="..." ...>

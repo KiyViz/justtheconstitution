@@ -16,37 +16,37 @@
     1: {
       title: JTC.t("image.page_caption_1"),
       caption: JTC.t("image.page_caption_1"),
-      local: "images/Constitution_Pg1of4_AC.webp",
-      fallback: "images/constitution-page1.jpg",
+      local: "/images/Constitution_Pg1of4_AC.webp",
+      fallback: "/images/constitution-page1.jpg",
       download: "https://www.archives.gov/founding-docs/downloads"
     },
     2: {
       title: JTC.t("image.page_caption_2"),
       caption: JTC.t("image.page_caption_2"),
-      local: "images/Constitution_Pg2of4_AC.webp",
-      fallback: "images/constitution-page2.jpg",
+      local: "/images/Constitution_Pg2of4_AC.webp",
+      fallback: "/images/constitution-page2.jpg",
       download: "https://www.archives.gov/founding-docs/downloads"
     },
     3: {
       title: JTC.t("image.page_caption_3"),
       caption: JTC.t("image.page_caption_3"),
-      local: "images/Constitution_Pg3of4_AC.webp",
-      fallback: "images/constitution-page3.jpg",
+      local: "/images/Constitution_Pg3of4_AC.webp",
+      fallback: "/images/constitution-page3.jpg",
       download: "https://www.archives.gov/founding-docs/downloads"
     },
     4: {
       title: JTC.t("image.page_caption_4"),
       caption: JTC.t("image.page_caption_4"),
-      local: "images/Constitution_Pg4of4_AC.webp",
-      fallback: "images/constitution-page4.jpg",
+      local: "/images/Constitution_Pg4of4_AC.webp",
+      fallback: "/images/constitution-page4.jpg",
       download: "https://www.archives.gov/founding-docs/downloads"
     },
     bor: {
       title: JTC.t("image.bor_title"),
       tag: JTC.t("image.bor_tag"),
       caption: JTC.t("image.bor_caption"),
-      local: "images/Bill_of_Rights_Pg1of1_AC.webp",
-      fallback: "images/bill-of-rights.jpg",
+      local: "/images/Bill_of_Rights_Pg1of1_AC.webp",
+      fallback: "/images/bill-of-rights.jpg",
       download: "https://www.archives.gov/founding-docs/downloads"
     }
   };
@@ -70,7 +70,7 @@
       title: am.label,
       tag: JTC.t("prefix.amendment").toUpperCase() + " " + am.num,
       caption: `${JTC.t("prefix.ratified")} ${am.year} — ${am.subtitle}`,
-      local: `images/${ordinal}_Amendment_Pg1of${total}_AC.webp`,
+      local: `/images/${ordinal}_Amendment_Pg1of${total}_AC.webp`,
       download: "https://www.archives.gov/founding-docs/downloads"
     };
   });
