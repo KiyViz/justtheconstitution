@@ -1,50 +1,32 @@
 /* ===== justtheconstitution — lang =====
-   Language/locale switcher popover.
+   Language/locale switcher. Globe icon expands on hover to show
+   the current language name; clicking switches to the next locale.
    Depends on: core (el). */
 (() => {
   const JTC = window.JTC;
-  const { el } = JTC;
 
   function init() {
     const root = document.documentElement;
     let locales;
     try { locales = JSON.parse(root.dataset.locales || "[]"); } catch { return; }
     const current = root.dataset.currentLocale || "en";
-    if (locales.length < 2) return;  // No switcher needed for single locale
+    if (locales.length < 2) return;
 
     const btn = document.getElementById("lang-btn");
-    const pop = document.getElementById("lang-pop");
-    if (!btn || !pop) return;
+    const label = document.getElementById("lang-label");
+    if (!btn || !label) return;
 
-    // Populate popover
-    pop.innerHTML = "";
-    locales.forEach(loc => {
-      const row = el("button", {
-        class: "lang-row" + (loc.code === current ? " is-active" : ""),
-        type: "button",
-        onClick: () => {
-          if (loc.code !== current) {
-            localStorage.setItem("jtc:lang", loc.code);
-            location.href = "../" + loc.code + "/" + location.hash;
-          }
-          pop.hidden = true;
-        }
-      }, loc.name);
-      pop.appendChild(row);
-    });
+    // Show current language name on hover
+    const currentLocale = locales.find(l => l.code === current);
+    if (currentLocale) label.textContent = currentLocale.name;
 
-    // Toggle
-    const closePop = () => { pop.hidden = true; };
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      pop.hidden = !pop.hidden;
-    });
-    document.addEventListener("click", (e) => {
-      if (pop.hidden) return;
-      if (!pop.contains(e.target) && e.target !== btn && !btn.contains(e.target)) closePop();
-    });
-    document.addEventListener("keydown", (e) => {
-      if (!pop.hidden && e.key === "Escape") closePop();
+    // Find the next locale to switch to
+    const currentIdx = locales.findIndex(l => l.code === current);
+    const nextLocale = locales[(currentIdx + 1) % locales.length];
+
+    btn.addEventListener("click", () => {
+      localStorage.setItem("jtc:lang", nextLocale.code);
+      location.href = "../" + nextLocale.code + "/" + location.hash;
     });
   }
 

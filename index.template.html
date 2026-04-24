@@ -30,8 +30,9 @@
       <button class="icon-btn" id="search-btn" aria-label="<!-- S:btn.search_aria -->" title="<!-- S:btn.search_title -->">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
       </button>
-      <button class="icon-btn" id="lang-btn" aria-label="<!-- S:lang.button_aria -->" title="<!-- S:lang.button_title -->">
+      <button class="icon-btn lang-btn" id="lang-btn" aria-label="<!-- S:lang.button_aria -->" title="<!-- S:lang.button_title -->">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z"/></svg>
+        <span class="lang-label" id="lang-label"></span>
       </button>
       <button class="icon-btn" id="share-btn" aria-label="<!-- S:btn.share_aria -->" title="<!-- S:btn.share -->">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v14"/></svg>
@@ -215,9 +216,6 @@
       <span><!-- S:share.more --></span>
     </button>
   </aside>
-
-  <!-- ===== Language popover ===== -->
-  <aside class="lang-pop" id="lang-pop" hidden></aside>
 
   <!-- ===== Toast (share feedback) ===== -->
   <div class="share-toast" id="share-toast" role="status" aria-live="polite" hidden><!-- S:share.toast_default --></div>
