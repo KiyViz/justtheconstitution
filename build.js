@@ -12,6 +12,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const vm = require('vm');
 
 const ROOT = __dirname;
@@ -291,20 +292,32 @@ function injectTemplateStrings(html, S) {
 }
 
 // ── Script tags ──
+// Short content hash for cache busting — changes when file content changes.
+function fileHash(filePath) {
+  const content = fs.readFileSync(filePath);
+  return crypto.createHash('md5').update(content).digest('hex').slice(0, 8);
+}
+
 function renderScripts(locale, config) {
+  // Helper: append ?v=hash to a root-relative script path
+  function src(relPath) {
+    const absPath = path.join(ROOT, relPath.replace(/^\.\.\//, ''));
+    const hash = fileHash(absPath);
+    return `${relPath}?v=${hash}`;
+  }
   const dataPath = `../${config.data}`;
   const lines = [
     `  <script src="strings.min.js"></script>`,
-    `  <script src="${dataPath}"></script>`,
-    `  <script src="../core.js"></script>`,
-    `  <script src="../tweaks.js"></script>`,
-    `  <script src="../images.js"></script>`,
-    `  <script src="../reader.js"></script>`,
-    `  <script src="../progress.js"></script>`,
-    `  <script src="../nav.js"></script>`,
-    `  <script src="../search.js"></script>`,
-    `  <script src="../lang.js"></script>`,
-    `  <script src="../app.js"></script>`
+    `  <script src="${src(dataPath)}"></script>`,
+    `  <script src="${src('../core.js')}"></script>`,
+    `  <script src="${src('../tweaks.js')}"></script>`,
+    `  <script src="${src('../images.js')}"></script>`,
+    `  <script src="${src('../reader.js')}"></script>`,
+    `  <script src="${src('../progress.js')}"></script>`,
+    `  <script src="${src('../nav.js')}"></script>`,
+    `  <script src="${src('../search.js')}"></script>`,
+    `  <script src="${src('../lang.js')}"></script>`,
+    `  <script src="${src('../app.js')}"></script>`
   ];
   return lines.join('\n');
 }
@@ -410,7 +423,8 @@ function main() {
 
     // Rewrite root-relative asset paths for locale subdirectory
     // Pages live at /{locale}/index.html, so root assets need ../
-    html = html.replace('href="styles.css"', 'href="../styles.css"');
+    const cssHash = fileHash(path.join(ROOT, 'styles.css'));
+    html = html.replace('href="styles.css"', `href="../styles.css?v=${cssHash}"`);
 
     // Inject locale metadata for lang switcher
     html = html.replace('<html', `<html data-locales='${esc(localesMeta)}' data-current-locale="${locale}"`);
