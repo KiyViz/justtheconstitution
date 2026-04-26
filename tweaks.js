@@ -12,7 +12,7 @@
 
   const TWEAK_DEFAULTS = {
     mode: "light",
-    theme: "modern",
+    theme: "parchment",
     reader: "default",
     toc: "open",
     pane: "open",
@@ -69,6 +69,15 @@
   function getTweaks() {
     const saved = JSON.parse(localStorage.getItem("jtc:tweaks") || "{}");
     const merged = { ...TWEAK_DEFAULTS, ...saved };
+    // Follow OS prefers-color-scheme when the user hasn't picked a mode
+    // explicitly. Once they touch the mode toggle their choice persists in
+    // localStorage and overrides this. Reset (which clears localStorage)
+    // bounces back to OS preference.
+    if (!saved.mode && typeof matchMedia === "function") {
+      try {
+        if (matchMedia("(prefers-color-scheme: dark)").matches) merged.mode = "dark";
+      } catch (_) { /* SSR / older browsers — leave default */ }
+    }
     if (!["open", "closed"].includes(merged.toc)) merged.toc = "open";
     if (!["open", "closed"].includes(merged.pane)) merged.pane = "open";
     if (merged.theme === "oled") { merged.mode = "oled"; merged.theme = "modern"; }
@@ -179,6 +188,8 @@
     if (mi) mi.innerHTML = modeSvg;
     const rmi = document.getElementById("reader-mode-icon");
     if (rmi) rmi.innerHTML = modeSvg;
+    const tmi = document.getElementById("tools-mode-icon");
+    if (tmi) tmi.innerHTML = modeSvg;
     const mb = document.getElementById("mode-toggle");
     if (mb) {
       const next = t.mode === "light" ? "dark" : t.mode === "dark" ? "oled" : "light";
@@ -262,14 +273,62 @@
     const body = document.getElementById("tweaks-body");
     body.innerHTML = "";
 
-    // Above-the-fold layout — the four most-used controls in priority order:
+    // Above-the-fold layout:
+    //   0. Tools     (lang / reader / mode icons — mirrors the desktop header
+    //                 icons that get hidden on mobile)
     //   1. Mode      (Light / Dark / OLED)
     //   2. Color     (3 Aa swatches; theme name appears in the row caption)
     //   3. Text size (3 size swatches; precise slider lives in Advanced)
     //   4. Copy      (With citation / Plain text — applies to all in-doc
     //                 copy buttons, not the share-popover Copy Link)
-    // Reading mode lives on the header button (#reader-toggle) and is
-    // intentionally not duplicated here.
+
+    // Tools — icon buttons for the same actions as the desktop header
+    // (language switcher, reader-mode toggle, mode toggle). On mobile the
+    // header strips these out for space; the Tools row keeps them reachable.
+    const toolsRow = el("div", { class: "tweak-row tools-row" });
+    toolsRow.appendChild(el("label", {}, JTC.t("settings.tools")));
+    const toolsBar = el("div", { class: "tools-bar" });
+
+    // Language switcher — delegate to the existing #lang-btn so the locale
+    // logic in lang.js stays single-source.
+    const langBtn = el("button", {
+      class: "tools-btn",
+      id: "tools-lang-btn",
+      type: "button",
+      "aria-label": JTC.t("lang.button_aria"),
+      title: JTC.t("lang.button_title"),
+      onClick: () => { const b = document.getElementById("lang-btn"); if (b) b.click(); }
+    });
+    langBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z"/></svg>';
+    toolsBar.appendChild(langBtn);
+
+    // Reader-mode toggle.
+    const readerBtn = el("button", {
+      class: "tools-btn",
+      id: "tools-reader-toggle",
+      type: "button",
+      "aria-label": JTC.t("btn.reader_aria"),
+      title: JTC.t("btn.reader_title"),
+      onClick: () => JTC.toggleReader && JTC.toggleReader()
+    });
+    readerBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>';
+    toolsBar.appendChild(readerBtn);
+
+    // Mode (Light → Dark → OLED) cycle. The icon swaps to match the next
+    // mode each cycle — applyTweaks() keeps #tools-mode-icon in sync.
+    const modeCycle = el("button", {
+      class: "tools-btn",
+      id: "tools-mode-toggle",
+      type: "button",
+      "aria-label": JTC.t("btn.mode_aria"),
+      title: JTC.t("btn.mode_title"),
+      onClick: () => JTC.toggleMode && JTC.toggleMode()
+    });
+    modeCycle.innerHTML = '<svg id="tools-mode-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>';
+    toolsBar.appendChild(modeCycle);
+
+    toolsRow.appendChild(toolsBar);
+    body.appendChild(toolsRow);
 
     // Mode — light / dark / oled segmented control
     const modeRow = el("div", { class: "tweak-row" });

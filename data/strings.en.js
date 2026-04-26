@@ -139,6 +139,7 @@ module.exports = {
   // ── Settings panel ──
   "settings.title":           "Settings",
   "settings.close_aria":      "Close settings",
+  "settings.tools":           "Tools",
   "settings.mode":            "Mode",
   "settings.mode_light":      "Light",
   "settings.mode_dark":       "Dark",
