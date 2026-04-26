@@ -17,6 +17,10 @@
 </head>
 <body>
 
+  <!-- ===== Skip link (a11y) — first focusable element on the page.
+       Hidden until focused; jumps focus to the Constitution body. ===== -->
+  <a class="skip-link" href="#text-pane"><!-- S:a11y.skip_to_content --></a>
+
   <!-- ===== Sticky header ===== -->
   <header class="site-header" role="banner">
     <div class="site-header__row">
@@ -194,9 +198,14 @@
   <aside class="tweaks" id="tweaks" aria-label="<!-- S:settings.title -->">
     <div class="tweaks__head">
       <b><!-- S:settings.title --></b>
-      <button class="icon-btn" id="tweaks-close" aria-label="<!-- S:settings.close_aria -->">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
-      </button>
+      <div class="tweaks__head-actions">
+        <button class="icon-btn icon-btn--small" id="tweaks-reset" aria-label="<!-- S:settings.reset_aria -->" title="<!-- S:settings.reset_title -->">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+        </button>
+        <button class="icon-btn" id="tweaks-close" aria-label="<!-- S:settings.close_aria -->">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
     </div>
     <div class="tweaks__body" id="tweaks-body"></div>
   </aside>

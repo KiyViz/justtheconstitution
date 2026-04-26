@@ -49,6 +49,8 @@
     document.getElementById("tweaks-close").addEventListener("click", () => {
       document.getElementById("tweaks").classList.remove("is-open");
     });
+    const tweaksReset = document.getElementById("tweaks-reset");
+    if (tweaksReset && JTC.resetTweaks) tweaksReset.addEventListener("click", JTC.resetTweaks);
 
     // Reader-mode floating controls (only shown in pure reader via CSS).
     const readerModeBtn = document.getElementById("reader-mode-toggle");

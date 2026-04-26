@@ -237,270 +237,105 @@
   --progress-h: 38px;
 }
 
-/* ===== LIGHT MODE — 12 themes in 4 groups ===== */
-/* --- Neutrals --- */
-[data-mode="light"][data-theme="neutral"] { /* Pure Neutral */
-  --bg:#ffffff; --bg-elev:#fafafa; --bg-sunken:#f2f2f2;
-  --ink:#111111; --ink-soft:#3a3a3a; --ink-faint:#707070;
-  --rule:#dedede; --rule-soft:#eaeaea; --accent:#111111;
-  --chip-bg:rgba(0,0,0,0.04); --chip-ink:#111;
-  --progress-track:rgba(0,0,0,0.06); --progress-seen:rgba(0,0,0,0.18);
-  --progress-tick:rgba(0,0,0,0.14); --progress-fill:#111;
-  --image-pane:#efefef; --image-mat:#1a1a1a;
-  --hairline:rgba(0,0,0,0.08);
+/* =====================================================================
+   THEME SYSTEM — 3 themes × 3 modes = 9 surfaces
+   =====================================================================
+   Themes:
+     • Parchment — warm vellum / low-blue. Hopper light-falling-on-a-wall.
+     • Modern    — off-white / off-black. Whistler grayscale. Default.
+     • Civic     — desaturated R/W/B. Taos / Santa Fe; subtle, not slogan.
+   Modes:
+     • Light     — readable in daylight on a phone
+     • Dark      — readable at night without burning the retina
+     • OLED      — pure-black bg for OLED battery; same identity per theme
+   Accent discipline: only Civic carries a non-monochrome accent. In
+   Parchment and Modern, --accent equals --ink so the page stays quiet.
+   ===================================================================== */
+
+/* ===== LIGHT MODE ===== */
+[data-mode="light"][data-theme="parchment"] {
+  /* Warm vellum paper, deep umber ink. Low-blue, eye-friendly in
+     daylight. Body contrast ~12:1 — comfortable, not glaring. */
+  --bg:#f0e6d0; --bg-elev:#f5ecd8; --bg-sunken:#e0d6ba;
+  --ink:#2a1c0a; --ink-soft:#5a4828; --ink-faint:#897856;
+  --rule:#d6c8a8; --rule-soft:#e2d7bc; --accent:#2a1c0a;
+  --chip-bg:rgba(42,28,10,0.06); --chip-ink:#2a1c0a;
+  --progress-track:rgba(42,28,10,0.07); --progress-seen:rgba(42,28,10,0.20);
+  --progress-tick:rgba(42,28,10,0.14); --progress-fill:#2a1c0a;
+  --image-pane:#e0d6ba; --image-mat:#2a1c0a;
+  --hairline:rgba(42,28,10,0.09);
 }
-[data-mode="light"][data-theme="cool"] { /* Cool Neutral */
-  --bg:#f6f7f9; --bg-elev:#ffffff; --bg-sunken:#e7eaf0;
-  --ink:#13161c; --ink-soft:#3c414a; --ink-faint:#707684;
-  --rule:#d5d9e0; --rule-soft:#e3e6ec; --accent:#13161c;
-  --chip-bg:rgba(19,22,28,0.04); --chip-ink:#13161c;
-  --progress-track:rgba(19,22,28,0.06); --progress-seen:rgba(19,22,28,0.20);
-  --progress-tick:rgba(19,22,28,0.14); --progress-fill:#13161c;
-  --image-pane:#e5e8ee; --image-mat:#1b1e25;
-  --hairline:rgba(19,22,28,0.08);
+[data-mode="light"][data-theme="modern"] {
+  /* Warm off-white (not pure #fff — that fatigues), near-black ink.
+     The everyday default; closest in spirit to the prior "Pure" theme. */
+  --bg:#fafaf7; --bg-elev:#ffffff; --bg-sunken:#ededea;
+  --ink:#1a1a1a; --ink-soft:#4a4a4a; --ink-faint:#888888;
+  --rule:#e0e0dc; --rule-soft:#ededea; --accent:#1a1a1a;
+  --chip-bg:rgba(26,26,26,0.04); --chip-ink:#1a1a1a;
+  --progress-track:rgba(26,26,26,0.06); --progress-seen:rgba(26,26,26,0.20);
+  --progress-tick:rgba(26,26,26,0.14); --progress-fill:#1a1a1a;
+  --image-pane:#ededea; --image-mat:#1a1a1a;
+  --hairline:rgba(26,26,26,0.08);
 }
-[data-mode="light"][data-theme="warm"] { /* Warm Neutral */
-  --bg:#faf7f1; --bg-elev:#ffffff; --bg-sunken:#ece6d9;
-  --ink:#1b1812; --ink-soft:#453e32; --ink-faint:#7a705e;
-  --rule:#ded7c6; --rule-soft:#ebe5d5; --accent:#1b1812;
-  --chip-bg:rgba(27,24,18,0.04); --chip-ink:#1b1812;
-  --progress-track:rgba(27,24,18,0.06); --progress-seen:rgba(27,24,18,0.20);
-  --progress-tick:rgba(27,24,18,0.14); --progress-fill:#1b1812;
-  --image-pane:#ebe4d2; --image-mat:#231e15;
-  --hairline:rgba(27,24,18,0.08);
-}
-/* --- Earthy warm --- */
-[data-mode="light"][data-theme="burgundy"] {
-  --bg:#ebd7d7; --bg-elev:#f0ddde; --bg-sunken:#d2b0b2;
-  --ink:#2c0912; --ink-soft:#4d1c25; --ink-faint:#80464f;
-  --rule:#bf9196; --rule-soft:#d1a9ad; --accent:#2c0912;
-  --chip-bg:rgba(44,9,18,0.06); --chip-ink:#2c0912;
-  --progress-track:rgba(44,9,18,0.09); --progress-seen:rgba(44,9,18,0.25);
-  --progress-tick:rgba(44,9,18,0.16); --progress-fill:#2c0912;
-  --image-pane:#d1a9ad; --image-mat:#2c0912;
-  --hairline:rgba(44,9,18,0.10);
-}
-[data-mode="light"][data-theme="mango"] {
-  --bg:#f2d3a8; --bg-elev:#f6dcb6; --bg-sunken:#dcb37e;
-  --ink:#3a1802; --ink-soft:#5c2c10; --ink-faint:#8a5a34;
-  --rule:#c29a68; --rule-soft:#d6b284; --accent:#3a1802;
-  --chip-bg:rgba(58,24,2,0.06); --chip-ink:#3a1802;
-  --progress-track:rgba(58,24,2,0.09); --progress-seen:rgba(58,24,2,0.25);
-  --progress-tick:rgba(58,24,2,0.16); --progress-fill:#3a1802;
-  --image-pane:#d6b284; --image-mat:#3a1802;
-  --hairline:rgba(58,24,2,0.10);
-}
-[data-mode="light"][data-theme="amber"] {
-  --bg:#ecdec2; --bg-elev:#f0e3cb; --bg-sunken:#dccda9;
-  --ink:#2a1d04; --ink-soft:#4a3612; --ink-faint:#7a663a;
-  --rule:#ccb886; --rule-soft:#dbc89b; --accent:#2a1d04;
-  --chip-bg:rgba(42,29,4,0.06); --chip-ink:#2a1d04;
-  --progress-track:rgba(42,29,4,0.09); --progress-seen:rgba(42,29,4,0.25);
-  --progress-tick:rgba(42,29,4,0.16); --progress-fill:#2a1d04;
-  --image-pane:#dbc89b; --image-mat:#2a1d04;
-  --hairline:rgba(42,29,4,0.10);
-}
-/* --- Earthy cool --- */
-[data-mode="light"][data-theme="forest"] {
-  --bg:#d0dbc8; --bg-elev:#dbe3d2; --bg-sunken:#b3c1aa;
-  --ink:#0b1d14; --ink-soft:#1f3528; --ink-faint:#566d5d;
-  --rule:#a2b598; --rule-soft:#b5c4aa; --accent:#0b1d14;
-  --chip-bg:rgba(11,29,20,0.06); --chip-ink:#0b1d14;
-  --progress-track:rgba(11,29,20,0.09); --progress-seen:rgba(11,29,20,0.25);
-  --progress-tick:rgba(11,29,20,0.16); --progress-fill:#0b1d14;
-  --image-pane:#b5c4aa; --image-mat:#0b1d14;
-  --hairline:rgba(11,29,20,0.10);
-}
-[data-mode="light"][data-theme="ocean"] {
-  --bg:#d6dde2; --bg-elev:#dde4e9; --bg-sunken:#bac5ce;
-  --ink:#0c1e2c; --ink-soft:#213645; --ink-faint:#55697a;
-  --rule:#a6b2bc; --rule-soft:#b8c1ca; --accent:#0c1e2c;
-  --chip-bg:rgba(12,30,44,0.06); --chip-ink:#0c1e2c;
-  --progress-track:rgba(12,30,44,0.09); --progress-seen:rgba(12,30,44,0.25);
-  --progress-tick:rgba(12,30,44,0.16); --progress-fill:#0c1e2c;
-  --image-pane:#b8c1ca; --image-mat:#0c1e2c;
-  --hairline:rgba(12,30,44,0.10);
-}
-[data-mode="light"][data-theme="slate"] {
-  --bg:#dbdee2; --bg-elev:#e2e5e9; --bg-sunken:#c2c7cd;
-  --ink:#121a22; --ink-soft:#2a3440; --ink-faint:#5a6471;
-  --rule:#a8aeb7; --rule-soft:#bbc0c8; --accent:#121a22;
-  --chip-bg:rgba(18,26,34,0.06); --chip-ink:#121a22;
-  --progress-track:rgba(18,26,34,0.09); --progress-seen:rgba(18,26,34,0.25);
-  --progress-tick:rgba(18,26,34,0.16); --progress-fill:#121a22;
-  --image-pane:#bbc0c8; --image-mat:#121a22;
-  --hairline:rgba(18,26,34,0.10);
-}
-/* --- Vibrant (non-monochromatic, saturated accent) --- */
-[data-mode="light"][data-theme="poppy"] {
-  --bg:#fffbf4; --bg-elev:#ffffff; --bg-sunken:#efe7db;
-  --ink:#0c0c10; --ink-soft:#3a1f24; --ink-faint:#6b4a50;
-  --rule:#e5d5d1; --rule-soft:#f2e4e0; --accent:#c1123f;
-  --chip-bg:rgba(193,18,63,0.08); --chip-ink:#c1123f;
-  --progress-track:rgba(12,12,16,0.06); --progress-seen:rgba(193,18,63,0.28);
-  --progress-tick:rgba(12,12,16,0.14); --progress-fill:#c1123f;
-  --image-pane:#efe7db; --image-mat:#0c0c10;
-  --hairline:rgba(12,12,16,0.08);
-}
-[data-mode="light"][data-theme="electric"] {
-  --bg:#faf6d4; --bg-elev:#fef9e2; --bg-sunken:#e6dfae;
-  --ink:#171935; --ink-soft:#2c3060; --ink-faint:#5a6290;
-  --rule:#ccc483; --rule-soft:#d9d29b; --accent:#1d4ed8;
-  --chip-bg:rgba(29,78,216,0.10); --chip-ink:#1d4ed8;
-  --progress-track:rgba(23,25,53,0.06); --progress-seen:rgba(29,78,216,0.30);
-  --progress-tick:rgba(23,25,53,0.14); --progress-fill:#1d4ed8;
-  --image-pane:#e6dfae; --image-mat:#171935;
-  --hairline:rgba(23,25,53,0.08);
-}
-[data-mode="light"][data-theme="orchid"] {
-  --bg:#f8efef; --bg-elev:#fdf5f5; --bg-sunken:#e4d1d4;
-  --ink:#1d0a21; --ink-soft:#3c1b41; --ink-faint:#6a4670;
-  --rule:#cdb1b5; --rule-soft:#ddc2c6; --accent:#a020b0;
-  --chip-bg:rgba(160,32,176,0.10); --chip-ink:#a020b0;
-  --progress-track:rgba(29,10,33,0.06); --progress-seen:rgba(160,32,176,0.30);
-  --progress-tick:rgba(29,10,33,0.14); --progress-fill:#a020b0;
-  --image-pane:#e4d1d4; --image-mat:#1d0a21;
-  --hairline:rgba(29,10,33,0.08);
+[data-mode="light"][data-theme="civic"] {
+  /* Adobe-cream paper, dusky desert-twilight navy ink, sunbaked terracotta
+     accent. Patriotic via desaturation rather than saturation — Taos/Santa
+     Fe earth-tone R/W/B, not bunting-and-fireworks. The terracotta is the
+     only non-monochrome colour in the entire theme system. */
+  --bg:#f0e4cf; --bg-elev:#f6ead7; --bg-sunken:#e0d4ba;
+  --ink:#2c3a4f; --ink-soft:#4d5b72; --ink-faint:#8090a4;
+  --rule:#d4c8b0; --rule-soft:#e0d6c2; --accent:#b04a35;
+  --chip-bg:rgba(176,74,53,0.08); --chip-ink:#b04a35;
+  --progress-track:rgba(44,58,79,0.06); --progress-seen:rgba(176,74,53,0.28);
+  --progress-tick:rgba(44,58,79,0.14); --progress-fill:#b04a35;
+  --image-pane:#e0d6c2; --image-mat:#2c3a4f;
+  --hairline:rgba(44,58,79,0.10);
 }
 
-/* ===== DARK MODE — matching 12 themes ===== */
-/* --- Neutrals --- */
-[data-mode="dark"][data-theme="neutral"] {
-  --bg:#121212; --bg-elev:#1a1a1a; --bg-sunken:#0a0a0a;
-  --ink:#ededed; --ink-soft:#c4c4c4; --ink-faint:#8a8a8a;
-  --rule:#2a2a2a; --rule-soft:#1e1e1e; --accent:#ededed;
-  --chip-bg:rgba(255,255,255,0.06); --chip-ink:#ededed;
-  --progress-track:rgba(255,255,255,0.08); --progress-seen:rgba(255,255,255,0.22);
-  --progress-tick:rgba(255,255,255,0.14); --progress-fill:#ededed;
-  --image-pane:#181818; --image-mat:#000;
-  --hairline:rgba(255,255,255,0.09);
+/* ===== DARK MODE ===== */
+[data-mode="dark"][data-theme="parchment"] {
+  /* IDE-grade warm dark mode — desaturated, not steeped in hue.
+     Background sits in the warm-gray family rather than saturated brown;
+     ink is a softened cream rather than a saturated tan. Body contrast
+     ~9:1 — sits in the Solarized/Gruvbox comfort zone for long sessions. */
+  --bg:#1d1813; --bg-elev:#241e17; --bg-sunken:#13100b;
+  --ink:#d4c5a6; --ink-soft:#a89878; --ink-faint:#6e624e;
+  --rule:#2a2317; --rule-soft:#1d180f; --accent:#d4c5a6;
+  --chip-bg:rgba(212,197,166,0.07); --chip-ink:#d4c5a6;
+  --progress-track:rgba(212,197,166,0.08); --progress-seen:rgba(212,197,166,0.22);
+  --progress-tick:rgba(212,197,166,0.14); --progress-fill:#d4c5a6;
+  --image-pane:#1d1813; --image-mat:#000;
+  --hairline:rgba(212,197,166,0.09);
 }
-[data-mode="dark"][data-theme="cool"] {
-  --bg:#10141a; --bg-elev:#161b23; --bg-sunken:#08090f;
-  --ink:#e8edf3; --ink-soft:#bbc2ce; --ink-faint:#808a9a;
-  --rule:#222832; --rule-soft:#161a23; --accent:#e8edf3;
-  --chip-bg:rgba(232,237,243,0.06); --chip-ink:#e8edf3;
-  --progress-track:rgba(232,237,243,0.08); --progress-seen:rgba(232,237,243,0.22);
-  --progress-tick:rgba(232,237,243,0.14); --progress-fill:#e8edf3;
-  --image-pane:#131820; --image-mat:#000;
-  --hairline:rgba(232,237,243,0.09);
+[data-mode="dark"][data-theme="modern"] {
+  /* Deep neutral gray, off-white ink. The standard dark mode. */
+  --bg:#14161a; --bg-elev:#1c1f24; --bg-sunken:#0c0e11;
+  --ink:#ededed; --ink-soft:#b8b8b8; --ink-faint:#808080;
+  --rule:#2a2d33; --rule-soft:#1c1f24; --accent:#ededed;
+  --chip-bg:rgba(237,237,237,0.06); --chip-ink:#ededed;
+  --progress-track:rgba(237,237,237,0.08); --progress-seen:rgba(237,237,237,0.22);
+  --progress-tick:rgba(237,237,237,0.14); --progress-fill:#ededed;
+  --image-pane:#1c1f24; --image-mat:#000;
+  --hairline:rgba(237,237,237,0.09);
 }
-[data-mode="dark"][data-theme="warm"] {
-  --bg:#16130d; --bg-elev:#1d1911; --bg-sunken:#0d0b07;
-  --ink:#eee9dd; --ink-soft:#beb6a3; --ink-faint:#857c64;
-  --rule:#2a2517; --rule-soft:#1b180e; --accent:#eee9dd;
-  --chip-bg:rgba(238,233,221,0.06); --chip-ink:#eee9dd;
-  --progress-track:rgba(238,233,221,0.08); --progress-seen:rgba(238,233,221,0.22);
-  --progress-tick:rgba(238,233,221,0.14); --progress-fill:#eee9dd;
-  --image-pane:#1b170f; --image-mat:#000;
-  --hairline:rgba(238,233,221,0.09);
+[data-mode="dark"][data-theme="civic"] {
+  /* Civic dark — desaturated. Background is a quiet gunmetal with a
+     hint of blue, not a saturated navy. Ink is a softened bone, not a
+     bright cream. The terracotta accent (#d5725b) is the only saturated
+     colour and only appears on the five accent elements. Body contrast
+     ~10:1 — comfortable for long reads; accent ~4.5:1 (passes AA for UI). */
+  --bg:#161a22; --bg-elev:#1c2028; --bg-sunken:#0e1118;
+  --ink:#d4c8aa; --ink-soft:#a8a08a; --ink-faint:#756d5c;
+  --rule:#1f242e; --rule-soft:#161a22; --accent:#d5725b;
+  --chip-bg:rgba(213,114,91,0.12); --chip-ink:#d5725b;
+  --progress-track:rgba(212,200,170,0.08); --progress-seen:rgba(213,114,91,0.28);
+  --progress-tick:rgba(212,200,170,0.14); --progress-fill:#d5725b;
+  --image-pane:#161a22; --image-mat:#000;
+  --hairline:rgba(212,200,170,0.09);
 }
-/* --- Earthy warm --- */
-[data-mode="dark"][data-theme="burgundy"] {
-  --bg:#170a0d; --bg-elev:#1e0e11; --bg-sunken:#0f0507;
-  --ink:#ebc9cd; --ink-soft:#b99ba0; --ink-faint:#80646a;
-  --rule:#2a1619; --rule-soft:#1b0d0f; --accent:#ebc9cd;
-  --chip-bg:rgba(235,201,205,0.07); --chip-ink:#ebc9cd;
-  --progress-track:rgba(235,201,205,0.08); --progress-seen:rgba(235,201,205,0.22);
-  --progress-tick:rgba(235,201,205,0.14); --progress-fill:#ebc9cd;
-  --image-pane:#170a0d; --image-mat:#000;
-  --hairline:rgba(235,201,205,0.09);
-}
-[data-mode="dark"][data-theme="mango"] {
-  --bg:#1b1006; --bg-elev:#22170b; --bg-sunken:#100a03;
-  --ink:#f0cb9a; --ink-soft:#bea17a; --ink-faint:#867050;
-  --rule:#2e1f0e; --rule-soft:#1d1408; --accent:#f0cb9a;
-  --chip-bg:rgba(240,203,154,0.07); --chip-ink:#f0cb9a;
-  --progress-track:rgba(240,203,154,0.08); --progress-seen:rgba(240,203,154,0.22);
-  --progress-tick:rgba(240,203,154,0.14); --progress-fill:#f0cb9a;
-  --image-pane:#1c1107; --image-mat:#000;
-  --hairline:rgba(240,203,154,0.09);
-}
-[data-mode="dark"][data-theme="amber"] {
-  --bg:#1a1408; --bg-elev:#221a0c; --bg-sunken:#110d04;
-  --ink:#ebd69a; --ink-soft:#baa777; --ink-faint:#7d6f4d;
-  --rule:#2d2210; --rule-soft:#1e1708; --accent:#ebd69a;
-  --chip-bg:rgba(235,214,154,0.07); --chip-ink:#ebd69a;
-  --progress-track:rgba(235,214,154,0.08); --progress-seen:rgba(235,214,154,0.22);
-  --progress-tick:rgba(235,214,154,0.14); --progress-fill:#ebd69a;
-  --image-pane:#1a1408; --image-mat:#000;
-  --hairline:rgba(235,214,154,0.09);
-}
-/* --- Earthy cool --- */
-[data-mode="dark"][data-theme="forest"] {
-  --bg:#0a150f; --bg-elev:#0e1b14; --bg-sunken:#050c08;
-  --ink:#c4d7c5; --ink-soft:#97aa99; --ink-faint:#637364;
-  --rule:#172418; --rule-soft:#0e1812; --accent:#c4d7c5;
-  --chip-bg:rgba(196,215,197,0.07); --chip-ink:#c4d7c5;
-  --progress-track:rgba(196,215,197,0.08); --progress-seen:rgba(196,215,197,0.22);
-  --progress-tick:rgba(196,215,197,0.14); --progress-fill:#c4d7c5;
-  --image-pane:#0a150f; --image-mat:#000;
-  --hairline:rgba(196,215,197,0.09);
-}
-[data-mode="dark"][data-theme="ocean"] {
-  --bg:#081219; --bg-elev:#0c1820; --bg-sunken:#040a0e;
-  --ink:#bccfda; --ink-soft:#93a7b3; --ink-faint:#617481;
-  --rule:#132430; --rule-soft:#0d1820; --accent:#bccfda;
-  --chip-bg:rgba(188,207,218,0.07); --chip-ink:#bccfda;
-  --progress-track:rgba(188,207,218,0.08); --progress-seen:rgba(188,207,218,0.22);
-  --progress-tick:rgba(188,207,218,0.14); --progress-fill:#bccfda;
-  --image-pane:#081219; --image-mat:#000;
-  --hairline:rgba(188,207,218,0.09);
-}
-[data-mode="dark"][data-theme="slate"] {
-  --bg:#0c1016; --bg-elev:#11161d; --bg-sunken:#05080c;
-  --ink:#c9d0db; --ink-soft:#9ea6b3; --ink-faint:#6b7380;
-  --rule:#1a2029; --rule-soft:#11161d; --accent:#c9d0db;
-  --chip-bg:rgba(201,208,219,0.07); --chip-ink:#c9d0db;
-  --progress-track:rgba(201,208,219,0.08); --progress-seen:rgba(201,208,219,0.22);
-  --progress-tick:rgba(201,208,219,0.14); --progress-fill:#c9d0db;
-  --image-pane:#0c1016; --image-mat:#000;
-  --hairline:rgba(201,208,219,0.09);
-}
-/* --- Vibrant (dark) --- */
-[data-mode="dark"][data-theme="poppy"] {
-  --bg:#0f0a0d; --bg-elev:#150d11; --bg-sunken:#070405;
-  --ink:#f5e5e8; --ink-soft:#c9abb0; --ink-faint:#7f6468;
-  --rule:#22151a; --rule-soft:#150d11; --accent:#ff6b88;
-  --chip-bg:rgba(255,107,136,0.14); --chip-ink:#ff6b88;
-  --progress-track:rgba(245,229,232,0.08); --progress-seen:rgba(255,107,136,0.32);
-  --progress-tick:rgba(245,229,232,0.14); --progress-fill:#ff6b88;
-  --image-pane:#0f0a0d; --image-mat:#000;
-  --hairline:rgba(245,229,232,0.09);
-}
-[data-mode="dark"][data-theme="electric"] {
-  --bg:#0d0e1a; --bg-elev:#131426; --bg-sunken:#06070e;
-  --ink:#e8e8f0; --ink-soft:#b3b3c0; --ink-faint:#6e6e80;
-  --rule:#1d1e34; --rule-soft:#131426; --accent:#60a5fa;
-  --chip-bg:rgba(96,165,250,0.14); --chip-ink:#60a5fa;
-  --progress-track:rgba(232,232,240,0.08); --progress-seen:rgba(96,165,250,0.32);
-  --progress-tick:rgba(232,232,240,0.14); --progress-fill:#60a5fa;
-  --image-pane:#0d0e1a; --image-mat:#000;
-  --hairline:rgba(232,232,240,0.09);
-}
-[data-mode="dark"][data-theme="orchid"] {
-  --bg:#150e17; --bg-elev:#1c121f; --bg-sunken:#0b060d;
-  --ink:#e9d8e8; --ink-soft:#baa3b8; --ink-faint:#7c677e;
-  --rule:#261924; --rule-soft:#17101a; --accent:#e879f9;
-  --chip-bg:rgba(232,121,249,0.14); --chip-ink:#e879f9;
-  --progress-track:rgba(233,216,232,0.08); --progress-seen:rgba(232,121,249,0.32);
-  --progress-tick:rgba(233,216,232,0.14); --progress-fill:#e879f9;
-  --image-pane:#150e17; --image-mat:#000;
-  --hairline:rgba(233,216,232,0.09);
-}
-/* ===== OLED MODE — pure black backgrounds for battery savings on OLED ===== */
-[data-mode="oled"][data-theme="neutral"] {
-  --bg:#000000; --bg-elev:#060606; --bg-sunken:#000000;
-  --ink:#f5f5f5; --ink-soft:#c8c8c8; --ink-faint:#8a8a8a;
-  --rule:#1a1a1a; --rule-soft:#0d0d0d; --accent:#ffffff;
-  --chip-bg:rgba(255,255,255,0.07); --chip-ink:#ffffff;
-  --progress-track:rgba(255,255,255,0.08); --progress-seen:rgba(255,255,255,0.25);
-  --progress-tick:rgba(255,255,255,0.18); --progress-fill:#ffffff;
-  --image-pane:#050505; --image-mat:#000;
-  --hairline:rgba(255,255,255,0.10);
-  color-scheme: dark;
-}
-[data-mode="oled"][data-theme="amber"] {
+
+/* ===== OLED MODE — pure-black backgrounds, theme identity preserved ===== */
+[data-mode="oled"][data-theme="parchment"] {
   --bg:#000000; --bg-elev:#0a0700; --bg-sunken:#000000;
   --ink:#ebd69a; --ink-soft:#baa777; --ink-faint:#7d6f4d;
   --rule:#1a1408; --rule-soft:#0d0a04; --accent:#ebd69a;
@@ -511,15 +346,28 @@
   --hairline:rgba(235,214,154,0.10);
   color-scheme: dark;
 }
-[data-mode="oled"][data-theme="green"] {
-  --bg:#000000; --bg-elev:#030703; --bg-sunken:#000000;
-  --ink:#c7d6b8; --ink-soft:#9eaf92; --ink-faint:#6a7a62;
-  --rule:#0e160f; --rule-soft:#080e08; --accent:#c7d6b8;
-  --chip-bg:rgba(199,214,184,0.07); --chip-ink:#c7d6b8;
-  --progress-track:rgba(199,214,184,0.08); --progress-seen:rgba(199,214,184,0.25);
-  --progress-tick:rgba(199,214,184,0.18); --progress-fill:#c7d6b8;
-  --image-pane:#030503; --image-mat:#000;
-  --hairline:rgba(199,214,184,0.10);
+[data-mode="oled"][data-theme="modern"] {
+  --bg:#000000; --bg-elev:#060606; --bg-sunken:#000000;
+  --ink:#f5f5f5; --ink-soft:#c8c8c8; --ink-faint:#8a8a8a;
+  --rule:#1a1a1a; --rule-soft:#0d0d0d; --accent:#f5f5f5;
+  --chip-bg:rgba(255,255,255,0.07); --chip-ink:#f5f5f5;
+  --progress-track:rgba(255,255,255,0.08); --progress-seen:rgba(255,255,255,0.25);
+  --progress-tick:rgba(255,255,255,0.18); --progress-fill:#f5f5f5;
+  --image-pane:#050505; --image-mat:#000;
+  --hairline:rgba(255,255,255,0.10);
+  color-scheme: dark;
+}
+[data-mode="oled"][data-theme="civic"] {
+  /* OLED Civic: terracotta brightens further to #e87053 to stay
+     legible against pure black where contrast feels harsher. */
+  --bg:#000000; --bg-elev:#080a0c; --bg-sunken:#000000;
+  --ink:#e8d9b4; --ink-soft:#b8a98c; --ink-faint:#80755e;
+  --rule:#15110a; --rule-soft:#0a0805; --accent:#e87053;
+  --chip-bg:rgba(232,112,83,0.14); --chip-ink:#e87053;
+  --progress-track:rgba(232,217,180,0.08); --progress-seen:rgba(232,112,83,0.30);
+  --progress-tick:rgba(232,217,180,0.18); --progress-fill:#e87053;
+  --image-pane:#050402; --image-mat:#000;
+  --hairline:rgba(232,217,180,0.10);
   color-scheme: dark;
 }
 
@@ -541,16 +389,43 @@ body {
   text-rendering: optimizeLegibility;
   font-synthesis-weight: none;
   transition: background-color .2s ease, color .2s ease;
+  /* Universal OpenType — standard ligatures + kerning. Safe on all three
+     font families (Inter Tight, EB Garamond, JetBrains Mono all support both). */
+  font-feature-settings: "liga" 1, "kern" 1;
 }
-[data-font="traditional"] {
+/* Typography is bound to the active theme — there is no separate
+   typeface picker. Each theme's character includes its type personality:
+   - Modern    → sans body, sans display headings (the default)
+   - Parchment → serif throughout (book-like)
+   - Civic     → serif body, sans display headings (newspaper pattern) */
+[data-theme="parchment"],
+[data-theme="civic"] {
   --font-body: var(--font-serif);
   --measure: 66ch;
   --lh-body: 1.58;
 }
-[data-font="technical"] {
-  --font-body: var(--font-mono);
-  --measure: 72ch;
-  --lh-body: 1.65;
+/* Discretionary ligatures + old-style figures only fire on serif body —
+   Inter Tight either ignores them or substitutes glyphs that don't pair
+   with running prose. */
+[data-theme="parchment"] body,
+[data-theme="civic"] body {
+  font-feature-settings: "liga" 1, "kern" 1, "dlig" 1, "onum" 1;
+}
+
+/* ── Tabular figures for any element with shifting digit counts ──
+   Page numbers, search counter, font-size readout, slider value — anywhere
+   the number changes while the layout shouldn't. Lining figures (lnum)
+   pair with tabular alignment (tnum) so the digits are uniform-width and
+   uniform-height. Overrides the body's onum where it would cause wobble. */
+.fs-val,
+.image-pane__label,
+.page-chip,
+#search-count,
+.amendment__year,
+.progress-counter,
+[data-tabular] {
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1, "kern" 1;
 }
 ::selection { background: var(--progress-seen); color: var(--ink); }
 
@@ -969,15 +844,10 @@ body {
   overflow-wrap: break-word;
   word-break: break-word;
 }
-[data-font="traditional"] .doc-title {
+[data-theme="parchment"] .doc-title {
   font-family: var(--font-serif);
   font-weight: 600;
   letter-spacing: -0.015em;
-}
-[data-font="technical"] .doc-title {
-  font-family: var(--font-mono);
-  font-weight: 600;
-  letter-spacing: -0.02em;
 }
 .doc-tag {
   font-family: var(--font-sans);
@@ -998,7 +868,33 @@ body {
   margin: 0 0 64px;
   text-wrap: pretty;
 }
-.preamble::first-letter { font-size: 1.1em; font-weight: 600; }
+/* ── Real drop cap on the Preamble ──
+   Floats the W ~3.5 lines tall, accent-coloured (which equals ink in
+   monochrome themes — drama via size — and is genuinely distinct in
+   themes with a real accent like Liberty). Optical alignment via
+   negative left margin so the diagonal stroke aligns with the body
+   text edge rather than the letter's bounding box. */
+/* Drop cap — sized so the cap baseline lands on the body's line-3 baseline
+   (3 lines tall, baseline-to-baseline). Math: at line-height 1.5em,
+   line-3 baseline ≈ 4.05em from the top; drop cap baseline = top + (fs *
+   ~0.78 ascender ratio). Solving fs ≈ 5.1em for sans, 5.4em for serif. */
+.preamble::first-letter {
+  float: left;
+  font-size: 5.1em;
+  line-height: 0.86;
+  font-weight: 500;
+  color: var(--accent);
+  padding: 0.02em 0.10em 0 0;
+  margin: 0.04em 0.06em -0.06em -0.02em;
+  font-feature-settings: "dlig" 1, "liga" 1, "kern" 1;
+}
+/* Serif body (Parchment, Civic) uses EB Garamond — slightly larger so
+   the cap-height matches the taller serif x-height; line 3 still aligns. */
+[data-theme="parchment"] .preamble::first-letter,
+[data-theme="civic"] .preamble::first-letter {
+  font-size: 5.4em;
+  line-height: 0.84;
+}
 .section-drop {
   border-top: 1px solid var(--rule);
   margin: 64px 0 32px;
@@ -1017,8 +913,7 @@ body {
   font-weight: 600;
   margin: 0;
 }
-[data-font="traditional"] .article-head h2 { font-family: var(--font-serif); }
-[data-font="technical"] .article-head h2 { font-family: var(--font-mono); letter-spacing: -0.01em; }
+[data-theme="parchment"] .article-head h2 { font-family: var(--font-serif); }
 .article-head .article-sub {
   font-family: var(--font-sans);
   color: var(--ink-faint);
@@ -1064,8 +959,7 @@ body {
   margin: 0;
   color: var(--ink);
 }
-[data-font="traditional"] .section-head h3 { font-family: var(--font-serif); }
-[data-font="technical"] .section-head h3 { font-family: var(--font-mono); letter-spacing: -0.01em; }
+[data-theme="parchment"] .section-head h3 { font-family: var(--font-serif); }
 
 .text-pane p {
   max-width: var(--measure);
@@ -1086,8 +980,7 @@ body {
   font-family: var(--font-sans);
   font-size: 22px; letter-spacing: -0.01em; font-weight: 600;
 }
-[data-font="traditional"] .signatures__pres .name { font-family: var(--font-serif); }
-[data-font="technical"] .signatures__pres .name { font-family: var(--font-mono); letter-spacing: -0.01em; }
+[data-theme="parchment"] .signatures__pres .name { font-family: var(--font-serif); }
 .signatures__pres .role { color: var(--ink-faint); font-size: 13px; margin-top: 4px; font-style: italic; }
 .signatures__grid {
   display: grid;
@@ -1115,8 +1008,7 @@ body {
   font-size: clamp(36px, 4vw, 52px); line-height: 1;
   letter-spacing: -0.025em; margin: 0; font-weight: 600;
 }
-[data-font="traditional"] .amendments-head h2 { font-family: var(--font-serif); }
-[data-font="technical"] .amendments-head h2 { font-family: var(--font-mono); letter-spacing: -0.01em; }
+[data-theme="parchment"] .amendments-head h2 { font-family: var(--font-serif); }
 .amendments-head .sub { color: var(--ink-faint); font-size: 14px; margin-top: 8px; max-width: var(--measure); }
 
 .amendment {
@@ -1141,8 +1033,7 @@ body {
   font-weight: 600; letter-spacing: -0.015em;
   line-height: 1.1; margin: 0 0 4px;
 }
-[data-font="traditional"] .amendment h3 { font-family: var(--font-serif); }
-[data-font="technical"] .amendment h3 { font-family: var(--font-mono); letter-spacing: -0.01em; }
+[data-theme="parchment"] .amendment h3 { font-family: var(--font-serif); }
 .amendment .amendment__sub { color: var(--ink-faint); font-size: 14px; margin-bottom: 18px; }
 
 /* ===== Image pane ===== */
@@ -1322,6 +1213,16 @@ body {
   padding: 12px 14px; border-bottom: 1px solid var(--hairline);
 }
 .tweaks__head b { letter-spacing: -0.005em; }
+.tweaks__head-actions {
+  display: flex; align-items: center; gap: 4px;
+}
+/* Smaller icon-btn variant for the reset / close cluster — keeps the
+   header compact without losing the existing focus / hover styles. */
+.icon-btn--small {
+  height: 30px;
+  padding: 0 8px;
+}
+.icon-btn--small svg { width: 16px; height: 16px; }
 .tweaks__body { padding: 14px; max-height: 70vh; overflow-y: auto; }
 .tweak-row { margin-bottom: 14px; }
 .tweak-row:last-child { margin-bottom: 0; }
@@ -1337,6 +1238,8 @@ body {
   gap: 12px;
 }
 .theme-grid.is-hidden { display: none; }
+/* Legacy group label — not emitted by buildGrid() in the 3-theme system,
+   retained only so any pre-existing DOM doesn't render unstyled garbage. */
 .theme-group__label {
   font-size: 10px;
   letter-spacing: 0.12em;
@@ -1348,21 +1251,63 @@ body {
 .theme-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
+  gap: 8px;
 }
 .theme-swatch {
-  aspect-ratio: 2.2 / 1;
-  border-radius: 6px;
+  /* Each swatch IS a typography preview rendered in the theme's actual
+     bg/ink, with the theme name beneath and a small accent dot in the
+     corner if the theme has a non-monochrome accent. */
+  aspect-ratio: 1.55 / 1;
+  border-radius: 8px;
   border: 2px solid transparent;
   cursor: pointer;
-  position: relative; overflow: hidden;
-  transition: transform .1s ease, border-color .1s ease;
+  position: relative;
+  overflow: hidden;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: transform .12s ease, border-color .12s ease;
+  font-family: var(--font-serif);
 }
-.theme-swatch:hover { transform: scale(1.05); }
-.theme-swatch.is-active { border-color: var(--ink); }
+.theme-swatch:hover { transform: scale(1.04); }
+.theme-swatch.is-active {
+  border-color: currentColor;
+}
+.theme-swatch:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.swatch-aa {
+  /* Fills the tile — the Aa is the swatch. */
+  font-size: clamp(28px, 6vw, 44px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  /* Inherit color from the swatch (= theme's --ink). */
+}
+.swatch-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  /* background set inline per-theme — uses the theme's accent. */
+}
+@media (prefers-reduced-motion: reduce) {
+  .theme-swatch { transition: none; }
+}
 
 .toggle-row { display: flex; gap: 6px; flex-wrap: wrap; }
+/* Wrap-friendly variant for chip rows that exceed 3 items (CVD picker
+   has 5; on narrow viewports they need to break onto two lines). */
+.toggle-row--wrap .toggle-chip {
+  flex: 0 1 calc(33.333% - 4px);
+  min-width: 80px;
+}
 .toggle-chip {
   flex: 1; min-width: 60px;
   padding: 7px 8px;
@@ -1376,8 +1321,175 @@ body {
 }
 .toggle-chip.is-active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
 
+/* Detail text appended to a row label (e.g., "COLOR · Parchment").
+   Lowercase + lighter weight so the active value reads as metadata,
+   not as a competing heading. */
+.label-detail {
+  text-transform: none;
+  letter-spacing: 0;
+  margin-left: 0.4em;
+  font-weight: 400;
+  color: var(--ink-soft);
+}
+
+/* ── Text-size swatches ──
+   Three tiles, each rendering "Aa" at a size proportional to its preset
+   (small/medium/large = 15/17/20px). Visually parallel to the colour
+   swatches above so the picker feels consistent. */
+.size-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.size-swatch {
+  aspect-ratio: 1.55 / 1;
+  border-radius: 8px;
+  border: 2px solid var(--hairline);
+  background: var(--bg-elev);
+  color: var(--ink);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-family: var(--font-body);
+  transition: border-color .12s ease, transform .12s ease;
+}
+.size-swatch:hover { transform: scale(1.04); }
+.size-swatch.is-active {
+  border-color: var(--ink);
+  background: var(--bg-sunken);
+}
+.size-swatch:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.size-aa {
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  /* font-size set inline per-swatch — exaggerates the small/med/large
+     difference so the swatches read at a glance even on small screens. */
+}
+@media (prefers-reduced-motion: reduce) {
+  .size-swatch { transition: none; }
+}
+
+/* ── Saturation sub-themes ──
+   Default leaves the authored theme alone. Vibrant punches up bg/ink/accent
+   per (theme × mode); for monochromatic themes (Modern, Parchment) Vibrant
+   also adds an accent hue that wasn't there at the default level, so the
+   change is always visible. */
+
+/* === VIBRANT === */
+[data-saturation="vibrant"][data-theme="modern"][data-mode="light"]    { --bg:#f7f8fc; --ink:#15161a; --accent:#1a3a8a; --chip-bg:rgba(26,58,138,0.08);  --chip-ink:#1a3a8a; --progress-fill:#1a3a8a; --progress-seen:rgba(26,58,138,0.28); }
+[data-saturation="vibrant"][data-theme="modern"][data-mode="dark"]     { --bg:#11141c; --ink:#ededf2; --accent:#5a8eff; --chip-bg:rgba(90,142,255,0.14); --chip-ink:#5a8eff; --progress-fill:#5a8eff; --progress-seen:rgba(90,142,255,0.30); }
+[data-saturation="vibrant"][data-theme="modern"][data-mode="oled"]     { --bg:#000000; --ink:#f5f5fa; --accent:#6fa0ff; --chip-bg:rgba(111,160,255,0.14);--chip-ink:#6fa0ff; --progress-fill:#6fa0ff; --progress-seen:rgba(111,160,255,0.30); }
+[data-saturation="vibrant"][data-theme="parchment"][data-mode="light"] { --bg:#f4dfb8; --ink:#2c1a02; --accent:#8a4a1a; --chip-bg:rgba(138,74,26,0.08);  --chip-ink:#8a4a1a; --progress-fill:#8a4a1a; --progress-seen:rgba(138,74,26,0.28); }
+[data-saturation="vibrant"][data-theme="parchment"][data-mode="dark"]  { --bg:#211910; --ink:#ddc28e; --accent:#f4a261; --chip-bg:rgba(244,162,97,0.14); --chip-ink:#f4a261; --progress-fill:#f4a261; --progress-seen:rgba(244,162,97,0.30); }
+[data-saturation="vibrant"][data-theme="parchment"][data-mode="oled"]  { --bg:#000000; --ink:#efd58f; --accent:#ffb573; --chip-bg:rgba(255,181,115,0.14);--chip-ink:#ffb573; --progress-fill:#ffb573; --progress-seen:rgba(255,181,115,0.30); }
+[data-saturation="vibrant"][data-theme="civic"][data-mode="light"]     { --bg:#f4e2c4; --ink:#1f3050; --accent:#c93a1f; --chip-bg:rgba(201,58,31,0.10);  --chip-ink:#c93a1f; --progress-fill:#c93a1f; --progress-seen:rgba(201,58,31,0.30); }
+[data-saturation="vibrant"][data-theme="civic"][data-mode="dark"]      { --bg:#14182a; --ink:#e8d8b4; --accent:#ee6b40; --chip-bg:rgba(238,107,64,0.14); --chip-ink:#ee6b40; --progress-fill:#ee6b40; --progress-seen:rgba(238,107,64,0.30); }
+[data-saturation="vibrant"][data-theme="civic"][data-mode="oled"]      { --bg:#000000; --ink:#f0d8a8; --accent:#ff7340; --chip-bg:rgba(255,115,64,0.14); --chip-ink:#ff7340; --progress-fill:#ff7340; --progress-seen:rgba(255,115,64,0.30); }
+
+/* ── User-override typography ──
+   When the user picks a typography option in settings, [data-font] is
+   set on the root and overrides the theme-bound default. Default ("no
+   data-font") leaves theme-bound rules in charge. */
+[data-font="serif"] {
+  --font-body: var(--font-serif);
+  --measure: 66ch;
+  --lh-body: 1.58;
+}
+[data-font="sans"] {
+  --font-body: var(--font-sans);
+  --measure: 70ch;
+  --lh-body: 1.5;
+}
+[data-font="mono"] {
+  --font-body: var(--font-mono);
+  --measure: 72ch;
+  --lh-body: 1.65;
+}
+[data-font="serif"] body,
+[data-font="mono"] body {
+  font-feature-settings: "liga" 1, "kern" 1, "dlig" 1, "onum" 1;
+}
+/* Override headings to match the chosen face — only serif and mono need
+   explicit overrides; sans matches the default. */
+[data-font="serif"] .doc-title,
+[data-font="serif"] .article-head h2,
+[data-font="serif"] .section-head h3,
+[data-font="serif"] .signatures__pres .name,
+[data-font="serif"] .amendments-head h2,
+[data-font="serif"] .amendment h3,
+[data-font="serif"] .download-cta h2 { font-family: var(--font-serif); }
+
+[data-font="mono"] .doc-title,
+[data-font="mono"] .article-head h2,
+[data-font="mono"] .section-head h3,
+[data-font="mono"] .signatures__pres .name,
+[data-font="mono"] .amendments-head h2,
+[data-font="mono"] .amendment h3,
+[data-font="mono"] .download-cta h2 { font-family: var(--font-mono); letter-spacing: -0.01em; }
+
+/* Mono drop cap — every JetBrains Mono character is the same width, so
+   a giant W is awkward. Tone it down. */
+[data-font="mono"] .preamble::first-letter {
+  font-size: 4em;
+  line-height: 0.92;
+  margin-right: 0.12em;
+}
+
 .slider-row input[type=range] { width: 100%; accent-color: var(--ink); }
 .slider-row .val { font-family: var(--font-mono); color: var(--ink-faint); font-size: 11px; float: right; }
+
+/* ── Settings: "More options" disclosure ──
+   Tucks lower-frequency controls (Typeface, Copy behaviour) under a
+   collapsed disclosure so the default sheet stays at three rows. */
+.tweak-more {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--hairline);
+}
+.tweak-more__summary {
+  list-style: none;
+  cursor: pointer;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+  user-select: none;
+}
+.tweak-more__summary::-webkit-details-marker { display: none; }
+.tweak-more__summary::before {
+  content: "";
+  width: 8px; height: 8px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 120ms ease-out;
+  margin-right: 2px;
+}
+.tweak-more[open] > .tweak-more__summary::before {
+  transform: rotate(45deg);
+}
+.tweak-more[open] > .tweak-more__summary {
+  margin-bottom: 12px;
+}
+.tweak-more:focus-within > .tweak-more__summary {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tweak-more__summary::before { transition: none; }
+}
 
 /* ===== Footer ===== */
 .site-footer {
@@ -1404,6 +1516,39 @@ body {
 }
 
 html { scrollbar-color: var(--rule) transparent; }
+
+/* ── Skip link (a11y) ──
+   First focusable element on the page. Off-canvas until keyboard focus
+   pulls it into view. Themed via current accent so it never reads as
+   chrome. */
+.skip-link {
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 10000;
+  padding: 10px 16px;
+  background: var(--bg);
+  color: var(--ink);
+  border: 2px solid var(--accent);
+  border-top: none;
+  border-left: none;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  text-decoration: none;
+  border-radius: 0 0 6px 0;
+  transform: translateY(-150%);
+  transition: transform 140ms ease-out;
+}
+.skip-link:focus,
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid var(--accent);
+  outline-offset: -4px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .skip-link { transition: none; }
+}
 
 .sr-only {
   position: absolute; width:1px; height:1px; padding:0; margin:-1px;
@@ -1515,8 +1660,7 @@ html { scrollbar-color: var(--rule) transparent; }
   margin: 0 0 8px;
   color: var(--ink);
 }
-[data-font="traditional"] .download-cta h2 { font-family: var(--font-serif); }
-[data-font="technical"] .download-cta h2 { font-family: var(--font-mono); letter-spacing: -0.01em; }
+[data-theme="parchment"] .download-cta h2 { font-family: var(--font-serif); }
 .download-cta p {
   color: var(--ink-faint);
   font-size: 14px;

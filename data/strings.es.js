@@ -2,6 +2,9 @@
 // Este archivo es leído por build.js, NO se sirve directamente al navegador.
 
 module.exports = {
+  // ── Accesibilidad ──
+  "a11y.skip_to_content":     "Saltar a la Constitución",
+
   // ── Metadatos de página ──
   "meta.title":               "Solo la Constitución",
   "meta.description":         "El texto completo de la Constitución de los Estados Unidos y sus veintisiete enmiendas, junto al pergamino original de los Archivos Nacionales. Sin anuncios. Sin comentarios. Solo la información.",
@@ -139,17 +142,25 @@ module.exports = {
   "settings.mode_dark":       "Oscuro",
   "settings.mode_oled":       "OLED",
   "settings.color":           "Color",
-  "settings.typeface":        "Tipografía",
-  "settings.font_simple":     "Simple",
-  "settings.font_traditional":"Tradicional",
-  "settings.font_technical":  "Técnica",
-  "settings.reading_mode":    "Modo de lectura",
-  "settings.reader_default":  "Normal",
-  "settings.reader_pure":     "Lectura pura",
   "settings.copy_label":      "Copiar al portapapeles",
   "settings.copy_citation":   "Con cita",
   "settings.copy_plain":      "Texto simple",
   "settings.text_size":       "Tamaño de texto",
+  "settings.size_small":      "Pequeño",
+  "settings.size_medium":     "Mediano",
+  "settings.size_large":      "Grande",
+  "settings.advanced":        "Configuración avanzada",
+  "settings.saturation":      "Saturación",
+  "settings.sat_default":     "Predeterminado",
+  "settings.sat_vibrant":     "Vibrante",
+  "settings.typeface":        "Tipografía",
+  "settings.font_default":    "Predeterminada",
+  "settings.font_serif":      "Serif",
+  "settings.font_sans":       "Sans-serif",
+  "settings.font_mono":       "Monoespaciada",
+  "settings.reset_aria":      "Restablecer todos los ajustes",
+  "settings.reset_title":     "Restablecer ajustes",
+  "settings.reset_toast":     "Ajustes restablecidos",
   "settings.switch_dark":     "Cambiar a modo oscuro",
   "settings.switch_dark_short":"Cambiar a oscuro",
   "settings.switch_oled":     "Cambiar a OLED",

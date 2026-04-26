@@ -1,71 +1,109 @@
 /* ===== justtheconstitution — tweaks =====
-   Theme / mode / font / reader / copy-mode / font-size.
-   Persists via localStorage. Owns the settings panel.
-   Depends on: core (el). */
+   Mode / theme / typography / saturation / text-size / copy-mode / reader.
+   Persists via localStorage. Owns the settings panel and the reset action.
+   Depends on: core (el, showToast). */
 (() => {
   const JTC = window.JTC;
   const { el } = JTC;
 
+  // Text-size swatch presets — used by the above-the-fold size picker.
+  // The slider in Advanced Settings can fine-tune to any value 14–22.
+  const SIZE_PRESETS = { small: 15, medium: 17, large: 20 };
+
   const TWEAK_DEFAULTS = {
     mode: "light",
-    theme: "neutral",
-    font: "simple",
+    theme: "modern",
     reader: "default",
     toc: "open",
     pane: "open",
     fontSize: 17,
-    copyMode: "full"
+    copyMode: "full",
+    saturation: "default",
+    font: "default"
   };
+  // Two saturation levels — Default leaves the authored theme alone;
+  // Vibrant punches up bg/ink/accent per-theme. The old "low-sat" tier
+  // was visually too subtle on monochromatic themes to justify the chip.
+  const VALID_SATURATION = new Set(["default", "vibrant"]);
+  // "default" means typography follows the active theme. The other three
+  // are explicit user overrides.
+  const VALID_FONT = new Set(["default", "serif", "sans", "mono"]);
 
-  // Old theme ids → new ids for the 12-theme palette rollout.
+  // Legacy theme ids → new ids for the 2026 3×3 restructure
+  // (3 themes — Parchment / Modern / Civic — each available in
+  // light, dark, and OLED). Map every previously-shipped id onto
+  // its closest replacement so existing localStorage values land
+  // somewhere coherent on first load.
   const THEME_MIGRATIONS = {
-    parchment: "warm",
-    sepia:     "amber",
-    clay:      "burgundy",
-    olive:     "amber",
-    moss:      "forest",
-    pine:      "forest",
-    indigo:    "electric",
-    plum:      "orchid",
-    rose:      "burgundy",
-    paper:     "neutral"
+    // Warm-family → Parchment
+    warm:      "parchment",
+    burgundy:  "parchment",
+    mango:     "parchment",
+    amber:     "parchment",
+    sepia:     "parchment",
+    clay:      "parchment",
+    olive:     "parchment",
+    rose:      "parchment",
+    // Neutral / cool family → Modern
+    neutral:   "modern",
+    pure:      "modern",
+    cool:      "modern",
+    slate:     "modern",
+    forest:    "modern",
+    ocean:     "modern",
+    moss:      "modern",
+    pine:      "modern",
+    paper:     "modern",
+    green:     "modern",
+    // Civic / vibrant family → Civic
+    liberty:   "civic",
+    poppy:     "civic",
+    electric:  "civic",
+    orchid:    "civic",
+    indigo:    "civic",
+    plum:      "civic"
   };
-  const VALID_THEMES = new Set([
-    "neutral", "cool", "warm",
-    "burgundy", "mango", "amber",
-    "forest", "ocean", "slate",
-    "poppy", "electric", "orchid"
-  ]);
-  const VALID_OLED_THEMES = new Set(["neutral", "amber", "green"]);
+  const VALID_THEMES      = new Set(["parchment", "modern", "civic"]);
+  const VALID_OLED_THEMES = new Set(["parchment", "modern", "civic"]);
 
   function getTweaks() {
     const saved = JSON.parse(localStorage.getItem("jtc:tweaks") || "{}");
     const merged = { ...TWEAK_DEFAULTS, ...saved };
-    // Migrate legacy values
-    if (merged.font === "sans") merged.font = "simple";
-    if (merged.font === "serif") merged.font = "traditional";
-    if (!["simple", "traditional", "technical"].includes(merged.font)) merged.font = "simple";
     if (!["open", "closed"].includes(merged.toc)) merged.toc = "open";
     if (!["open", "closed"].includes(merged.pane)) merged.pane = "open";
-    if (merged.theme === "oled") { merged.mode = "oled"; merged.theme = "neutral"; }
+    if (merged.theme === "oled") { merged.mode = "oled"; merged.theme = "modern"; }
     if (!["light", "dark", "oled"].includes(merged.mode)) merged.mode = "light";
     if (!["full", "plain"].includes(merged.copyMode)) merged.copyMode = "full";
-    // Theme migration: map retired palettes onto the new 12-theme set, then
-    // clamp anything still unknown to the default neutral.
+    // Migrate any retired saturation ids (Pkg-7 mono/low, Pkg-8 low-sat)
+    // onto "default". Only "vibrant" survives as a non-default level.
+    if (saved.saturation && saved.saturation !== "vibrant") merged.saturation = "default";
+    if (!VALID_SATURATION.has(merged.saturation)) merged.saturation = "default";
+    // Migrate legacy font ids: simple→sans, traditional→serif, technical→mono.
+    if (merged.font === "simple") merged.font = "sans";
+    if (merged.font === "traditional") merged.font = "serif";
+    if (merged.font === "technical") merged.font = "mono";
+    if (!VALID_FONT.has(merged.font)) merged.font = "default";
+    // Theme migration — legacy ids → parchment/modern/civic.
     if (THEME_MIGRATIONS[merged.theme]) merged.theme = THEME_MIGRATIONS[merged.theme];
     if (merged.mode === "oled") {
-      if (!VALID_OLED_THEMES.has(merged.theme)) merged.theme = "neutral";
+      if (!VALID_OLED_THEMES.has(merged.theme)) merged.theme = "modern";
     } else {
-      if (!VALID_THEMES.has(merged.theme)) merged.theme = "neutral";
+      if (!VALID_THEMES.has(merged.theme)) merged.theme = "modern";
     }
-    // One-shot default reset: force the typeface back to "simple" on first load
-    // after this migration runs. Lets everyone start on the intended default.
-    if (merged.schemaVersion !== 2) {
-      merged.font = "simple";
-      merged.schemaVersion = 2;
-    }
+    // CVD picker has been retired; clear any leftover key.
+    delete merged.cvd;
     delete merged.layout;
     return merged;
+  }
+  function resetTweaks() {
+    // Order matters: rebuild the panel DOM first, THEN sync state. If
+    // applyTweaks runs before renderTweaks, the freshly-built grids never
+    // get the .is-hidden class for non-active modes, and all 9 swatches
+    // appear at once.
+    localStorage.removeItem("jtc:tweaks");
+    renderTweaks();
+    applyTweaks();
+    if (JTC.showToast) JTC.showToast(JTC.t("settings.reset_toast"));
   }
   function setTweak(key, val) {
     const t = getTweaks();
@@ -79,7 +117,14 @@
     const root = document.documentElement;
     root.dataset.mode = t.mode;
     root.dataset.theme = t.theme;
-    root.dataset.font = t.font;
+    root.dataset.saturation = t.saturation;
+    // data-font is only set when the user explicitly overrides typography.
+    // "default" means no attribute, so theme-bound CSS rules apply.
+    if (t.font === "default") {
+      delete root.dataset.font;
+    } else {
+      root.dataset.font = t.font;
+    }
     root.dataset.reader = t.reader;
     root.dataset.toc = t.toc;
     root.dataset.pane = t.pane;
@@ -90,12 +135,8 @@
       const active = sw.dataset.theme === t.theme && sw.dataset.mode === t.mode;
       sw.classList.toggle("is-active", active);
     });
-    // Show only the swatches for the active mode
     document.querySelectorAll(".theme-grid").forEach(g => {
       g.classList.toggle("is-hidden", g.dataset.mode !== t.mode);
-    });
-    document.querySelectorAll("[data-font-toggle]").forEach(b => {
-      b.classList.toggle("is-active", b.dataset.fontToggle === t.font);
     });
     document.querySelectorAll("[data-reader-toggle]").forEach(b => {
       b.classList.toggle("is-active", b.dataset.readerToggle === t.reader);
@@ -106,6 +147,20 @@
     document.querySelectorAll("[data-copy-toggle]").forEach(b => {
       b.classList.toggle("is-active", b.dataset.copyToggle === t.copyMode);
     });
+    document.querySelectorAll("[data-saturation-toggle]").forEach(b => {
+      b.classList.toggle("is-active", b.dataset.saturationToggle === t.saturation);
+    });
+    document.querySelectorAll("[data-font-toggle]").forEach(b => {
+      b.classList.toggle("is-active", b.dataset.fontToggle === t.font);
+    });
+    document.querySelectorAll("[data-size-toggle]").forEach(b => {
+      b.classList.toggle("is-active", SIZE_PRESETS[b.dataset.sizeToggle] === t.fontSize);
+    });
+    const colorDetail = document.getElementById("color-row-detail");
+    if (colorDetail) {
+      const active = (MODE_THEMES[t.mode] || []).find(th => th.id === t.theme);
+      colorDetail.textContent = active ? "· " + active.name : "";
+    }
     const fs = document.getElementById("fs-slider");
     if (fs) { fs.value = t.fontSize; document.getElementById("fs-val").textContent = `${t.fontSize}px`; }
 
@@ -142,87 +197,79 @@
     if (pcb) pcb.setAttribute("aria-expanded", t.pane === "open" ? "true" : "false");
   }
 
-  // 12 themes × 2 modes (light, dark), grouped into 4 categories of 3.
-  // `group` is the label shown above each row of 3 swatches.
-  // Vibrant themes include an `accent` so the swatch preview shows their
-  // saturated colour alongside the base bg/ink.
+  // 3 themes × 3 modes (light, dark, oled).
+  // Only Civic carries a non-monochrome `accent`; Parchment and Modern
+  // are deliberately monochrome (accent = ink) to keep the page quiet.
   const LIGHT_THEMES = [
-    { id: "neutral",  name: "Pure",     group: "Neutral",      bg: "#ffffff", ink: "#111111" },
-    { id: "cool",     name: "Cool",     group: "Neutral",      bg: "#f6f7f9", ink: "#13161c" },
-    { id: "warm",     name: "Warm",     group: "Neutral",      bg: "#faf7f1", ink: "#1b1812" },
-    { id: "burgundy", name: "Burgundy", group: "Earthy warm",  bg: "#ebd7d7", ink: "#2c0912" },
-    { id: "mango",    name: "Mango",    group: "Earthy warm",  bg: "#f2d3a8", ink: "#3a1802" },
-    { id: "amber",    name: "Amber",    group: "Earthy warm",  bg: "#ecdec2", ink: "#2a1d04" },
-    { id: "forest",   name: "Forest",   group: "Earthy cool",  bg: "#d0dbc8", ink: "#0b1d14" },
-    { id: "ocean",    name: "Ocean",    group: "Earthy cool",  bg: "#d6dde2", ink: "#0c1e2c" },
-    { id: "slate",    name: "Slate",    group: "Earthy cool",  bg: "#dbdee2", ink: "#121a22" },
-    { id: "poppy",    name: "Poppy",    group: "Vibrant",      bg: "#fffbf4", ink: "#0c0c10", accent: "#c1123f" },
-    { id: "electric", name: "Electric", group: "Vibrant",      bg: "#faf6d4", ink: "#171935", accent: "#1d4ed8" },
-    { id: "orchid",   name: "Orchid",   group: "Vibrant",      bg: "#f8efef", ink: "#1d0a21", accent: "#a020b0" }
+    { id: "parchment", name: "Parchment", bg: "#f0e6d0", ink: "#2a1c0a" },
+    { id: "modern",    name: "Modern",    bg: "#fafaf7", ink: "#1a1a1a" },
+    { id: "civic",     name: "Civic",     bg: "#f0e4cf", ink: "#2c3a4f", accent: "#b04a35" }
   ];
   const DARK_THEMES = [
-    { id: "neutral",  name: "Pure",     group: "Neutral",      bg: "#121212", ink: "#ededed" },
-    { id: "cool",     name: "Cool",     group: "Neutral",      bg: "#10141a", ink: "#e8edf3" },
-    { id: "warm",     name: "Warm",     group: "Neutral",      bg: "#16130d", ink: "#eee9dd" },
-    { id: "burgundy", name: "Burgundy", group: "Earthy warm",  bg: "#170a0d", ink: "#ebc9cd" },
-    { id: "mango",    name: "Mango",    group: "Earthy warm",  bg: "#1b1006", ink: "#f0cb9a" },
-    { id: "amber",    name: "Amber",    group: "Earthy warm",  bg: "#1a1408", ink: "#ebd69a" },
-    { id: "forest",   name: "Forest",   group: "Earthy cool",  bg: "#0a150f", ink: "#c4d7c5" },
-    { id: "ocean",    name: "Ocean",    group: "Earthy cool",  bg: "#081219", ink: "#bccfda" },
-    { id: "slate",    name: "Slate",    group: "Earthy cool",  bg: "#0c1016", ink: "#c9d0db" },
-    { id: "poppy",    name: "Poppy",    group: "Vibrant",      bg: "#0f0a0d", ink: "#f5e5e8", accent: "#ff6b88" },
-    { id: "electric", name: "Electric", group: "Vibrant",      bg: "#0d0e1a", ink: "#e8e8f0", accent: "#60a5fa" },
-    { id: "orchid",   name: "Orchid",   group: "Vibrant",      bg: "#150e17", ink: "#e9d8e8", accent: "#e879f9" }
+    { id: "parchment", name: "Parchment", bg: "#1a140a", ink: "#ebd69a" },
+    { id: "modern",    name: "Modern",    bg: "#14161a", ink: "#ededed" },
+    { id: "civic",     name: "Civic",     bg: "#141a26", ink: "#e8d9b4", accent: "#d5725b" }
   ];
-  // OLED mode — pure black bg across all variants; accent varies
+  // OLED — pure black bg, ink/accent inherit each theme's identity.
   const OLED_THEMES = [
-    { id: "neutral",  name: "Neutral",  group: "OLED", bg: "#000000", ink: "#ffffff" },
-    { id: "amber",    name: "Amber",    group: "OLED", bg: "#000000", ink: "#ebd69a" },
-    { id: "green",    name: "Green",    group: "OLED", bg: "#000000", ink: "#c7d6b8" }
+    { id: "parchment", name: "Parchment", bg: "#000000", ink: "#ebd69a" },
+    { id: "modern",    name: "Modern",    bg: "#000000", ink: "#f5f5f5" },
+    { id: "civic",     name: "Civic",     bg: "#000000", ink: "#e8d9b4", accent: "#e87053" }
   ];
   const MODE_THEMES = { light: LIGHT_THEMES, dark: DARK_THEMES, oled: OLED_THEMES };
 
+  // Build a swatch grid for one mode. Each swatch fills with a large "Aa"
+  // rendered in the theme's bg/ink and that theme's body typography, so the
+  // tile previews both colour AND type personality at once. The active
+  // theme name appears in the row caption (handled in applyTweaks), not on
+  // the swatch itself, to keep each tile clean.
   function buildGrid(mode, themes) {
     const grid = el("div", { class: "theme-grid", "data-mode": mode });
-    // Bucket by `group` preserving array order
-    const groups = [];
-    const byName = {};
+    const row = el("div", { class: "theme-row" });
+
     themes.forEach(th => {
-      if (!byName[th.group]) {
-        byName[th.group] = { label: th.group, themes: [] };
-        groups.push(byName[th.group]);
+      const sw = el("button", {
+        class: "theme-swatch",
+        "data-theme": th.id,
+        "data-mode": mode,
+        title: th.name,
+        "aria-label": `${mode} · ${th.name}`,
+        onClick: () => { setTweaks({ mode, theme: th.id }); }
+      });
+      sw.style.background = th.bg;
+      sw.style.color = th.ink;
+
+      // Big Aa preview that fills the tile.
+      const aa = el("span", { class: "swatch-aa" }, "Aa");
+      sw.appendChild(aa);
+
+      // Accent dot (Civic only) — small mark in the corner so the
+      // non-monochrome theme is identifiable without text overlay.
+      if (th.accent) {
+        const dot = el("span", { class: "swatch-dot" });
+        dot.style.background = th.accent;
+        sw.appendChild(dot);
       }
-      byName[th.group].themes.push(th);
+
+      row.appendChild(sw);
     });
 
-    groups.forEach(g => {
-      grid.appendChild(el("div", { class: "theme-group__label" }, g.label));
-      const row = el("div", { class: "theme-row" });
-      g.themes.forEach(th => {
-        const sw = el("button", {
-          class: "theme-swatch",
-          "data-theme": th.id,
-          "data-mode": mode,
-          title: th.name,
-          "aria-label": `${mode} · ${g.label} · ${th.name}`,
-          onClick: () => { setTweaks({ mode, theme: th.id }); }
-        });
-        // Vibrant themes get a 3-stop slice showing bg, ink, and the saturated accent.
-        if (th.accent) {
-          sw.style.background = `linear-gradient(135deg, ${th.bg} 0 40%, ${th.ink} 40% 70%, ${th.accent} 70% 100%)`;
-        } else {
-          sw.style.background = `linear-gradient(135deg, ${th.bg} 50%, ${th.ink} 50%)`;
-        }
-        row.appendChild(sw);
-      });
-      grid.appendChild(row);
-    });
+    grid.appendChild(row);
     return grid;
   }
 
   function renderTweaks() {
     const body = document.getElementById("tweaks-body");
     body.innerHTML = "";
+
+    // Above-the-fold layout — the four most-used controls in priority order:
+    //   1. Mode      (Light / Dark / OLED)
+    //   2. Color     (3 Aa swatches; theme name appears in the row caption)
+    //   3. Text size (3 size swatches; precise slider lives in Advanced)
+    //   4. Copy      (With citation / Plain text — applies to all in-doc
+    //                 copy buttons, not the share-popover Copy Link)
+    // Reading mode lives on the header button (#reader-toggle) and is
+    // intentionally not duplicated here.
 
     // Mode — light / dark / oled segmented control
     const modeRow = el("div", { class: "tweak-row" });
@@ -235,37 +282,47 @@
     modeRow.appendChild(modeToggle);
     body.appendChild(modeRow);
 
-    // Color — one grid per mode, only active mode is visible
+    // Color — one grid per mode (only active mode is visible).
+    // The label gets a `<span#color-row-detail>` that applyTweaks() updates
+    // with "· {ThemeName}" so the active theme name is always visible without
+    // crowding the swatch tiles themselves.
     const themeRow = el("div", { class: "tweak-row" });
-    themeRow.appendChild(el("label", {}, JTC.t("settings.color")));
+    const colorLabel = el("label", {}, [
+      document.createTextNode(JTC.t("settings.color")),
+      el("span", { id: "color-row-detail", class: "label-detail" }, "")
+    ]);
+    themeRow.appendChild(colorLabel);
     themeRow.appendChild(buildGrid("light", LIGHT_THEMES));
     themeRow.appendChild(buildGrid("dark", DARK_THEMES));
     themeRow.appendChild(buildGrid("oled", OLED_THEMES));
     body.appendChild(themeRow);
 
-    // Typeface
-    const fontRow = el("div", { class: "tweak-row" });
-    fontRow.appendChild(el("label", {}, JTC.t("settings.typeface")));
-    const fontToggle = el("div", { class: "toggle-row" }, [
-      el("button", { class: "toggle-chip", "data-font-toggle": "simple",      onClick: () => setTweak("font", "simple") },      JTC.t("settings.font_simple")),
-      el("button", { class: "toggle-chip", "data-font-toggle": "traditional", onClick: () => setTweak("font", "traditional") }, JTC.t("settings.font_traditional")),
-      el("button", { class: "toggle-chip", "data-font-toggle": "technical",   onClick: () => setTweak("font", "technical") },   JTC.t("settings.font_technical"))
-    ]);
-    fontRow.appendChild(fontToggle);
-    body.appendChild(fontRow);
+    // Text size — three Aa swatches (small/medium/large) at preset values.
+    // Slider for fine-tune lives in Advanced.
+    const sizeRow = el("div", { class: "tweak-row" });
+    sizeRow.appendChild(el("label", {}, JTC.t("settings.text_size")));
+    const sizeGrid = el("div", { class: "size-grid" });
+    [
+      { id: "small",  label: JTC.t("settings.size_small"),  px: SIZE_PRESETS.small  },
+      { id: "medium", label: JTC.t("settings.size_medium"), px: SIZE_PRESETS.medium },
+      { id: "large",  label: JTC.t("settings.size_large"),  px: SIZE_PRESETS.large  }
+    ].forEach(s => {
+      const sw = el("button", {
+        class: "size-swatch",
+        "data-size-toggle": s.id,
+        title: s.label,
+        "aria-label": `${JTC.t("settings.text_size")} · ${s.label}`,
+        onClick: () => setTweak("fontSize", s.px)
+      });
+      const aa = el("span", { class: "size-aa" }, "Aa");
+      aa.style.fontSize = `${s.px + 6}px`;
+      sw.appendChild(aa);
+      sizeGrid.appendChild(sw);
+    });
+    sizeRow.appendChild(sizeGrid);
+    body.appendChild(sizeRow);
 
-
-    // Reader mode
-    const rdrRow = el("div", { class: "tweak-row" });
-    rdrRow.appendChild(el("label", {}, JTC.t("settings.reading_mode")));
-    const rdrToggle = el("div", { class: "toggle-row" }, [
-      el("button", { class: "toggle-chip", "data-reader-toggle": "default", onClick: () => setTweak("reader", "default") }, JTC.t("settings.reader_default")),
-      el("button", { class: "toggle-chip", "data-reader-toggle": "pure", onClick: () => setTweak("reader", "pure") }, JTC.t("settings.reader_pure"))
-    ]);
-    rdrRow.appendChild(rdrToggle);
-    body.appendChild(rdrRow);
-
-    // Copy to clipboard behaviour
+    // Copy to clipboard — applies to in-document copy buttons.
     const copyRow = el("div", { class: "tweak-row" });
     copyRow.appendChild(el("label", {}, JTC.t("settings.copy_label")));
     const copyToggle = el("div", { class: "toggle-row" }, [
@@ -275,13 +332,45 @@
     copyRow.appendChild(copyToggle);
     body.appendChild(copyRow);
 
-    // Font size
+    // ── Advanced settings (collapsed by default) ──
+    const adv = el("details", { class: "tweak-more" });
+    adv.appendChild(el("summary", { class: "tweak-more__summary" }, JTC.t("settings.advanced")));
+
+    // Typography — four chips (Default / Serif / Sans-serif / Mono).
+    // "Default" follows the active theme; the others override via [data-font].
+    const typoRow = el("div", { class: "tweak-row" });
+    typoRow.appendChild(el("label", {}, JTC.t("settings.typeface")));
+    const typoToggle = el("div", { class: "toggle-row" }, [
+      el("button", { class: "toggle-chip", "data-font-toggle": "default", onClick: () => setTweak("font", "default") }, JTC.t("settings.font_default")),
+      el("button", { class: "toggle-chip", "data-font-toggle": "serif",   onClick: () => setTweak("font", "serif") },   JTC.t("settings.font_serif")),
+      el("button", { class: "toggle-chip", "data-font-toggle": "sans",    onClick: () => setTweak("font", "sans") },    JTC.t("settings.font_sans")),
+      el("button", { class: "toggle-chip", "data-font-toggle": "mono",    onClick: () => setTweak("font", "mono") },    JTC.t("settings.font_mono"))
+    ]);
+    typoRow.appendChild(typoToggle);
+    adv.appendChild(typoRow);
+
+    // Saturation sub-theme — three chips. Each level has explicit per-theme
+    // values in styles.css so all themes show a visible difference, not
+    // just Civic. Default is the authored theme; Low desaturates everything;
+    // Vibrant amplifies bg/ink/accent.
+    const satRow = el("div", { class: "tweak-row" });
+    satRow.appendChild(el("label", {}, JTC.t("settings.saturation")));
+    const satToggle = el("div", { class: "toggle-row" }, [
+      el("button", { class: "toggle-chip", "data-saturation-toggle": "default", onClick: () => setTweak("saturation", "default") }, JTC.t("settings.sat_default")),
+      el("button", { class: "toggle-chip", "data-saturation-toggle": "vibrant", onClick: () => setTweak("saturation", "vibrant") }, JTC.t("settings.sat_vibrant"))
+    ]);
+    satRow.appendChild(satToggle);
+    adv.appendChild(satRow);
+
+    // Text size — fine slider (14–22px).
     const fsRow = el("div", { class: "tweak-row slider-row" });
     fsRow.appendChild(el("label", {}, [document.createTextNode(JTC.t("settings.text_size")), el("span", { id: "fs-val", class: "val" }, "17px")]));
     const slider = el("input", { type: "range", min: "14", max: "22", step: "1", id: "fs-slider" });
     slider.addEventListener("input", e => setTweak("fontSize", parseInt(e.target.value, 10)));
     fsRow.appendChild(slider);
-    body.appendChild(fsRow);
+    adv.appendChild(fsRow);
+
+    body.appendChild(adv);
   }
 
   // Batch set multiple tweaks at once (e.g. mode + theme together)
@@ -318,6 +407,7 @@
   JTC.setMode = setMode;
   JTC.toggleMode = toggleMode;
   JTC.toggleReader = toggleReader;
+  JTC.resetTweaks = resetTweaks;
   JTC.applyTweaks = applyTweaks;
   JTC.renderTweaks = renderTweaks;
 })();

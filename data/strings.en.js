@@ -4,6 +4,9 @@
 // client JS modules (via the JTC.STRINGS runtime object).
 
 module.exports = {
+  // ── Accessibility ──
+  "a11y.skip_to_content":     "Skip to the Constitution",
+
   // ── Page metadata ──
   "meta.title":               "Just the Constitution",
   "meta.description":         "The full text of the United States Constitution and its twenty-seven amendments, paired with the original National Archives parchment. No ads. No commentary. Just the info.",
@@ -141,17 +144,25 @@ module.exports = {
   "settings.mode_dark":       "Dark",
   "settings.mode_oled":       "OLED",
   "settings.color":           "Color",
-  "settings.typeface":        "Typeface",
-  "settings.font_simple":     "Simple",
-  "settings.font_traditional":"Traditional",
-  "settings.font_technical":  "Technical",
-  "settings.reading_mode":    "Reading mode",
-  "settings.reader_default":  "Default",
-  "settings.reader_pure":     "Pure reader",
   "settings.copy_label":      "Copy to clipboard",
   "settings.copy_citation":   "With citation",
   "settings.copy_plain":      "Plain text",
   "settings.text_size":       "Text size",
+  "settings.size_small":      "Small",
+  "settings.size_medium":     "Medium",
+  "settings.size_large":      "Large",
+  "settings.advanced":        "Advanced settings",
+  "settings.saturation":      "Saturation",
+  "settings.sat_default":     "Default",
+  "settings.sat_vibrant":     "Vibrant",
+  "settings.typeface":        "Typography",
+  "settings.font_default":    "Default",
+  "settings.font_serif":      "Serif",
+  "settings.font_sans":       "Sans-serif",
+  "settings.font_mono":       "Mono",
+  "settings.reset_aria":      "Reset all settings to defaults",
+  "settings.reset_title":     "Reset settings",
+  "settings.reset_toast":     "Settings reset",
   "settings.switch_dark":     "Switch to dark mode",
   "settings.switch_dark_short":"Switch to dark",
   "settings.switch_oled":     "Switch to OLED",
