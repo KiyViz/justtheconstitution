@@ -1506,18 +1506,25 @@ body {
 .site-footer a:hover { color: var(--ink); }
 .site-footer p { margin: 0 0 10px; }
 
-/* ── Tools row (settings panel) ──
-   A bar of icon buttons mirroring the desktop header's secondary actions
-   (language switcher, reader-mode toggle, mode cycle). Always present in
-   settings; on mobile these same actions are stripped from the header for
-   space, so the Tools row becomes the primary access path. */
+/* ── Tools row (settings panel, mobile only) ──
+   Mirrors the desktop header's secondary icons (lang / reader / mode) for
+   small screens where those icons are stripped from the header to avoid
+   overflow. Buttons are icon-only by default; the label slides in on
+   hover/focus, matching the language switcher's expand pattern.
+
+   Hidden by default — only revealed in the @media (max-width: 720px)
+   block at the bottom of this file. Desktop already has these actions
+   in the header, so the Tools row would be redundant there. */
+.tools-row { display: none; }
 .tools-bar {
   display: flex;
   gap: 6px;
+  flex-wrap: wrap;
 }
 .tools-btn {
-  flex: 1;
-  height: 38px;
+  height: 40px;
+  min-width: 44px;
+  padding: 0 12px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1526,6 +1533,7 @@ body {
   color: var(--ink);
   border-radius: 8px;
   cursor: pointer;
+  overflow: hidden;
   transition: background-color .12s ease, border-color .12s ease;
 }
 .tools-btn:hover { background: var(--chip-bg); border-color: var(--rule); }
@@ -1533,9 +1541,29 @@ body {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
-.tools-btn svg { width: 18px; height: 18px; }
+.tools-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+.tools-btn__label {
+  display: inline-block;
+  max-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  opacity: 0;
+  margin-left: 0;
+  transition: max-width .2s ease, opacity .15s ease, margin-left .2s ease;
+}
+.tools-btn:hover .tools-btn__label,
+.tools-btn:focus-visible .tools-btn__label {
+  max-width: 140px;
+  margin-left: 8px;
+  opacity: 1;
+}
 @media (prefers-reduced-motion: reduce) {
-  .tools-btn { transition: none; }
+  .tools-btn,
+  .tools-btn__label { transition: none; }
 }
 
 /* ===== Responsive tweaks ===== */
@@ -1551,6 +1579,9 @@ body {
   #lang-btn,
   #reader-toggle,
   #mode-toggle { display: none; }
+  /* Reveal Tools row on mobile only — it duplicates desktop header
+     actions, so showing it on desktop would be redundant chrome. */
+  .tools-row { display: block; }
 }
 
 html { scrollbar-color: var(--rule) transparent; }

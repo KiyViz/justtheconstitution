@@ -289,6 +289,9 @@
     toolsRow.appendChild(el("label", {}, JTC.t("settings.tools")));
     const toolsBar = el("div", { class: "tools-bar" });
 
+    // Each Tools button is icon-only by default; the label slides in on
+    // hover/focus, mirroring the desktop language switcher's behavior.
+
     // Language switcher — delegate to the existing #lang-btn so the locale
     // logic in lang.js stays single-source.
     const langBtn = el("button", {
@@ -299,7 +302,7 @@
       title: JTC.t("lang.button_title"),
       onClick: () => { const b = document.getElementById("lang-btn"); if (b) b.click(); }
     });
-    langBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z"/></svg>';
+    langBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z"/></svg><span class="tools-btn__label">' + JTC.t("lang.button_title") + '</span>';
     toolsBar.appendChild(langBtn);
 
     // Reader-mode toggle.
@@ -311,11 +314,11 @@
       title: JTC.t("btn.reader_title"),
       onClick: () => JTC.toggleReader && JTC.toggleReader()
     });
-    readerBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>';
+    readerBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg><span class="tools-btn__label">' + JTC.t("btn.reader_title") + '</span>';
     toolsBar.appendChild(readerBtn);
 
-    // Mode (Light → Dark → OLED) cycle. The icon swaps to match the next
-    // mode each cycle — applyTweaks() keeps #tools-mode-icon in sync.
+    // Mode (Light → Dark → OLED) cycle. applyTweaks keeps #tools-mode-icon
+    // in sync with the header's mode icon.
     const modeCycle = el("button", {
       class: "tools-btn",
       id: "tools-mode-toggle",
@@ -324,7 +327,7 @@
       title: JTC.t("btn.mode_title"),
       onClick: () => JTC.toggleMode && JTC.toggleMode()
     });
-    modeCycle.innerHTML = '<svg id="tools-mode-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>';
+    modeCycle.innerHTML = '<svg id="tools-mode-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg><span class="tools-btn__label">' + JTC.t("btn.mode_title") + '</span>';
     toolsBar.appendChild(modeCycle);
 
     toolsRow.appendChild(toolsBar);
