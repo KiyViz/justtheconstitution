@@ -1255,8 +1255,8 @@ body {
 }
 .theme-swatch {
   /* Each swatch IS a typography preview rendered in the theme's actual
-     bg/ink, with the theme name beneath and a small accent dot in the
-     corner if the theme has a non-monochrome accent. */
+     bg/ink AND that theme's body font, so the tile previews colour AND
+     type personality at once. Per-theme font assignment lives below. */
   aspect-ratio: 1.55 / 1;
   border-radius: 8px;
   border: 2px solid transparent;
@@ -1270,8 +1270,13 @@ body {
   justify-content: center;
   gap: 4px;
   transition: transform .12s ease, border-color .12s ease;
-  font-family: var(--font-serif);
 }
+/* Match each swatch's font to that theme's body font, regardless of
+   the user's Typography override (the swatch should always preview the
+   THEME's typography, not the user's customisation). */
+.theme-swatch[data-theme="parchment"] { font-family: var(--font-serif); }
+.theme-swatch[data-theme="modern"]    { font-family: var(--font-sans); }
+.theme-swatch[data-theme="civic"]     { font-family: var(--font-serif); }
 .theme-swatch:hover { transform: scale(1.04); }
 .theme-swatch.is-active {
   border-color: currentColor;
