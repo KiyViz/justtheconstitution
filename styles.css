@@ -1662,8 +1662,19 @@ html { scrollbar-color: var(--rule) transparent; }
 .share-row svg { width: 16px; height: 16px; flex: 0 0 16px; color: var(--ink-soft); }
 .share-row:hover svg { color: var(--ink); }
 
-/* ===== Language switcher ===== */
-.lang-btn { overflow: hidden; }
+/* ===== Language switcher =====
+   Override two icon-btn defaults so the idle state hugs the icon:
+   - gap: 0 — kill the 8px flex gap that reserves empty space between
+     the icon and the collapsed label.
+   - padding: 0 10px — symmetric tight padding; combined with the
+     16px icon and the 36px min-width, the icon centers exactly.
+   The label's own margin-left (animated 0 → 6px on hover) handles
+   spacing when it expands. */
+.lang-btn {
+  overflow: hidden;
+  gap: 0;
+  padding: 0 10px;
+}
 .lang-btn svg { flex-shrink: 0; }
 .lang-label {
   display: inline-block;
@@ -1677,7 +1688,8 @@ html { scrollbar-color: var(--rule) transparent; }
   margin-left: 0;
   transition: max-width .2s ease, opacity .15s ease, margin-left .2s ease;
 }
-.lang-btn:hover .lang-label {
+.lang-btn:hover .lang-label,
+.lang-btn:focus-visible .lang-label {
   max-width: 80px;
   margin-left: 6px;
   opacity: 1;
