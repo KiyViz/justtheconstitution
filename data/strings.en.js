@@ -30,11 +30,39 @@ module.exports = {
   "prefix.commonly_known":    "Commonly known as",
   "prefix.article":           "Article",
   "prefix.section":           "Section",
+  "prefix.clause":            "Clause",
   "prefix.paragraph":         "\u00b6",
 
   // ── Citation ──
+  // Legacy — kept for any remaining call sites; prefer
+  // cite.constitution_short / cite.constitution_long below.
   "cite.us_constitution":     "U.S. Constitution",
   "cite.source_label":        "Source:",
+  // Citation primitives — pulled by citations.js for the locale-aware engine.
+  // These are the building blocks of Bluebook/MLA/Chicago citation strings.
+  // English values; non-EN locales typically keep these in English (the
+  // style guides themselves are anglophone) and rely on cite.translation_marker
+  // to flag that the quoted text is a translation.
+  "cite.constitution_long":   "U.S. Constitution",
+  "cite.constitution_short":  "U.S. Const.",
+  "cite.translation_marker":  "",
+  "cite.bluebook.preamble":   "pmbl.",
+  "cite.bluebook.signatures": "sigs.",
+  "cite.bluebook.art":        "art.",
+  "cite.bluebook.amend":      "amend.",
+  "cite.bluebook.section":    "§",
+  "cite.bluebook.clause":     "cl.",
+  "cite.mla.const":           "US Const.",
+  "cite.mla.preamble":        "preamble",
+  "cite.mla.signatures":      "signatures",
+  "cite.mla.art":             "art.",
+  "cite.mla.amend":           "amend.",
+  "cite.mla.section":         "sec.",
+  "cite.mla.clause":          "cl.",
+  "cite.chicago.art":         "art.",
+  "cite.chicago.amend":       "amend.",
+  "cite.chicago.section":     "§",
+  "cite.chicago.clause":      "cl.",
 
   // ── Copy buttons ──
   "copy.excerpt":             "Copy excerpt",
@@ -145,9 +173,15 @@ module.exports = {
   "settings.mode_dark":       "Dark",
   "settings.mode_oled":       "OLED",
   "settings.color":           "Color",
-  "settings.copy_label":      "Copy to clipboard",
-  "settings.copy_citation":   "With citation",
-  "settings.copy_plain":      "Plain text",
+  // Copy / citation format — shown above the fold in the settings pane.
+  // Short labels, characters at a premium.
+  "settings.copy_label":      "Copy",
+  "settings.copy_plain":      "Plain",
+  "settings.copy_bluebook":   "Bluebook",
+  "settings.copy_mla":        "MLA",
+  "settings.copy_chicago":    "Chicago",
+  "settings.copy_markdown":   "MD",
+  "settings.copy_bibtex":     "BibTeX",
   "settings.text_size":       "Text size",
   "settings.size_small":      "Small",
   "settings.size_medium":     "Medium",

@@ -11,16 +11,77 @@
 
   const COPY_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
 
-  function formatCopyPayload(text, cite, mode) {
-    if (mode === "plain") return text;
-    return `"${text}"\n\n— ${cite}\nSource: ${SITE_URL}`;
+  // ── Source-object builders ──
+  // Each in-document copy point is described by a structured `source` object
+  // (see citations.js for the full shape). The citation engine maps that
+  // shape to format-specific output (plain / Bluebook / MLA / Chicago /
+  // Markdown / BibTeX). hasMultipleSections / hasMultipleClauses drive the
+  // legally-accurate Bluebook granularity rule (skip § for single-section
+  // articles, skip cl. for single-paragraph sections).
+  function articleNum(a)  { return parseInt(a.id.split('-')[1], 10);  }
+  function sectionNum(s)  { const m = /-s(\d+)$/.exec(s.id); return m ? parseInt(m[1], 10) : 1; }
+  function amendmentNum(am) { return parseInt(am.id.split('-')[1], 10); }
+
+  function preambleSrc()       { return { kind: "preamble",   anchor: "preamble",   label: JTC.t("section.preamble") }; }
+  function signaturesSrc()     { return { kind: "signatures", anchor: "signatures", label: JTC.t("section.signatures") }; }
+  function articleSrc(a)       { return { kind: "article",    art: articleNum(a), anchor: a.id, label: a.label }; }
+  function sectionSrc(a, s) {
+    return {
+      kind: "section",
+      art: articleNum(a),
+      sec: sectionNum(s),
+      hasMultipleSections: a.sections.length > 1,
+      anchor: s.id,
+      label: a.label + (s.label ? ", " + s.label : "")
+    };
+  }
+  function paragraphSrc(a, s, paraIdx) {
+    return {
+      kind: "clause",
+      art: articleNum(a),
+      sec: sectionNum(s),
+      cl: paraIdx + 1,
+      hasMultipleSections: a.sections.length > 1,
+      hasMultipleClauses: s.paragraphs.length > 1,
+      anchor: s.id,
+      label: `${a.label}${s.label ? ", " + s.label : ""}, ${JTC.t("prefix.paragraph")} ${paraIdx + 1}`
+    };
+  }
+  function amendmentSrc(am) {
+    return {
+      kind: "amendment",
+      am: amendmentNum(am),
+      totalParas: am.paragraphs.length,
+      anchor: am.id,
+      label: `${JTC.t("prefix.amendment")} ${am.num}`
+    };
+  }
+  function amendmentParaSrc(am, paraIdx) {
+    return {
+      kind: "amendment-section",
+      am: amendmentNum(am),
+      para: paraIdx + 1,
+      totalParas: am.paragraphs.length,
+      anchor: am.id,
+      label: `${JTC.t("prefix.amendment")} ${am.num}, ${JTC.t("prefix.section")} ${paraIdx + 1}`
+    };
   }
 
-  function addCopyButton(host, getText, cite, label) {
+  // ── Format dispatcher ──
+  // Plain mode (and signatures, which have no clean citation convention)
+  // returns just the passage text. Other modes route through citations.js.
+  function formatCopyPayload(text, source, mode, opts) {
+    if (mode === "plain" || !JTC.formatCitation) return text;
+    if (source && source.kind === "signatures") return text;
+    return JTC.formatCitation(source, text, mode, opts);
+  }
+
+  function addCopyButton(host, getText, source, label) {
+    const ariaLabel = source && source.label ? `Copy — ${source.label}` : "Copy";
     const btn = el("button", {
       class: "copy-btn",
       type: "button",
-      "aria-label": `Copy — ${cite}`,
+      "aria-label": ariaLabel,
       title: JTC.t("copy.to_clipboard")
     });
     btn.innerHTML = COPY_SVG;
@@ -29,26 +90,16 @@
       e.preventDefault();
       e.stopPropagation();
       const text = (typeof getText === "function" ? getText() : getText).trim();
-      const payload = formatCopyPayload(text, cite, JTC.getTweaks().copyMode);
+      const mode = JTC.getTweaks().copyMode;
+      const locale = document.documentElement.dataset.currentLocale
+                  || document.documentElement.lang || "en";
+      const opts = { locale, url: SITE_URL };
+      const payload = formatCopyPayload(text, source, mode, opts);
       const ok = await copyText(payload);
       showToast(ok ? JTC.t("toast.copied") : JTC.t("toast.copy_failed"));
     });
     host.appendChild(btn);
     return btn;
-  }
-
-  // Citation builders
-  function citeArticle(art, sectionLabel, sectionHeading, paraIndex, totalParas) {
-    const parts = [JTC.t("cite.us_constitution"), `${JTC.t("prefix.article")} ${art}`];
-    if (sectionLabel) parts.push(sectionLabel); // "Section 1", "Section 2", …
-    else if (sectionHeading) parts.push(sectionHeading);
-    if (paraIndex && totalParas > 1) parts.push(JTC.t("prefix.paragraph") + " " + paraIndex);
-    return parts.join(", ");
-  }
-  function citeAmendment(num, paraIndex, totalParas) {
-    const parts = [JTC.t("cite.us_constitution"), `${JTC.t("prefix.amendment")} ${num}`];
-    if (paraIndex && totalParas > 1) parts.push(JTC.t("prefix.paragraph") + " " + paraIndex);
-    return parts.join(", ");
   }
 
   // Flatten helpers — build text blobs at render time
@@ -120,17 +171,16 @@
     } else {
       preP = el("p", { class: "preamble" }, C.preamble.text);
     }
-    addCopyButton(preP, C.preamble.text, `${JTC.t("cite.us_constitution")}, ${JTC.t("section.preamble")}`, JTC.t("copy.excerpt"));
+    addCopyButton(preP, C.preamble.text, preambleSrc(), JTC.t("copy.excerpt"));
     pre.appendChild(preP);
     pane.appendChild(pre);
 
     // Articles
     C.articles.forEach(a => {
-      const artNum = a.label.replace("Article ", "");
       const art = el("section", { id: a.id, class: "anchor", "data-chapter": a.id });
       const head = el("div", { class: "section-drop" });
       const h2 = el("h2", {}, a.label);
-      addCopyButton(h2, () => articleFullText(a), `${JTC.t("cite.us_constitution")}, ${JTC.t("prefix.article")} ${artNum}`, JTC.t("copy.passage"));
+      addCopyButton(h2, () => articleFullText(a), articleSrc(a), JTC.t("copy.passage"));
       const headText = el("div", { class: "article-head" }, [
         h2,
         a.subtitle ? el("div", { class: "article-sub" }, a.subtitle) : null
@@ -157,19 +207,17 @@
           if (s.label) sh.appendChild(el("span", { class: "section-num" }, s.label));
           if (s.heading) {
             const h3 = el("h3", {}, s.heading);
-            addCopyButton(h3, () => sectionFullText(s), citeArticle(artNum, s.label, s.heading), JTC.t("copy.passage"));
+            addCopyButton(h3, () => sectionFullText(s), sectionSrc(a, s), JTC.t("copy.passage"));
             sh.appendChild(h3);
           } else {
             // Only a section label (no heading) — attach copy to the label itself.
-            addCopyButton(sh, () => sectionFullText(s), citeArticle(artNum, s.label, ""), JTC.t("copy.passage"));
+            addCopyButton(sh, () => sectionFullText(s), sectionSrc(a, s), JTC.t("copy.passage"));
           }
           sec.appendChild(sh);
         }
-        const total = s.paragraphs.length;
         s.paragraphs.forEach((p, i) => {
           const paraEl = el("p", {}, p);
-          const paraCite = citeArticle(artNum, s.label, s.heading, i + 1, total);
-          addCopyButton(paraEl, p, paraCite, JTC.t("copy.excerpt"));
+          addCopyButton(paraEl, p, paragraphSrc(a, s, i), JTC.t("copy.excerpt"));
           sec.appendChild(paraEl);
         });
         if (s.page && s.page !== a.page) sec.dataset.page = s.page;
@@ -201,7 +249,7 @@
     presBlock.appendChild(signerLine(pres, "div"));
     presBlock.querySelector("div").classList.add("name");
     presBlock.appendChild(el("div", { class: "role" }, pres.role));
-    addCopyButton(presBlock, signaturesFullText, `${JTC.t("cite.us_constitution")}, ${JTC.t("section.signatures")}`, JTC.t("copy.all"));
+    addCopyButton(presBlock, signaturesFullText, signaturesSrc(), JTC.t("copy.all"));
     sig.appendChild(presBlock);
 
     const grid = el("div", { class: "signatures__grid" });
@@ -239,13 +287,12 @@
         el("span", { class: "amendment__year" }, `${JTC.t("prefix.ratified")} ${am.year}`)
       ]));
       const amH3 = el("h3", {}, am.label);
-      addCopyButton(amH3, () => amendmentFullText(am), `${JTC.t("cite.us_constitution")}, ${JTC.t("prefix.amendment")} ${am.num}`, JTC.t("copy.passage"));
+      addCopyButton(amH3, () => amendmentFullText(am), amendmentSrc(am), JTC.t("copy.passage"));
       box.appendChild(amH3);
       box.appendChild(el("div", { class: "amendment__sub" }, am.subtitle));
-      const totalAm = am.paragraphs.length;
       am.paragraphs.forEach((p, i) => {
         const paraEl = el("p", {}, p);
-        addCopyButton(paraEl, p, citeAmendment(am.num, i + 1, totalAm), JTC.t("copy.excerpt"));
+        addCopyButton(paraEl, p, amendmentParaSrc(am, i), JTC.t("copy.excerpt"));
         box.appendChild(paraEl);
       });
       pane.appendChild(box);
@@ -261,15 +308,14 @@
   function hydrateText(pane) {
     // Preamble
     const preP = pane.querySelector("#preamble > p.preamble");
-    if (preP) addCopyButton(preP, C.preamble.text, `${JTC.t("cite.us_constitution")}, ${JTC.t("section.preamble")}`, JTC.t("copy.excerpt"));
+    if (preP) addCopyButton(preP, C.preamble.text, preambleSrc(), JTC.t("copy.excerpt"));
 
     // Articles
     C.articles.forEach(a => {
-      const artNum = a.label.replace("Article ", "");
       const art = document.getElementById(a.id);
       if (!art) return;
       const h2 = art.querySelector(".article-head h2");
-      if (h2) addCopyButton(h2, () => articleFullText(a), `${JTC.t("cite.us_constitution")}, ${JTC.t("prefix.article")} ${artNum}`, JTC.t("copy.passage"));
+      if (h2) addCopyButton(h2, () => articleFullText(a), articleSrc(a), JTC.t("copy.passage"));
 
       const sectionDrop = art.querySelector(":scope > .section-drop");
       if (sectionDrop && !sectionDrop.querySelector(".page-chip")) {
@@ -292,36 +338,33 @@
         if (sh) {
           const h3 = sh.querySelector("h3");
           if (h3) {
-            addCopyButton(h3, () => sectionFullText(s), citeArticle(artNum, s.label, s.heading), JTC.t("copy.passage"));
+            addCopyButton(h3, () => sectionFullText(s), sectionSrc(a, s), JTC.t("copy.passage"));
           } else {
-            addCopyButton(sh, () => sectionFullText(s), citeArticle(artNum, s.label, ""), JTC.t("copy.passage"));
+            addCopyButton(sh, () => sectionFullText(s), sectionSrc(a, s), JTC.t("copy.passage"));
           }
         }
         const paras = sec.querySelectorAll(":scope > p");
-        const total = s.paragraphs.length;
         paras.forEach((paraEl, i) => {
           const p = s.paragraphs[i];
-          const paraCite = citeArticle(artNum, s.label, s.heading, i + 1, total);
-          addCopyButton(paraEl, p, paraCite, JTC.t("copy.excerpt"));
+          addCopyButton(paraEl, p, paragraphSrc(a, s, i), JTC.t("copy.excerpt"));
         });
       });
     });
 
     // Signatures
     const presBlock = pane.querySelector(".signatures__pres");
-    if (presBlock) addCopyButton(presBlock, signaturesFullText, `${JTC.t("cite.us_constitution")}, ${JTC.t("section.signatures")}`, JTC.t("copy.all"));
+    if (presBlock) addCopyButton(presBlock, signaturesFullText, signaturesSrc(), JTC.t("copy.all"));
 
     // Amendments
     C.amendments.forEach(am => {
       const box = document.getElementById(am.id);
       if (!box) return;
       const h3 = box.querySelector(":scope > h3");
-      if (h3) addCopyButton(h3, () => amendmentFullText(am), `${JTC.t("cite.us_constitution")}, ${JTC.t("prefix.amendment")} ${am.num}`, JTC.t("copy.passage"));
+      if (h3) addCopyButton(h3, () => amendmentFullText(am), amendmentSrc(am), JTC.t("copy.passage"));
       const paras = box.querySelectorAll(":scope > p");
-      const totalAm = am.paragraphs.length;
       paras.forEach((paraEl, i) => {
         const p = am.paragraphs[i];
-        addCopyButton(paraEl, p, citeAmendment(am.num, i + 1, totalAm), JTC.t("copy.excerpt"));
+        addCopyButton(paraEl, p, amendmentParaSrc(am, i), JTC.t("copy.excerpt"));
       });
     });
 
@@ -417,8 +460,6 @@
 
   JTC.renderText = renderText;
   JTC.addCopyButton = addCopyButton;
-  JTC.citeArticle = citeArticle;
-  JTC.citeAmendment = citeAmendment;
   JTC.articleFullText = articleFullText;
   JTC.sectionFullText = sectionFullText;
   JTC.amendmentFullText = amendmentFullText;

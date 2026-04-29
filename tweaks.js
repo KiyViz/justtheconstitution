@@ -17,10 +17,16 @@
     toc: "open",
     pane: "open",
     fontSize: 17,
-    copyMode: "full",
+    copyMode: "plain",
     saturation: "default",
     font: "default"
   };
+  // Citation formats — applies to all in-document copy buttons.
+  // "plain" = just the passage text. The rest wrap the text with a
+  // formatted citation per their respective style guides.
+  const VALID_COPY_MODES = new Set([
+    "plain", "bluebook", "mla", "chicago", "markdown", "bibtex"
+  ]);
   // Two saturation levels — Default leaves the authored theme alone;
   // Vibrant punches up bg/ink/accent per-theme. The old "low-sat" tier
   // was visually too subtle on monochromatic themes to justify the chip.
@@ -82,7 +88,12 @@
     if (!["open", "closed"].includes(merged.pane)) merged.pane = "open";
     if (merged.theme === "oled") { merged.mode = "oled"; merged.theme = "modern"; }
     if (!["light", "dark", "oled"].includes(merged.mode)) merged.mode = "light";
-    if (!["full", "plain"].includes(merged.copyMode)) merged.copyMode = "full";
+    // Migrate the legacy two-value enum (full / plain) to the new six-format
+    // enum. "full" used to mean "with citation"; map it to Bluebook (the
+    // most authoritative format for a constitutional source), preserving
+    // the user's "I want citations" intent.
+    if (merged.copyMode === "full") merged.copyMode = "bluebook";
+    if (!VALID_COPY_MODES.has(merged.copyMode)) merged.copyMode = "plain";
     // Migrate any retired saturation ids (Pkg-7 mono/low, Pkg-8 low-sat)
     // onto "default". Only "vibrant" survives as a non-default level.
     if (saved.saturation && saved.saturation !== "vibrant") merged.saturation = "default";
@@ -384,12 +395,21 @@
     sizeRow.appendChild(sizeGrid);
     body.appendChild(sizeRow);
 
-    // Copy to clipboard — applies to in-document copy buttons.
+    // Citation format — applies to all in-document copy buttons. "Plain" is
+    // the default; the others wrap the copied passage with a formatted
+    // citation per the respective style guide. Bluebook is the legal
+    // standard for constitutional citations; MLA and Chicago serve
+    // academic/humanities audiences; Markdown ("MD") is for blogs and
+    // note-taking apps; BibTeX serves academic LaTeX users.
     const copyRow = el("div", { class: "tweak-row" });
     copyRow.appendChild(el("label", {}, JTC.t("settings.copy_label")));
     const copyToggle = el("div", { class: "toggle-row" }, [
-      el("button", { class: "toggle-chip", "data-copy-toggle": "full",  onClick: () => setTweak("copyMode", "full")  }, JTC.t("settings.copy_citation")),
-      el("button", { class: "toggle-chip", "data-copy-toggle": "plain", onClick: () => setTweak("copyMode", "plain") }, JTC.t("settings.copy_plain"))
+      el("button", { class: "toggle-chip", "data-copy-toggle": "plain",    onClick: () => setTweak("copyMode", "plain") },    JTC.t("settings.copy_plain")),
+      el("button", { class: "toggle-chip", "data-copy-toggle": "bluebook", onClick: () => setTweak("copyMode", "bluebook") }, JTC.t("settings.copy_bluebook")),
+      el("button", { class: "toggle-chip", "data-copy-toggle": "mla",      onClick: () => setTweak("copyMode", "mla") },      JTC.t("settings.copy_mla")),
+      el("button", { class: "toggle-chip", "data-copy-toggle": "chicago",  onClick: () => setTweak("copyMode", "chicago") },  JTC.t("settings.copy_chicago")),
+      el("button", { class: "toggle-chip", "data-copy-toggle": "markdown", onClick: () => setTweak("copyMode", "markdown") }, JTC.t("settings.copy_markdown")),
+      el("button", { class: "toggle-chip", "data-copy-toggle": "bibtex",   onClick: () => setTweak("copyMode", "bibtex") },   JTC.t("settings.copy_bibtex"))
     ]);
     copyRow.appendChild(copyToggle);
     body.appendChild(copyRow);

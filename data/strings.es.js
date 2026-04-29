@@ -28,11 +28,37 @@ module.exports = {
   "prefix.commonly_known":    "Comúnmente conocido como",
   "prefix.article":           "Artículo",
   "prefix.section":           "Sección",
+  "prefix.clause":            "Cláusula",
   "prefix.paragraph":         "\u00b6",
 
   // ── Citación ──
   "cite.us_constitution":     "Constitución de EE.\u00a0UU.",
   "cite.source_label":        "Fuente:",
+
+  // Primitivos de citación — usados por citations.js. Las convenciones
+  // Bluebook/MLA/Chicago son anglófonas, así que estos valores quedan
+  // en inglés; el marcador "(traducción al español)" se añade al final
+  // de cada cita para indicar que el texto citado es una traducción.
+  "cite.constitution_long":   "U.S. Constitution",
+  "cite.constitution_short":  "U.S. Const.",
+  "cite.translation_marker":  "(traducción al español)",
+  "cite.bluebook.preamble":   "pmbl.",
+  "cite.bluebook.signatures": "sigs.",
+  "cite.bluebook.art":        "art.",
+  "cite.bluebook.amend":      "amend.",
+  "cite.bluebook.section":    "§",
+  "cite.bluebook.clause":     "cl.",
+  "cite.mla.const":           "US Const.",
+  "cite.mla.preamble":        "preamble",
+  "cite.mla.signatures":      "signatures",
+  "cite.mla.art":             "art.",
+  "cite.mla.amend":           "amend.",
+  "cite.mla.section":         "sec.",
+  "cite.mla.clause":          "cl.",
+  "cite.chicago.art":         "art.",
+  "cite.chicago.amend":       "amend.",
+  "cite.chicago.section":     "§",
+  "cite.chicago.clause":      "cl.",
 
   // ── Botones de copia ──
   "copy.excerpt":             "Copiar extracto",
@@ -143,9 +169,14 @@ module.exports = {
   "settings.mode_dark":       "Oscuro",
   "settings.mode_oled":       "OLED",
   "settings.color":           "Color",
-  "settings.copy_label":      "Copiar al portapapeles",
-  "settings.copy_citation":   "Con cita",
-  "settings.copy_plain":      "Texto simple",
+  // Copiar / formato de cita — chips arriba del pliegue. Etiquetas cortas.
+  "settings.copy_label":      "Copiar",
+  "settings.copy_plain":      "Plano",
+  "settings.copy_bluebook":   "Bluebook",
+  "settings.copy_mla":        "MLA",
+  "settings.copy_chicago":    "Chicago",
+  "settings.copy_markdown":   "MD",
+  "settings.copy_bibtex":     "BibTeX",
   "settings.text_size":       "Tamaño de texto",
   "settings.size_small":      "Pequeño",
   "settings.size_medium":     "Mediano",
