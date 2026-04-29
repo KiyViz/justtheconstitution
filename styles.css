@@ -441,13 +441,16 @@ body {
 }
 /* ── Wordmark / home link ──
    Default state: the engrossed "We" mark (theme-aware via currentColor).
-   Hover/focus: crossfades to the "justtheconstitution.org" wordmark text.
-   Both states occupy the same slot, so layout doesn't shift on swap. */
+   Hover/focus: mark dissolves out (opacity + slight scale-down + small
+   blur, like a watermark fading from parchment) while the wordmark text
+   slides in from the left. Both states occupy the same slot so the swap
+   doesn't reflow the header. Eased with cubic-bezier(0.16, 1, 0.3, 1)
+   ("expo-out") for a soft, decisive arrival. */
 .wordmark {
   position: relative;
   display: inline-flex;
   align-items: center;
-  height: 22px;
+  height: 44px;
   /* Min-width holds the wordmark-text width so the swap doesn't reflow. */
   min-width: 168px;
   font-family: var(--font-sans);
@@ -462,10 +465,16 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: flex-start;
-  width: 22px;
-  height: 22px;
+  width: 44px;
+  height: 44px;
   opacity: 1;
-  transition: opacity 150ms ease;
+  transform: scale(1);
+  filter: blur(0);
+  transition:
+    opacity 280ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 280ms cubic-bezier(0.16, 1, 0.3, 1),
+    filter 280ms cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: left center;
 }
 .wordmark__mark svg {
   width: 100%;
@@ -476,21 +485,36 @@ body {
   position: absolute;
   left: 0;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translate(-6px, -50%);
   white-space: nowrap;
   opacity: 0;
-  transition: opacity 150ms ease;
+  transition:
+    opacity 280ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 280ms cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: none;
 }
 .wordmark:hover .wordmark__mark,
-.wordmark:focus-visible .wordmark__mark { opacity: 0; }
+.wordmark:focus-visible .wordmark__mark {
+  opacity: 0;
+  transform: scale(0.92);
+  filter: blur(2px);
+}
 .wordmark:hover .wordmark__text,
-.wordmark:focus-visible .wordmark__text { opacity: 1; }
+.wordmark:focus-visible .wordmark__text {
+  opacity: 1;
+  transform: translate(0, -50%);
+}
 .wordmark .dot { color: var(--ink-faint); font-weight: 400; }
 .wordmark b { font-weight: 700; }
 @media (prefers-reduced-motion: reduce) {
+  /* Honor the user's preference: no motion, no blur — just an instant
+     opacity swap so the interaction is still discoverable. */
   .wordmark__mark,
-  .wordmark__text { transition: none; }
+  .wordmark__text { transition: opacity 0ms; }
+  .wordmark:hover .wordmark__mark,
+  .wordmark:focus-visible .wordmark__mark { transform: scale(1); filter: blur(0); }
+  .wordmark:hover .wordmark__text,
+  .wordmark:focus-visible .wordmark__text { transform: translate(0, -50%); }
 }
 .header-spacer { flex: 1; }
 
@@ -1657,8 +1681,8 @@ body {
 /* ===== Responsive tweaks ===== */
 @media (max-width: 1100px) { .progress { top: var(--header-h); } }
 @media (max-width: 720px) {
-  .wordmark { font-size: 14px; height: 20px; min-width: 154px; }
-  .wordmark__mark { width: 20px; height: 20px; }
+  .wordmark { font-size: 14px; height: 40px; min-width: 154px; }
+  .wordmark__mark { width: 40px; height: 40px; }
   .icon-btn { padding: 0 10px; }
   .site-header__row { padding: 8px 14px; gap: 6px; }
   .progress { padding: 6px 14px 6px; }
