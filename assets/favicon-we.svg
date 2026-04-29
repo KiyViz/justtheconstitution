@@ -5,21 +5,25 @@
   by Jacob Shallus on the parchment Constitution (1787); same paths as
   assets/dropcap-we.svg.
 
-  Colors track the site's [data-theme="parchment"] tokens from styles.css:
-    light → bg #f0e6d0, ink #2a1c0a
-    dark  → bg #1d1813, ink #d4c5a6
+  Colors track the site's [data-theme="parchment"] tokens from styles.css,
+  but inverted relative to OS appearance so the favicon stands out
+  against the browser chrome:
+    light OS → dark-parchment fill   (paper #1d1813, ink #d4c5a6)
+    dark OS  → light-parchment fill  (paper #f0e6d0, ink #2a1c0a)
   The embedded <style> block uses prefers-color-scheme so the favicon
   adapts to the OS appearance in browsers that support it (Chrome,
   Firefox, Safari). Browsers that don't support media queries inside
-  SVG favicons just see the light defaults — still on-brand.
+  SVG favicons just see the light-OS defaults — still on-brand.
 -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="We">
   <style>
-    .paper { fill: #f0e6d0; }
-    .ink   { fill: #2a1c0a; }
+    /* Default = light OS → dark parchment for contrast against light chrome. */
+    .paper { fill: #1d1813; }
+    .ink   { fill: #d4c5a6; }
     @media (prefers-color-scheme: dark) {
-      .paper { fill: #1d1813; }
-      .ink   { fill: #d4c5a6; }
+      /* Dark OS → light parchment for contrast against dark chrome. */
+      .paper { fill: #f0e6d0; }
+      .ink   { fill: #2a1c0a; }
     }
   </style>
   <rect class="paper" width="160" height="160"/>
