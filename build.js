@@ -454,6 +454,8 @@ function main() {
     // Pages live at /{locale}/index.html, so root assets need ../
     const cssHash = fileHash(path.join(ROOT, 'styles.css'));
     html = html.replace('href="styles.css"', `href="../styles.css?v=${cssHash}"`);
+    const faviconHash = fileHash(path.join(ROOT, 'assets', 'favicon-we.svg'));
+    html = html.replace('href="assets/favicon-we.svg"', `href="../assets/favicon-we.svg?v=${faviconHash}"`);
 
     // Inject locale metadata for lang switcher
     html = html.replace('<html', `<html data-locales='${esc(localesMeta)}' data-current-locale="${locale}"`);
