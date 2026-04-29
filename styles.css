@@ -5,200 +5,182 @@
 
 /* latin-ext */
 @font-face {
-  font-family: 'EB Garamond';
+  font-family: 'Courier Prime';
   font-style: italic;
   font-weight: 400;
   font-display: swap;
-  src: url('fonts/eb-garamond-400-italic-latin-ext.woff2') format('woff2');
+  src: url('fonts/courier-prime-400-italic-latin-ext.woff2') format('woff2');
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 /* latin */
 @font-face {
-  font-family: 'EB Garamond';
+  font-family: 'Courier Prime';
   font-style: italic;
   font-weight: 400;
   font-display: swap;
-  src: url('fonts/eb-garamond-400-italic-latin.woff2') format('woff2');
+  src: url('fonts/courier-prime-400-italic-latin.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 /* latin-ext */
 @font-face {
-  font-family: 'EB Garamond';
+  font-family: 'Courier Prime';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('fonts/eb-garamond-400-normal-latin-ext.woff2') format('woff2');
+  src: url('fonts/courier-prime-400-normal-latin-ext.woff2') format('woff2');
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 /* latin */
 @font-face {
-  font-family: 'EB Garamond';
+  font-family: 'Courier Prime';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('fonts/eb-garamond-400-normal-latin.woff2') format('woff2');
+  src: url('fonts/courier-prime-400-normal-latin.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 /* latin-ext */
 @font-face {
-  font-family: 'EB Garamond';
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url('fonts/eb-garamond-500-normal-latin-ext.woff2') format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-/* latin */
-@font-face {
-  font-family: 'EB Garamond';
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url('fonts/eb-garamond-500-normal-latin.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-/* latin-ext */
-@font-face {
-  font-family: 'EB Garamond';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url('fonts/eb-garamond-600-normal-latin-ext.woff2') format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-/* latin */
-@font-face {
-  font-family: 'EB Garamond';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url('fonts/eb-garamond-600-normal-latin.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-/* latin-ext */
-@font-face {
-  font-family: 'Inter Tight';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('fonts/inter-tight-400-normal-latin-ext.woff2') format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-/* latin */
-@font-face {
-  font-family: 'Inter Tight';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('fonts/inter-tight-400-normal-latin.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-/* latin-ext */
-@font-face {
-  font-family: 'Inter Tight';
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url('fonts/inter-tight-500-normal-latin-ext.woff2') format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-/* latin */
-@font-face {
-  font-family: 'Inter Tight';
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url('fonts/inter-tight-500-normal-latin.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-/* latin-ext */
-@font-face {
-  font-family: 'Inter Tight';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url('fonts/inter-tight-600-normal-latin-ext.woff2') format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-/* latin */
-@font-face {
-  font-family: 'Inter Tight';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url('fonts/inter-tight-600-normal-latin.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-/* latin-ext */
-@font-face {
-  font-family: 'Inter Tight';
+  font-family: 'Courier Prime';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('fonts/inter-tight-700-normal-latin-ext.woff2') format('woff2');
+  src: url('fonts/courier-prime-700-normal-latin-ext.woff2') format('woff2');
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 /* latin */
 @font-face {
-  font-family: 'Inter Tight';
+  font-family: 'Courier Prime';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('fonts/inter-tight-700-normal-latin.woff2') format('woff2');
+  src: url('fonts/courier-prime-700-normal-latin.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 /* latin-ext */
 @font-face {
-  font-family: 'JetBrains Mono';
+  font-family: 'Libre Caslon Text';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/libre-caslon-text-400-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Libre Caslon Text';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/libre-caslon-text-400-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Libre Caslon Text';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('fonts/jetbrains-mono-400-normal-latin-ext.woff2') format('woff2');
+  src: url('fonts/libre-caslon-text-400-normal-latin-ext.woff2') format('woff2');
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 /* latin */
 @font-face {
-  font-family: 'JetBrains Mono';
+  font-family: 'Libre Caslon Text';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('fonts/jetbrains-mono-400-normal-latin.woff2') format('woff2');
+  src: url('fonts/libre-caslon-text-400-normal-latin.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 /* latin-ext */
 @font-face {
-  font-family: 'JetBrains Mono';
+  font-family: 'Libre Caslon Text';
   font-style: normal;
-  font-weight: 500;
+  font-weight: 700;
   font-display: swap;
-  src: url('fonts/jetbrains-mono-500-normal-latin-ext.woff2') format('woff2');
+  src: url('fonts/libre-caslon-text-700-normal-latin-ext.woff2') format('woff2');
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 /* latin */
 @font-face {
-  font-family: 'JetBrains Mono';
+  font-family: 'Libre Caslon Text';
   font-style: normal;
-  font-weight: 500;
+  font-weight: 700;
   font-display: swap;
-  src: url('fonts/jetbrains-mono-500-normal-latin.woff2') format('woff2');
+  src: url('fonts/libre-caslon-text-700-normal-latin.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 /* latin-ext */
 @font-face {
-  font-family: 'JetBrains Mono';
+  font-family: 'Public Sans';
   font-style: normal;
-  font-weight: 600;
+  font-weight: 400;
   font-display: swap;
-  src: url('fonts/jetbrains-mono-600-normal-latin-ext.woff2') format('woff2');
+  src: url('fonts/public-sans-400-normal-latin-ext.woff2') format('woff2');
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 /* latin */
 @font-face {
-  font-family: 'JetBrains Mono';
+  font-family: 'Public Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/public-sans-400-normal-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Public Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('fonts/public-sans-500-normal-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Public Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('fonts/public-sans-500-normal-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Public Sans';
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url('fonts/jetbrains-mono-600-normal-latin.woff2') format('woff2');
+  src: url('fonts/public-sans-600-normal-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Public Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('fonts/public-sans-600-normal-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Public Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('fonts/public-sans-700-normal-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Public Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('fonts/public-sans-700-normal-latin.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
@@ -224,12 +206,18 @@
   --image-pane: #eee;
   --image-mat: #1a1a1a;
 
-  /* Type */
-  --font-sans: "Inter Tight", "Helvetica Neue", "Helvetica", "Arial", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-serif: "EB Garamond", "Garamond", "Adobe Garamond Pro", "Iowan Old Style", "Hoefler Text", "Georgia", "Cambria", "Times New Roman", serif;
-  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", "Menlo", "Consolas", monospace;
+  /* Type — locked Apr 2026.
+     serif: Libre Caslon Text — the type the Constitution was first printed in
+            (Dunlap & Claypoole, Sept 1787).
+     sans:  Public Sans — USWDS-commissioned federal typeface (GSA, 2019).
+     mono:  Courier Prime — typewriter / mid-century officialdom register,
+            applied to citations, footnotes, year labels, and other metadata.
+     Body: 18px to compensate for Caslon's lower x-height vs. the prior Garamond. */
+  --font-sans:  "Public Sans", "Helvetica Neue", "Helvetica", "Arial", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-serif: "Libre Caslon Text", "Caslon", "Hoefler Text", "Iowan Old Style", "Georgia", "Cambria", serif;
+  --font-mono:  "Courier Prime", ui-monospace, "SFMono-Regular", "Menlo", "Consolas", monospace;
   --font-body: var(--font-sans);
-  --fs-body: 17px;
+  --fs-body: 18px;
   --lh-body: 1.62;
   --measure: 62ch;
 
@@ -390,7 +378,7 @@ body {
   font-synthesis-weight: none;
   transition: background-color .2s ease, color .2s ease;
   /* Universal OpenType — standard ligatures + kerning. Safe on all three
-     font families (Inter Tight, EB Garamond, JetBrains Mono all support both). */
+     font families (Public Sans, Libre Caslon Text, Courier Prime all support both). */
   font-feature-settings: "liga" 1, "kern" 1;
 }
 /* Typography is bound to the active theme — there is no separate
@@ -404,12 +392,14 @@ body {
   --measure: 66ch;
   --lh-body: 1.58;
 }
-/* Discretionary ligatures + old-style figures only fire on serif body —
-   Inter Tight either ignores them or substitutes glyphs that don't pair
-   with running prose. */
+/* Discretionary ligatures fire on serif body — Public Sans either ignores
+   them or substitutes glyphs that don't pair with running prose. Old-style
+   figures (`onum`) intentionally not requested: Libre Caslon Text doesn't
+   expose them as a static feature, and lining figures read more formal in
+   a civic context. (18th-c. printers used both styles inconsistently.) */
 [data-theme="parchment"] body,
 [data-theme="civic"] body {
-  font-feature-settings: "liga" 1, "kern" 1, "dlig" 1, "onum" 1;
+  font-feature-settings: "liga" 1, "kern" 1, "dlig" 1;
 }
 
 /* ── Tabular figures for any element with shifting digit counts ──
@@ -868,17 +858,56 @@ body {
   margin: 0 0 64px;
   text-wrap: pretty;
 }
-/* ── Real drop cap on the Preamble ──
-   Floats the W ~3.5 lines tall, accent-coloured (which equals ink in
-   monochrome themes — drama via size — and is genuinely distinct in
-   themes with a real accent like Liberty). Optical alignment via
-   negative left margin so the diagonal stroke aligns with the body
-   text edge rather than the letter's bounding box. */
-/* Drop cap — sized so the cap baseline lands on the body's line-3 baseline
-   (3 lines tall, baseline-to-baseline). Math: at line-height 1.5em,
-   line-3 baseline ≈ 4.05em from the top; drop cap baseline = top + (fs *
-   ~0.78 ascender ratio). Solving fs ≈ 5.1em for sans, 5.4em for serif. */
-.preamble::first-letter {
+/* ── Preamble dropcap ──
+   English locale: SVG dropcap of the engrossed "We" — adapted from the
+   JTC brand mark, itself a tracing of the iconic letterform Jacob Shallus
+   engrossed on the parchment Constitution in September 1787. The literal
+   "We" stays in the DOM (visually hidden via .dropcap-letters) so screen
+   readers and copy-paste keep the original text intact.
+
+   Other locales: standard Caslon ::first-letter dropcap on the leading
+   character — works for "N" of "Nosotros" (es), and any future locale. */
+.preamble.has-dropcap-we {
+  position: relative;
+}
+.preamble .dropcap-we {
+  float: left;
+  /* Sized to span ~3 body lines. The SVG's internal whitespace (from the
+     original 160×160 logo viewBox) provides the optical padding around the
+     letterform, so the box is intentionally a bit larger than a pure
+     letter-only crop. Tuned for body 18px / line-height 1.58. */
+  width: 5.6em;
+  height: 5.0em;
+  margin: -0.10em 0.30em -0.20em -0.10em;
+  /* Mask paints the SVG outline with currentColor / accent so the dropcap
+     follows theme accent automatically across Modern / Parchment / Civic. */
+  background-color: var(--accent);
+  -webkit-mask-image: url('assets/dropcap-we.svg');
+          mask-image: url('assets/dropcap-we.svg');
+  -webkit-mask-size: contain;
+          mask-size: contain;
+  -webkit-mask-position: top left;
+          mask-position: top left;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+}
+.preamble .dropcap-letters {
+  /* Visually hidden but accessible — preserves "We" for screen readers
+     and copy-paste while the SVG handles the visual presentation. */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Standard Caslon dropcap (non-EN locales). Sized so the cap baseline
+   lands on the body's line-3 baseline (3 lines tall, baseline-to-baseline). */
+.preamble:not(.has-dropcap-we)::first-letter {
   float: left;
   font-size: 5.1em;
   line-height: 0.86;
@@ -888,12 +917,18 @@ body {
   margin: 0.04em 0.06em -0.06em -0.02em;
   font-feature-settings: "dlig" 1, "liga" 1, "kern" 1;
 }
-/* Serif body (Parchment, Civic) uses EB Garamond — slightly larger so
-   the cap-height matches the taller serif x-height; line 3 still aligns. */
-[data-theme="parchment"] .preamble::first-letter,
-[data-theme="civic"] .preamble::first-letter {
+[data-theme="parchment"] .preamble:not(.has-dropcap-we)::first-letter,
+[data-theme="civic"] .preamble:not(.has-dropcap-we)::first-letter {
   font-size: 5.4em;
   line-height: 0.84;
+}
+
+/* Mobile: scale the SVG dropcap down on narrow viewports. */
+@media (max-width: 480px) {
+  .preamble .dropcap-we {
+    width: 4.4em;
+    height: 4.0em;
+  }
 }
 .section-drop {
   border-top: 1px solid var(--rule);
@@ -1418,7 +1453,7 @@ body {
 }
 [data-font="serif"] body,
 [data-font="mono"] body {
-  font-feature-settings: "liga" 1, "kern" 1, "dlig" 1, "onum" 1;
+  font-feature-settings: "liga" 1, "kern" 1, "dlig" 1;
 }
 /* Override headings to match the chosen face — only serif and mono need
    explicit overrides; sans matches the default. */
@@ -1438,9 +1473,10 @@ body {
 [data-font="mono"] .amendment h3,
 [data-font="mono"] .download-cta h2 { font-family: var(--font-mono); letter-spacing: -0.01em; }
 
-/* Mono drop cap — every JetBrains Mono character is the same width, so
-   a giant W is awkward. Tone it down. */
-[data-font="mono"] .preamble::first-letter {
+/* Mono drop cap (non-EN locales only) — every Courier Prime character is
+   the same width, so a giant initial is awkward. Tone it down. EN locale
+   uses the SVG dropcap regardless of typography override. */
+[data-font="mono"] .preamble:not(.has-dropcap-we)::first-letter {
   font-size: 4em;
   line-height: 0.92;
   margin-right: 0.12em;
@@ -1496,12 +1532,19 @@ body {
   .tweak-more__summary::before { transition: none; }
 }
 
-/* ===== Footer ===== */
+/* ===== Footer =====
+   The footer is entirely citations and source attribution (NARA, National
+   Constitution Center, image credits). It uses the mono register so it
+   reads as metadata about the document rather than continuation of the
+   document or the UI. Three typographic registers across the site:
+     • serif (Libre Caslon Text) — the document
+     • sans  (Public Sans)       — the interface
+     • mono  (Courier Prime)     — citations, footnotes, metadata */
 .site-footer {
   border-top: 1px solid var(--hairline);
   padding: 40px 24px 80px;
   color: var(--ink-faint);
-  font-family: var(--font-sans);
+  font-family: var(--font-mono);
   font-size: 12px;
   line-height: 1.6;
   max-width: 900px;
@@ -1857,9 +1900,12 @@ html { scrollbar-color: var(--rule) transparent; }
   list-style: none;
   counter-reset: sig-fn;
   max-width: var(--measure);
-  font-family: var(--font-sans);
+  /* Mono register — footnotes are annotations on the document, not the
+     document itself. Separates "the text" from "the chrome" from "the
+     citations" with three distinct typefaces. */
+  font-family: var(--font-mono);
   font-size: 12px;
-  line-height: 1.55;
+  line-height: 1.6;
   color: var(--ink-faint);
 }
 .sig-footnotes li {

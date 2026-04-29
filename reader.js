@@ -104,9 +104,22 @@
     pane.appendChild(el("h1", { class: "doc-title" }, JTC.t("doc.title")));
     pane.appendChild(el("div", { class: "doc-tag" }, JTC.t("doc.tag")));
 
-    // Preamble
+    // Preamble — English locale gets the engrossed-"We" dropcap (JTC mark,
+    // Shallus's iconic letterform). Real "We" stays in DOM (visually hidden
+    // via .dropcap-letters) for screen readers and copy-paste. Other locales
+    // fall through to the standard ::first-letter Caslon dropcap.
     const pre = el("section", { id: "preamble", class: "anchor", "data-chapter": "preamble" });
-    const preP = el("p", { class: "preamble" }, C.preamble.text);
+    const isEN = (document.documentElement.dataset.currentLocale || document.documentElement.lang || "en") === "en";
+    let preP;
+    if (isEN && /^We /.test(C.preamble.text)) {
+      preP = el("p", { class: "preamble has-dropcap-we" }, [
+        el("span", { class: "dropcap-we", "aria-hidden": "true" }),
+        el("span", { class: "dropcap-letters" }, "We"),
+        C.preamble.text.slice(2)
+      ]);
+    } else {
+      preP = el("p", { class: "preamble" }, C.preamble.text);
+    }
     addCopyButton(preP, C.preamble.text, `${JTC.t("cite.us_constitution")}, ${JTC.t("section.preamble")}`, JTC.t("copy.excerpt"));
     pre.appendChild(preP);
     pane.appendChild(pre);

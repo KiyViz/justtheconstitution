@@ -9,11 +9,18 @@ const path = require('path');
 const https = require('https');
 
 const KEEP_SUBSETS = new Set(['latin', 'latin-ext']);
+// Typography lock (Apr 2026):
+//   serif → Libre Caslon Text (the type the Constitution was first printed in)
+//   sans  → Public Sans       (USWDS-commissioned federal typeface)
+//   mono  → Courier Prime     (typewriter / mid-century officialdom register)
+// All three OFL, all latin + latin-ext only. Weights kept tight on serif/mono
+// because Google Fonts only serves these as static; intermediate weights are
+// browser-synthesised (600 → 700 for serif headings is acceptable).
 const CSS_URL =
   'https://fonts.googleapis.com/css2' +
-  '?family=Inter+Tight:wght@400;500;600;700' +
-  '&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400' +
-  '&family=JetBrains+Mono:wght@400;500;600' +
+  '?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400' +
+  '&family=Public+Sans:wght@400;500;600;700' +
+  '&family=Courier+Prime:ital,wght@0,400;0,700;1,400' +
   '&display=swap';
 
 const UA =

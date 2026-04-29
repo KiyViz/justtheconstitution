@@ -90,16 +90,25 @@ function validateLocaleData(en, locale, localeName) {
 }
 
 // ── Content rendering ──
-function renderContent(C, S) {
+function renderContent(C, S, locale) {
   const L = [];
   const ind = '      ';
 
   L.push(`${ind}<h1 class="doc-title">${esc(S["doc.title"])}</h1>`);
   L.push(`${ind}<div class="doc-tag">${esc(S["doc.tag"])}</div>`);
 
-  // Preamble
+  // Preamble — English locale gets the engrossed-"We" dropcap (the JTC mark,
+  // a tracing of Jacob Shallus's iconic letterform on the parchment). The
+  // literal "We" is kept in the DOM (visually hidden) so screen readers and
+  // copy-paste still see it. Other locales fall through to the standard
+  // ::first-letter Caslon dropcap on whatever their leading character is.
   L.push(`${ind}<section id="${esc(C.preamble.id)}" class="anchor" data-chapter="preamble">`);
-  L.push(`${ind}  <p class="preamble">${esc(C.preamble.text)}</p>`);
+  if (locale === 'en' && /^We /.test(C.preamble.text)) {
+    const rest = C.preamble.text.slice(2); // strip leading "We", keep " the People..."
+    L.push(`${ind}  <p class="preamble has-dropcap-we"><span class="dropcap-we" aria-hidden="true"></span><span class="dropcap-letters">We</span>${esc(rest)}</p>`);
+  } else {
+    L.push(`${ind}  <p class="preamble">${esc(C.preamble.text)}</p>`);
+  }
   L.push(`${ind}</section>`);
 
   // Articles
@@ -422,7 +431,7 @@ function main() {
     }
 
     // Render content HTML
-    const content = renderContent(C, S);
+    const content = renderContent(C, S, locale);
 
     // Start from template
     let html = template;
