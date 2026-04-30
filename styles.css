@@ -441,11 +441,22 @@ body {
 }
 /* ── Wordmark / home link ──
    Default state: the engrossed "We" mark (theme-aware via currentColor).
-   Hover/focus: the mark fades while the wordmark text "unfurls" out from
-   where the mark sat — a clip-path inset retracts left-to-right, so
-   "We" appears to expand into "justtheconstitution.org". Both states
-   occupy the same slot so the header doesn't reflow. Eased with
-   cubic-bezier(0.16, 1, 0.3, 1) ("expo-out") for a soft, decisive arrival. */
+   Hover/focus: write-on. The wordmark text starts clipped to a 0-width
+   sliver at its left edge; on hover, a clip-path inset retracts at a
+   constant rate (linear timing) so the title appears to be drawn in by
+   a pen, left-to-right. On un-hover, the clip retracts in reverse —
+   write-off. The "We" mark fades quickly so it doesn't fight the writing.
+
+   Performance notes for low-end devices:
+   - clip-path: inset() with rect insets is the cheapest CSS animation
+     available — Chrome/Safari composite it on the GPU as a layer mask,
+     no per-frame layout or paint of the text itself.
+   - No filter, no blur, no box-shadow animation.
+   - No will-change — it pins the element on a compositor layer for
+     the lifetime of the page, costing memory we don't need to spend.
+   - opacity is universally cheap.
+   The two transitions touch only opacity and clip-path; total work
+   per frame is O(1) regardless of the title's length. */
 .wordmark {
   position: relative;
   display: inline-flex;
@@ -468,8 +479,8 @@ body {
   width: 44px;
   height: 44px;
   opacity: 1;
-  transition: opacity 220ms cubic-bezier(0.16, 1, 0.3, 1);
-  transform-origin: left center;
+  /* Mark clears fast so the writing animation has the stage. */
+  transition: opacity 140ms linear;
 }
 .wordmark__mark svg {
   width: 100%;
@@ -483,30 +494,22 @@ body {
   transform: translateY(-50%);
   white-space: nowrap;
   opacity: 1;
-  /* Hidden state: clipped to a 0-width sliver at the left edge.
-     The clip-path retracts on hover, sweeping the text into view
-     left-to-right — so the title visually grows out of the mark. */
+  /* Default = clipped to nothing on the left. Hover retracts the right
+     inset to 0%, sweeping the text in left-to-right. Linear timing is
+     deliberate — easing curves like expo-out decelerate into the end,
+     which reads as "sliding" instead of "writing". */
   clip-path: inset(0 100% 0 0);
-  transition: clip-path 380ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: clip-path 520ms linear;
   pointer-events: none;
-  will-change: clip-path;
 }
 .wordmark:hover .wordmark__mark,
-.wordmark:focus-visible .wordmark__mark {
-  /* Mark fades a touch faster than the text reveals, so the title is
-     fully readable by the time the sweep completes. */
-  opacity: 0;
-  transition-duration: 180ms;
-}
+.wordmark:focus-visible .wordmark__mark { opacity: 0; }
 .wordmark:hover .wordmark__text,
-.wordmark:focus-visible .wordmark__text {
-  clip-path: inset(0 0 0 0);
-}
+.wordmark:focus-visible .wordmark__text { clip-path: inset(0 0 0 0); }
 .wordmark .dot { color: var(--ink-faint); font-weight: 400; }
 .wordmark b { font-weight: 700; }
 @media (prefers-reduced-motion: reduce) {
-  /* Honor the user's preference: no sweep, no fade — instant swap so
-     the interaction stays discoverable without motion. */
+  /* Instant swap — interaction stays discoverable, motion does not. */
   .wordmark__mark,
   .wordmark__text { transition: none; }
 }
@@ -1416,6 +1419,9 @@ body {
   border-radius: 999px; cursor: pointer;
   text-align: center;
   letter-spacing: -0.005em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .toggle-chip.is-active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
 
