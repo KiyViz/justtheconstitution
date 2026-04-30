@@ -403,7 +403,7 @@
     // note-taking apps; BibTeX serves academic LaTeX users.
     const copyRow = el("div", { class: "tweak-row" });
     copyRow.appendChild(el("label", {}, JTC.t("settings.copy_label")));
-    const copyToggle = el("div", { class: "toggle-row" }, [
+    const copyToggle = el("div", { class: "toggle-row toggle-row--wrap" }, [
       el("button", { class: "toggle-chip", "data-copy-toggle": "plain",    onClick: () => setTweak("copyMode", "plain") },    JTC.t("settings.copy_plain")),
       el("button", { class: "toggle-chip", "data-copy-toggle": "bluebook", onClick: () => setTweak("copyMode", "bluebook") }, JTC.t("settings.copy_bluebook")),
       el("button", { class: "toggle-chip", "data-copy-toggle": "mla",      onClick: () => setTweak("copyMode", "mla") },      JTC.t("settings.copy_mla")),

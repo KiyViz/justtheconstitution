@@ -1419,6 +1419,9 @@ body {
   border-radius: 999px; cursor: pointer;
   text-align: center;
   letter-spacing: -0.005em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .toggle-chip.is-active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
 
