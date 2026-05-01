@@ -97,15 +97,19 @@ function renderContent(C, S, locale) {
   L.push(`${ind}<h1 class="doc-title">${esc(S["doc.title"])}</h1>`);
   L.push(`${ind}<div class="doc-tag">${esc(S["doc.tag"])}</div>`);
 
-  // Preamble — English locale gets the engrossed-"We" dropcap (the JTC mark,
-  // a tracing of Jacob Shallus's iconic letterform on the parchment). The
-  // literal "We" is kept in the DOM (visually hidden) so screen readers and
-  // copy-paste still see it. Other locales fall through to the standard
-  // ::first-letter Caslon dropcap on whatever their leading character is.
+  // Preamble — locale-specific engrossed dropcap.
+  //   • English: "We" SVG (JTC mark, Shallus's iconic letterform).
+  //   • Spanish: "N" SVG (companion mark in the same calligraphic hand).
+  // The literal opening glyph(s) are kept in the DOM (visually hidden) so
+  // screen readers and copy-paste still see them. Other locales fall through
+  // to the standard ::first-letter Caslon dropcap on the leading character.
   L.push(`${ind}<section id="${esc(C.preamble.id)}" class="anchor" data-chapter="preamble">`);
   if (locale === 'en' && /^We /.test(C.preamble.text)) {
     const rest = C.preamble.text.slice(2); // strip leading "We", keep " the People..."
     L.push(`${ind}  <p class="preamble has-dropcap-we"><span class="dropcap-we" aria-hidden="true"></span><span class="dropcap-letters">We</span>${esc(rest)}</p>`);
+  } else if (locale === 'es' && /^N/.test(C.preamble.text)) {
+    const rest = C.preamble.text.slice(1); // strip leading "N", keep "osotros, el Pueblo..."
+    L.push(`${ind}  <p class="preamble has-dropcap-n"><span class="dropcap-n" aria-hidden="true"></span><span class="dropcap-letters">N</span>${esc(rest)}</p>`);
   } else {
     L.push(`${ind}  <p class="preamble">${esc(C.preamble.text)}</p>`);
   }

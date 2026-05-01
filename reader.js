@@ -155,18 +155,29 @@
     pane.appendChild(el("h1", { class: "doc-title" }, JTC.t("doc.title")));
     pane.appendChild(el("div", { class: "doc-tag" }, JTC.t("doc.tag")));
 
-    // Preamble — English locale gets the engrossed-"We" dropcap (JTC mark,
-    // Shallus's iconic letterform). Real "We" stays in DOM (visually hidden
-    // via .dropcap-letters) for screen readers and copy-paste. Other locales
-    // fall through to the standard ::first-letter Caslon dropcap.
+    // Preamble — locale-specific engrossed dropcap.
+    //   • English: "We" SVG (JTC mark, Shallus's iconic letterform).
+    //   • Spanish: "N" SVG (companion mark, same calligraphic hand).
+    // The literal opening glyph(s) stay in the DOM (visually hidden via
+    // .dropcap-letters) so screen readers and copy-paste keep the original
+    // text intact. Any other locale falls through to the standard
+    // ::first-letter Caslon dropcap.
     const pre = el("section", { id: "preamble", class: "anchor", "data-chapter": "preamble" });
-    const isEN = (document.documentElement.dataset.currentLocale || document.documentElement.lang || "en") === "en";
+    const locale = document.documentElement.dataset.currentLocale || document.documentElement.lang || "en";
+    const isEN = locale === "en";
+    const isES = locale === "es";
     let preP;
     if (isEN && /^We /.test(C.preamble.text)) {
       preP = el("p", { class: "preamble has-dropcap-we" }, [
         el("span", { class: "dropcap-we", "aria-hidden": "true" }),
         el("span", { class: "dropcap-letters" }, "We"),
         C.preamble.text.slice(2)
+      ]);
+    } else if (isES && /^N/.test(C.preamble.text)) {
+      preP = el("p", { class: "preamble has-dropcap-n" }, [
+        el("span", { class: "dropcap-n", "aria-hidden": "true" }),
+        el("span", { class: "dropcap-letters" }, "N"),
+        C.preamble.text.slice(1)
       ]);
     } else {
       preP = el("p", { class: "preamble" }, C.preamble.text);

@@ -926,12 +926,17 @@ body {
    "We" stays in the DOM (visually hidden via .dropcap-letters) so screen
    readers and copy-paste keep the original text intact.
 
+   Spanish locale: SVG dropcap of an engrossed "N" — companion mark in
+   the same calligraphic hand, leading "Nosotros, el Pueblo…".
+
    Other locales: standard Caslon ::first-letter dropcap on the leading
-   character — works for "N" of "Nosotros" (es), and any future locale. */
-.preamble.has-dropcap-we {
+   character. */
+.preamble.has-dropcap-we,
+.preamble.has-dropcap-n {
   position: relative;
 }
-.preamble .dropcap-we {
+.preamble .dropcap-we,
+.preamble .dropcap-n {
   float: left;
   /* Sized to span ~3 body lines. The SVG's internal whitespace (from the
      original 160×160 logo viewBox) provides the optical padding around the
@@ -943,8 +948,6 @@ body {
   /* Mask paints the SVG outline with currentColor / accent so the dropcap
      follows theme accent automatically across Modern / Parchment / Civic. */
   background-color: var(--accent);
-  -webkit-mask-image: url('assets/dropcap-we.svg');
-          mask-image: url('assets/dropcap-we.svg');
   -webkit-mask-size: contain;
           mask-size: contain;
   -webkit-mask-position: top left;
@@ -952,9 +955,17 @@ body {
   -webkit-mask-repeat: no-repeat;
           mask-repeat: no-repeat;
 }
+.preamble .dropcap-we {
+  -webkit-mask-image: url('assets/dropcap-we.svg');
+          mask-image: url('assets/dropcap-we.svg');
+}
+.preamble .dropcap-n {
+  -webkit-mask-image: url('assets/dropcap-n.svg');
+          mask-image: url('assets/dropcap-n.svg');
+}
 .preamble .dropcap-letters {
-  /* Visually hidden but accessible — preserves "We" for screen readers
-     and copy-paste while the SVG handles the visual presentation. */
+  /* Visually hidden but accessible — preserves the leading glyph(s) for
+     screen readers and copy-paste while the SVG handles the visual. */
   position: absolute;
   width: 1px;
   height: 1px;
@@ -966,9 +977,9 @@ body {
   border: 0;
 }
 
-/* Standard Caslon dropcap (non-EN locales). Sized so the cap baseline
-   lands on the body's line-3 baseline (3 lines tall, baseline-to-baseline). */
-.preamble:not(.has-dropcap-we)::first-letter {
+/* Standard Caslon dropcap (locales without an SVG dropcap). Sized so the cap
+   baseline lands on the body's line-3 baseline (3 lines tall, baseline-to-baseline). */
+.preamble:not(.has-dropcap-we):not(.has-dropcap-n)::first-letter {
   float: left;
   font-size: 5.1em;
   line-height: 0.86;
@@ -978,15 +989,16 @@ body {
   margin: 0.04em 0.06em -0.06em -0.02em;
   font-feature-settings: "dlig" 1, "liga" 1, "kern" 1;
 }
-[data-theme="parchment"] .preamble:not(.has-dropcap-we)::first-letter,
-[data-theme="civic"] .preamble:not(.has-dropcap-we)::first-letter {
+[data-theme="parchment"] .preamble:not(.has-dropcap-we):not(.has-dropcap-n)::first-letter,
+[data-theme="civic"] .preamble:not(.has-dropcap-we):not(.has-dropcap-n)::first-letter {
   font-size: 5.4em;
   line-height: 0.84;
 }
 
 /* Mobile: scale the SVG dropcap down on narrow viewports. */
 @media (max-width: 480px) {
-  .preamble .dropcap-we {
+  .preamble .dropcap-we,
+  .preamble .dropcap-n {
     width: 4.4em;
     height: 4.0em;
   }
@@ -1537,10 +1549,10 @@ body {
 [data-font="mono"] .amendment h3,
 [data-font="mono"] .download-cta h2 { font-family: var(--font-mono); letter-spacing: -0.01em; }
 
-/* Mono drop cap (non-EN locales only) — every Courier Prime character is
-   the same width, so a giant initial is awkward. Tone it down. EN locale
-   uses the SVG dropcap regardless of typography override. */
-[data-font="mono"] .preamble:not(.has-dropcap-we)::first-letter {
+/* Mono drop cap (locales without an SVG dropcap) — every Courier Prime
+   character is the same width, so a giant initial is awkward. Tone it down.
+   EN/ES locales use the SVG dropcap regardless of typography override. */
+[data-font="mono"] .preamble:not(.has-dropcap-we):not(.has-dropcap-n)::first-letter {
   font-size: 4em;
   line-height: 0.92;
   margin-right: 0.12em;
