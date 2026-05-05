@@ -295,7 +295,7 @@ const CLIENT_KEYS = [
   'progress.signatures', 'progress.signatures_short',
   'image.source_link', 'image.error_prefix', 'image.error_view',
   'image.error_link', 'image.error_suffix',
-  'image.page_tag_prefix', 'image.view_original',
+  'image.page_tag_prefix', 'image.view_original', 'image.page_chip',
   'image.page_caption_1', 'image.page_caption_2',
   'image.page_caption_3', 'image.page_caption_4',
   'image.bor_title', 'image.bor_tag', 'image.bor_caption',
