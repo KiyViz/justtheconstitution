@@ -55,16 +55,16 @@
   // I–X share the Bill of Rights image above. Multi-page amendments use page 1
   // as the primary view; users can open the lightbox for the full set.
   const AMENDMENT_PAGE_COUNT = { 14: 2, 20: 2, 25: 2, 27: 3 };
-  function ordinalSuffix(n) {
+  function fileOrdinal(n) {
     const m100 = n % 100;
-    if (m100 >= 11 && m100 <= 13) return JTC.t("ordinal.th");
+    if (m100 >= 11 && m100 <= 13) return `${n}th`;
     const m10 = n % 10;
-    return m10 === 1 ? JTC.t("ordinal.st") : m10 === 2 ? JTC.t("ordinal.nd") : m10 === 3 ? JTC.t("ordinal.rd") : JTC.t("ordinal.th");
+    return `${n}${m10 === 1 ? "st" : m10 === 2 ? "nd" : m10 === 3 ? "rd" : "th"}`;
   }
   C.amendments.forEach(am => {
     const n = parseInt(am.id.slice(3), 10);
     if (n < 11) return;
-    const ordinal = `${n}${ordinalSuffix(n)}`;
+    const ordinal = fileOrdinal(n);
     const total = AMENDMENT_PAGE_COUNT[n] || 1;
     PAGE_IMAGES[am.id] = {
       title: am.label,
