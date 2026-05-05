@@ -97,17 +97,16 @@ function renderContent(C, S, locale) {
   L.push(`${ind}<h1 class="doc-title">${esc(S["doc.title"])}</h1>`);
   L.push(`${ind}<div class="doc-tag">${esc(S["doc.tag"])}</div>`);
 
-  // Preamble — locale-specific SVG dropcaps modeled on the engrossed
-  // Constitution letterforms. The visible text stays in the DOM (visually
-  // hidden) so screen readers and copy-paste see standard text. Locales
-  // without a custom SVG fall through to the ::first-letter Caslon dropcap.
+  // Preamble — locale-specific SVG dropcaps. The leading text lives in a
+  // .dropcap-letters span (color:transparent + CSS mask) so it stays
+  // selectable and accessible while showing the engrossed SVG letterform.
   L.push(`${ind}<section id="${esc(C.preamble.id)}" class="anchor" data-chapter="preamble">`);
   if (locale === 'en' && /^We /.test(C.preamble.text)) {
     const rest = C.preamble.text.slice(2);
-    L.push(`${ind}  <p class="preamble has-dropcap-we"><span class="dropcap-we" aria-hidden="true"></span><span class="dropcap-letters">We</span>${esc(rest)}</p>`);
+    L.push(`${ind}  <p class="preamble has-dropcap-we"><span class="dropcap-letters">We</span>${esc(rest)}</p>`);
   } else if (locale === 'es' && /^N/.test(C.preamble.text)) {
     const rest = C.preamble.text.slice(1);
-    L.push(`${ind}  <p class="preamble has-dropcap-n"><span class="dropcap-n" aria-hidden="true"></span><span class="dropcap-letters">N</span>${esc(rest)}</p>`);
+    L.push(`${ind}  <p class="preamble has-dropcap-n"><span class="dropcap-letters">N</span>${esc(rest)}</p>`);
   } else {
     L.push(`${ind}  <p class="preamble">${esc(C.preamble.text)}</p>`);
   }
