@@ -933,12 +933,20 @@ body {
 .preamble.has-dropcap-we .dropcap-letters,
 .preamble.has-dropcap-n .dropcap-letters {
   float: left;
+  position: relative;
   width: 5.6em;
   height: 5.0em;
   margin: -0.10em 0.30em -0.20em -0.10em;
   color: transparent;
   -webkit-user-select: all;
           user-select: all;
+}
+.preamble.has-dropcap-we .dropcap-letters::before,
+.preamble.has-dropcap-n .dropcap-letters::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
   background-color: var(--accent);
   -webkit-mask-size: contain;
           mask-size: contain;
@@ -947,11 +955,11 @@ body {
   -webkit-mask-repeat: no-repeat;
           mask-repeat: no-repeat;
 }
-.preamble.has-dropcap-we .dropcap-letters {
+.preamble.has-dropcap-we .dropcap-letters::before {
   -webkit-mask-image: url('assets/dropcap-we.svg');
           mask-image: url('assets/dropcap-we.svg');
 }
-.preamble.has-dropcap-n .dropcap-letters {
+.preamble.has-dropcap-n .dropcap-letters::before {
   -webkit-mask-image: url('assets/dropcap-n.svg');
           mask-image: url('assets/dropcap-n.svg');
 }
