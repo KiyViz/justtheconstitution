@@ -14,7 +14,7 @@
   // labels so the two ranges don't collide visually.
   const chapters = [
     { id: "preamble", label: JTC.t("progress.preamble"), short: JTC.t("progress.preamble_short") },
-    ...C.articles.map(a => ({ id: a.id, label: a.label, short: a.label.replace("Article ", "") })),
+    ...C.articles.map(a => ({ id: a.id, label: a.label, short: a.label.replace(JTC.t("prefix.article") + " ", "") })),
     { id: "signatures", label: JTC.t("progress.signatures"), short: JTC.t("progress.signatures_short") },
     ...C.amendments.map((am, i) => ({ id: am.id, label: `${JTC.t("prefix.amendment")} ${am.num}`, short: String(i + 1) }))
   ];
