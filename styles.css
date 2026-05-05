@@ -1946,7 +1946,7 @@ html { scrollbar-color: var(--rule) transparent; }
 .text-pane h3:hover > .copy-btn,
 .text-pane .section-head:hover > .copy-btn,
 .signatures__pres:hover > .copy-btn,
-.copy-btn:focus-visible { opacity: 0.35; }
+.copy-btn:focus-visible { opacity: 0.8; }
 /* On touch devices there's no hover — keep them barely visible. */
 @media (hover: none) {
   .copy-btn { opacity: 0.25; }
