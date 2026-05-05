@@ -1949,7 +1949,7 @@ html { scrollbar-color: var(--rule) transparent; }
 .copy-btn:focus-visible { opacity: 0.8; }
 /* On touch devices there's no hover — keep them barely visible. */
 @media (hover: none) {
-  .copy-btn { opacity: 0.25; }
+  .copy-btn { opacity: 0.5; }
 }
 /* Text label next to the copy icon — hidden on mobile to preserve the
    icon-only affordance at small widths. */
