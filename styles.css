@@ -1180,6 +1180,13 @@ body {
   font-size: 14px; font-weight: 600; letter-spacing: -0.005em;
 }
 .image-pane__controls { display: flex; gap: 6px; }
+@media (max-width: 1200px) {
+  .image-pane__head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .image-pane__controls { order: -1; }
+}
 
 .image-frame {
   flex: 1;
