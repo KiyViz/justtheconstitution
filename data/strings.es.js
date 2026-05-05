@@ -143,6 +143,7 @@ module.exports = {
   "image.bor_tag":            "CARTA DE DERECHOS",
   "image.bor_caption":        "Ratificada el 15 de diciembre de 1791 \u2014 Enmiendas I\u2013X",
   "image.view_original":      "Ver página original",
+  "image.page_chip":          "Página {n} →",
 
   // ── Visor ampliado ──
   "lb.aria":                  "Pergamino ampliado",

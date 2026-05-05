@@ -203,7 +203,7 @@
           // the parchment still pops up on tap.
           if (window.matchMedia("(max-width: 960px)").matches) JTC.openLightbox();
         }
-      }, `Page ${a.page} →`);
+      }, JTC.t("image.page_chip").replace("{n}", a.page));
       head.append(headText, pageBtn);
       art.appendChild(head);
 
@@ -334,7 +334,7 @@
             JTC.setCurrentPage(a.page);
             if (window.matchMedia("(max-width: 960px)").matches) JTC.openLightbox();
           }
-        }, `Page ${a.page} →`);
+        }, JTC.t("image.page_chip").replace("{n}", a.page));
         sectionDrop.appendChild(pageBtn);
       }
 

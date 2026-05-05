@@ -147,6 +147,7 @@ module.exports = {
   "image.bor_tag":            "BILL OF RIGHTS",
   "image.bor_caption":        "Ratified December 15, 1791 \u2014 Amendments I\u2013X",
   "image.view_original":      "View original page",
+  "image.page_chip":          "Page {n} →",
 
   // ── Lightbox ──
   "lb.aria":                  "Enlarged parchment",
