@@ -921,69 +921,37 @@ body {
 }
 /* ── Preamble dropcap ──
    Locale-specific SVG dropcaps modeled on the engrossed Constitution
-   letterforms (Jacob Shallus, 1787). Each locale's leading word/letter
-   stays in the DOM (visually hidden via .dropcap-letters) so screen
-   readers and copy-paste keep the original text intact.
+   letterforms (Jacob Shallus, 1787). The dropcap text ("We", "N") lives
+   in a .dropcap-letters span that is floated and sized to match the SVG.
+   The actual glyphs are transparent; a CSS mask paints the engrossed
+   letterform in the theme accent color. Because the real text is in-flow,
+   it remains selectable (copy-paste) and accessible (screen readers).
 
    EN → engrossed "We" (JTC brand mark)
    ES → engrossed "N" (Nosotros — Spanish JTC mark)
    Other locales → standard Caslon ::first-letter dropcap. */
-.preamble.has-dropcap-we {
-  position: relative;
-}
-.preamble .dropcap-we {
+.preamble.has-dropcap-we .dropcap-letters,
+.preamble.has-dropcap-n .dropcap-letters {
   float: left;
-  /* Sized to span ~3 body lines. The SVG's internal whitespace (from the
-     original 160×160 logo viewBox) provides the optical padding around the
-     letterform, so the box is intentionally a bit larger than a pure
-     letter-only crop. Tuned for body 18px / line-height 1.58. */
   width: 5.6em;
   height: 5.0em;
   margin: -0.10em 0.30em -0.20em -0.10em;
-  /* Mask paints the SVG outline with currentColor / accent so the dropcap
-     follows theme accent automatically across Modern / Parchment / Civic. */
+  color: transparent;
   background-color: var(--accent);
+  -webkit-mask-size: contain;
+          mask-size: contain;
+  -webkit-mask-position: top left;
+          mask-position: top left;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+}
+.preamble.has-dropcap-we .dropcap-letters {
   -webkit-mask-image: url('assets/dropcap-we.svg');
           mask-image: url('assets/dropcap-we.svg');
-  -webkit-mask-size: contain;
-          mask-size: contain;
-  -webkit-mask-position: top left;
-          mask-position: top left;
-  -webkit-mask-repeat: no-repeat;
-          mask-repeat: no-repeat;
 }
-.preamble .dropcap-letters {
-  /* Visually hidden but accessible — preserves "We"/"N" for screen readers
-     and copy-paste while the SVG handles the visual presentation. */
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-/* ── Spanish locale: SVG dropcap of the engrossed "N" ── */
-.preamble.has-dropcap-n {
-  position: relative;
-}
-.preamble .dropcap-n {
-  float: left;
-  width: 5.6em;
-  height: 5.0em;
-  margin: -0.10em 0.30em -0.20em -0.10em;
-  background-color: var(--accent);
+.preamble.has-dropcap-n .dropcap-letters {
   -webkit-mask-image: url('assets/dropcap-n.svg');
           mask-image: url('assets/dropcap-n.svg');
-  -webkit-mask-size: contain;
-          mask-size: contain;
-  -webkit-mask-position: top left;
-          mask-position: top left;
-  -webkit-mask-repeat: no-repeat;
-          mask-repeat: no-repeat;
 }
 
 /* Standard Caslon dropcap (locales without a custom SVG). Sized so the cap
@@ -1006,8 +974,8 @@ body {
 
 /* Mobile: scale the SVG dropcaps down on narrow viewports. */
 @media (max-width: 480px) {
-  .preamble .dropcap-we,
-  .preamble .dropcap-n {
+  .preamble.has-dropcap-we .dropcap-letters,
+  .preamble.has-dropcap-n .dropcap-letters {
     width: 4.4em;
     height: 4.0em;
   }
