@@ -375,8 +375,14 @@ function renderLocaleSitemap(C, locale) {
   ).join('\n');
   const defaultHreflang = `      <xhtml:link rel="alternate" hreflang="x-default" href="${SITE_URL}en/"/>`;
 
+  const infoHreflangs = Object.keys(LOCALES).map(l =>
+    `      <xhtml:link rel="alternate" hreflang="${l}" href="${SITE_URL}${l}/info/"/>`
+  ).join('\n');
+  const infoDefaultHreflang = `      <xhtml:link rel="alternate" hreflang="x-default" href="${SITE_URL}en/info/"/>`;
+
   const urls = [
     `  <url>\n    <loc>${base}</loc>\n${hreflangs}\n${defaultHreflang}\n  </url>`,
+    `  <url>\n    <loc>${base}info/</loc>\n${infoHreflangs}\n${infoDefaultHreflang}\n  </url>`,
     ...anchors.map(id =>
       `  <url>\n    <loc>${base}#${id}</loc>\n  </url>`
     )
@@ -522,6 +528,63 @@ function main() {
   const enHtml = fs.readFileSync(path.join(ROOT, 'en', 'index.html'), 'utf8');
   fs.writeFileSync(path.join(ROOT, 'index.html'), enHtml);
   console.log(`wrote index.html (copy of en/ for fallback)`);
+
+  // ── Subpages ──
+  // Build info page (per-locale) and 404 (root, language-neutral).
+  // These use their own templates and only load theme.js.
+  console.log('\n── Building subpages ──');
+
+  const themeHash = fileHash(path.join(ROOT, 'theme.js'));
+  const subCssHash = fileHash(path.join(ROOT, 'styles.css'));
+  const subFaviconHash = fileHash(path.join(ROOT, 'assets', 'favicon-we.svg'));
+
+  // Info page — per-locale
+  const infoTemplate = fs.readFileSync(path.join(ROOT, 'templates', 'info.template.html'), 'utf8');
+  for (const [locale, config] of Object.entries(LOCALES)) {
+    const S = loadStrings(config.strings);
+    let html = infoTemplate;
+
+    html = html.replace('lang="en"', `lang="${locale}"`);
+    // Asset paths: info lives at /{locale}/info/index.html → ../../ to root
+    html = html.replace('href="styles.css"', `href="../../styles.css?v=${subCssHash}"`);
+    html = html.replace('href="assets/favicon-we.svg"', `href="../../assets/favicon-we.svg?v=${subFaviconHash}"`);
+
+    // Head extras (canonical + hreflang for info page)
+    const infoUrl = `${SITE_URL}${locale}/info/`;
+    const hreflangs = Object.keys(LOCALES).map(l =>
+      `  <link rel="alternate" hreflang="${l}" href="${SITE_URL}${l}/info/" />`
+    ).join('\n');
+    const headExtras = [
+      `  <link rel="canonical" href="${infoUrl}" />`,
+      hreflangs,
+      `  <link rel="alternate" hreflang="x-default" href="${SITE_URL}en/info/" />`
+    ].join('\n');
+    if (html.includes(HEAD_MARK_START)) {
+      html = html.replace(
+        new RegExp(`${HEAD_MARK_START}[\\s\\S]*?${HEAD_MARK_END}`),
+        headExtras
+      );
+    }
+
+    html = injectTemplateStrings(html, S);
+
+    // Script tag
+    html = html.replace(SCRIPTS_MARKER, `  <script src="../../theme.js?v=${themeHash}"></script>`);
+
+    const outDir = path.join(ROOT, locale, 'info');
+    fs.mkdirSync(outDir, { recursive: true });
+    fs.writeFileSync(path.join(outDir, 'index.html'), html);
+    console.log(`  wrote ${locale}/info/index.html`);
+  }
+
+  // 404 page — root, language-neutral (theme.js handles locale detection)
+  const fourOhFourTemplate = fs.readFileSync(path.join(ROOT, 'templates', '404.template.html'), 'utf8');
+  let fourOhFour = fourOhFourTemplate;
+  fourOhFour = fourOhFour.replace('href="styles.css"', `href="styles.css?v=${subCssHash}"`);
+  fourOhFour = fourOhFour.replace('href="assets/favicon-we.svg"', `href="assets/favicon-we.svg?v=${subFaviconHash}"`);
+  fourOhFour = fourOhFour.replace(SCRIPTS_MARKER, `  <script src="theme.js?v=${themeHash}"></script>`);
+  fs.writeFileSync(path.join(ROOT, '404.html'), fourOhFour);
+  console.log(`  wrote 404.html`);
 
   console.log('\nBuild complete.');
 }

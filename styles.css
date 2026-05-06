@@ -1645,6 +1645,186 @@ body {
 .site-footer a { color: var(--ink-soft); text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 2px; }
 .site-footer a:hover { color: var(--ink); }
 .site-footer p { margin: 0 0 10px; }
+.footer-nav { margin-top: 20px; }
+.footer-byline { margin-top: 4px; }
+
+/* ===== Subpage shared chrome ===== */
+.subpage-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px clamp(20px, 4vw, 48px);
+  border-bottom: 1px solid var(--hairline);
+}
+.subpage-header .wordmark { text-decoration: none; }
+
+/* ===== 404 page ===== */
+.page-404 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 200px);
+  padding: 48px 24px;
+  text-align: center;
+}
+.page-404__message h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(24px, 4vw, 40px);
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0 0 48px;
+}
+.page-404__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 32px;
+  background: var(--ink);
+  color: var(--bg);
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  text-decoration: none;
+  transition: transform .1s ease, opacity .1s ease;
+}
+.page-404__btn:hover { transform: translateY(-1px); opacity: 0.92; }
+
+/* ===== Info page ===== */
+.info-page {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 64px clamp(20px, 4vw, 48px) 80px;
+}
+.info-section { margin-bottom: 56px; }
+.info-section h1 {
+  font-family: var(--font-sans);
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 16px;
+}
+.info-section h2 {
+  font-family: var(--font-sans);
+  font-size: clamp(18px, 2.2vw, 22px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0 0 16px;
+  padding-top: 24px;
+  border-top: 1px solid var(--hairline);
+}
+.info-section p {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--ink-soft);
+  margin: 0 0 12px;
+  max-width: 60ch;
+}
+
+/* FAQ accordion */
+.faq-item {
+  border-bottom: 1px solid var(--rule-soft);
+  padding: 0;
+}
+.faq-item summary {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+  padding: 14px 0;
+  cursor: pointer;
+  list-style: none;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::before {
+  content: "+";
+  display: inline-block;
+  width: 20px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--ink-faint);
+}
+.faq-item[open] summary::before { content: "\2212"; }
+.faq-item p {
+  font-family: var(--font-serif);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin: 0 0 14px;
+  padding-left: 20px;
+}
+
+/* Contact form */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.form-field span {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-faint);
+}
+.form-field input,
+.form-field textarea {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  line-height: 1.5;
+  padding: 10px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--ink);
+  transition: border-color .15s ease;
+}
+.form-field input:focus,
+.form-field textarea:focus {
+  outline: none;
+  border-color: var(--ink-soft);
+}
+.contact-form__btn {
+  align-self: flex-start;
+  padding: 10px 24px;
+  background: var(--ink);
+  color: var(--bg);
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform .1s ease, opacity .1s ease;
+}
+.contact-form__btn:hover { transform: translateY(-1px); opacity: 0.92; }
+.contact-form__btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.contact-form__status {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding: 10px 0;
+}
+.contact-form__status.is-success { color: var(--ink-soft); }
+.contact-form__status.is-error { color: #b91c1c; }
+.contact-form__alt {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-faint);
+  margin-top: 16px;
+}
 
 /* ── Tools row (settings panel, mobile only) ──
    Mirrors the desktop header's secondary icons (lang / reader / mode) for
