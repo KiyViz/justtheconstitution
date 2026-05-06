@@ -1684,6 +1684,7 @@ body {
   border-bottom: 1px solid var(--hairline);
 }
 .subpage-header .wordmark { text-decoration: none; }
+.subpage-header #lang-btn { display: inline-flex; }
 
 /* ===== 404 page ===== */
 .page-404 {
