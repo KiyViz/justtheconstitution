@@ -16,14 +16,22 @@
   root.dataset.theme = t.theme;
   root.dataset.saturation = t.saturation;
 
-  const btn = document.getElementById('mode-toggle');
-  if (btn) btn.addEventListener('click', () => {
-    const idx = MODES.indexOf(t.mode);
-    t.mode = MODES[(idx + 1) % MODES.length];
-    root.dataset.mode = t.mode;
-    saved.mode = t.mode;
-    localStorage.setItem('jtc:tweaks', JSON.stringify(saved));
-  });
+  // Language switcher (info / subpages)
+  const langBtn = document.getElementById('lang-btn');
+  const langLabel = document.getElementById('lang-label');
+  if (langBtn && langLabel) {
+    const currentLang = root.getAttribute('lang') || 'en';
+    const alt = document.querySelector('link[rel="alternate"][hreflang]:not([hreflang="x-default"]):not([hreflang="' + currentLang + '"])');
+    if (alt) {
+      const targetLang = alt.getAttribute('hreflang');
+      langLabel.textContent = targetLang === 'es' ? 'Español' : 'English';
+      langBtn.addEventListener('click', () => {
+        localStorage.setItem('jtc:lang', targetLang);
+        const href = alt.getAttribute('href');
+        try { location.href = new URL(href).pathname; } catch { location.href = href; }
+      });
+    }
+  }
 
   // Locale detection for 404 page
   const isEs = /^\/es(\/|$)/.test(location.pathname);
