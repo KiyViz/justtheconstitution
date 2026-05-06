@@ -8,6 +8,7 @@ node_modules/
 !en/strings.min.js
 !es/strings.min.js
 styles.min.css
+og-image.png
 
 # wrangler files
 .wrangler
