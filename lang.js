@@ -25,6 +25,7 @@
     const nextLocale = locales[(currentIdx + 1) % locales.length];
 
     btn.addEventListener("click", () => {
+      JTC.trackEvent('language_switched');
       localStorage.setItem("jtc:lang", nextLocale.code);
       location.href = "../" + nextLocale.code + "/" + location.hash;
     });

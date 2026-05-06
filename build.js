@@ -15,6 +15,9 @@ const path = require('path');
 const crypto = require('crypto');
 const vm = require('vm');
 
+let esbuild;
+try { esbuild = require('esbuild'); } catch (e) { /* optional: skip minification if not installed */ }
+
 const ROOT = __dirname;
 const SITE_URL = 'https://justtheconstitution.org/';
 const TEMPLATE = path.join(ROOT, 'index.template.html');
@@ -95,6 +98,7 @@ function renderContent(C, S, locale) {
   const ind = '      ';
 
   L.push(`${ind}<h1 class="doc-title">${esc(S["doc.title"])}</h1>`);
+  if (S["doc.subtitle"]) L.push(`${ind}<p class="doc-subtitle">${esc(S["doc.subtitle"])}</p>`);
   L.push(`${ind}<div class="doc-tag">${esc(S["doc.tag"])}</div>`);
 
   // Preamble — locale-specific SVG dropcaps modeled on the engrossed
@@ -205,9 +209,10 @@ function renderContent(C, S, locale) {
   return L.join('\n');
 }
 
-// ── Head injection (canonical, hreflang, OG, JSON-LD) ──
+// ── Head injection (canonical, hreflang, OG, Twitter, JSON-LD) ──
 function renderHeadExtras(locale, S) {
   const localeUrl = `${SITE_URL}${locale}/`;
+  const buildDate = new Date().toISOString().slice(0, 10);
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Legislation',
@@ -215,8 +220,15 @@ function renderHeadExtras(locale, S) {
     legislationType: 'Constitution',
     inLanguage: locale,
     datePublished: '1787-09-17',
-    url: localeUrl
+    dateModified: buildDate,
+    url: localeUrl,
+    author: { '@type': 'GovernmentOrganization', name: 'Constitutional Convention' },
+    publisher: { '@type': 'Organization', name: 'justtheconstitution.org', url: SITE_URL },
+    isPartOf: { '@type': 'CreativeWork', name: 'Founding Documents of the United States' }
   };
+  const ogTitle = esc(S['meta.og_title'] || S['meta.title']);
+  const ogDesc = esc(S['meta.og_description']);
+  const ogImage = `${SITE_URL}og-image.png`;
   const lines = [
     `  <link rel="canonical" href="${localeUrl}" />`,
     ...Object.keys(LOCALES).map(l =>
@@ -224,10 +236,13 @@ function renderHeadExtras(locale, S) {
     ),
     `  <link rel="alternate" hreflang="x-default" href="${SITE_URL}en/" />`,
     `  <meta property="og:url" content="${localeUrl}" />`,
-    `  <meta property="og:title" content="${esc(S['meta.og_title'] || S['meta.title'])}" />`,
-    `  <meta property="og:description" content="${esc(S['meta.og_description'])}" />`,
-    `  <meta property="og:image" content="${SITE_URL}og-image.png" />`,
+    `  <meta property="og:title" content="${ogTitle}" />`,
+    `  <meta property="og:description" content="${ogDesc}" />`,
+    `  <meta property="og:image" content="${ogImage}" />`,
     `  <meta name="twitter:card" content="summary_large_image" />`,
+    `  <meta name="twitter:title" content="${ogTitle}" />`,
+    `  <meta name="twitter:description" content="${ogDesc}" />`,
+    `  <meta name="twitter:image" content="${ogImage}" />`,
     `  <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>`
   ];
   return [`  ${HEAD_MARK_START}`, ...lines, `  ${HEAD_MARK_END}`].join('\n');
@@ -337,18 +352,18 @@ function renderScripts(locale, config) {
   }
   const dataPath = `../${config.data}`;
   const lines = [
-    `  <script src="strings.min.js"></script>`,
-    `  <script src="${src(dataPath)}"></script>`,
-    `  <script src="${src('../core.js')}"></script>`,
-    `  <script src="${src('../citations.js')}"></script>`,
-    `  <script src="${src('../tweaks.js')}"></script>`,
-    `  <script src="${src('../images.js')}"></script>`,
-    `  <script src="${src('../reader.js')}"></script>`,
-    `  <script src="${src('../progress.js')}"></script>`,
-    `  <script src="${src('../nav.js')}"></script>`,
-    `  <script src="${src('../search.js')}"></script>`,
-    `  <script src="${src('../lang.js')}"></script>`,
-    `  <script src="${src('../app.js')}"></script>`
+    `  <script defer src="strings.min.js"></script>`,
+    `  <script defer src="${src(dataPath)}"></script>`,
+    `  <script defer src="${src('../core.js')}"></script>`,
+    `  <script defer src="${src('../citations.js')}"></script>`,
+    `  <script defer src="${src('../tweaks.js')}"></script>`,
+    `  <script defer src="${src('../images.js')}"></script>`,
+    `  <script defer src="${src('../reader.js')}"></script>`,
+    `  <script defer src="${src('../progress.js')}"></script>`,
+    `  <script defer src="${src('../nav.js')}"></script>`,
+    `  <script defer src="${src('../search.js')}"></script>`,
+    `  <script defer src="${src('../lang.js')}"></script>`,
+    `  <script defer src="${src('../app.js')}"></script>`
   ];
   return lines.join('\n');
 }
@@ -363,6 +378,7 @@ function localesMetaJson() {
 // ── Sitemap ──
 function renderLocaleSitemap(C, locale) {
   const base = `${SITE_URL}${locale}/`;
+  const lastmod = new Date().toISOString().slice(0, 10);
   const anchors = [
     'preamble',
     ...C.articles.flatMap(a => [a.id, ...a.sections.map(s => s.id)]),
@@ -380,9 +396,15 @@ function renderLocaleSitemap(C, locale) {
   ).join('\n');
   const infoDefaultHreflang = `      <xhtml:link rel="alternate" hreflang="x-default" href="${SITE_URL}en/info/"/>`;
 
+  const eduHreflangs = Object.keys(LOCALES).map(l =>
+    `      <xhtml:link rel="alternate" hreflang="${l}" href="${SITE_URL}${l}/for-educators/"/>`
+  ).join('\n');
+  const eduDefaultHreflang = `      <xhtml:link rel="alternate" hreflang="x-default" href="${SITE_URL}en/for-educators/"/>`;
+
   const urls = [
-    `  <url>\n    <loc>${base}</loc>\n${hreflangs}\n${defaultHreflang}\n  </url>`,
-    `  <url>\n    <loc>${base}info/</loc>\n${infoHreflangs}\n${infoDefaultHreflang}\n  </url>`,
+    `  <url>\n    <loc>${base}</loc>\n    <lastmod>${lastmod}</lastmod>\n${hreflangs}\n${defaultHreflang}\n  </url>`,
+    `  <url>\n    <loc>${base}info/</loc>\n    <lastmod>${lastmod}</lastmod>\n${infoHreflangs}\n${infoDefaultHreflang}\n  </url>`,
+    `  <url>\n    <loc>${base}for-educators/</loc>\n    <lastmod>${lastmod}</lastmod>\n${eduHreflangs}\n${eduDefaultHreflang}\n  </url>`,
     ...anchors.map(id =>
       `  <url>\n    <loc>${base}#${id}</loc>\n  </url>`
     )
@@ -396,8 +418,9 @@ ${urls}
 }
 
 function renderSitemapIndex() {
+  const lastmod = new Date().toISOString().slice(0, 10);
   const sitemaps = Object.keys(LOCALES).map(l =>
-    `  <sitemap>\n    <loc>${SITE_URL}${l}/sitemap.xml</loc>\n  </sitemap>`
+    `  <sitemap>\n    <loc>${SITE_URL}${l}/sitemap.xml</loc>\n    <lastmod>${lastmod}</lastmod>\n  </sitemap>`
   ).join('\n');
   return `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -464,6 +487,8 @@ function main() {
     html = html.replace('href="styles.css"', `href="../styles.css?v=${cssHash}"`);
     const faviconHash = fileHash(path.join(ROOT, 'assets', 'favicon-we.svg'));
     html = html.replace('href="assets/favicon-we.svg"', `href="../assets/favicon-we.svg?v=${faviconHash}"`);
+    // Font preloads — rewrite to locale-relative paths
+    html = html.replace(/href="fonts\//g, 'href="../fonts/');
 
     // Inject locale metadata for lang switcher
     html = html.replace('<html', `<html data-locales='${esc(localesMeta)}' data-current-locale="${locale}"`);
@@ -549,15 +574,30 @@ function main() {
     html = html.replace('href="styles.css"', `href="../../styles.css?v=${subCssHash}"`);
     html = html.replace('href="assets/favicon-we.svg"', `href="../../assets/favicon-we.svg?v=${subFaviconHash}"`);
 
-    // Head extras (canonical + hreflang for info page)
+    // Head extras (canonical + hreflang + FAQPage schema for info page)
     const infoUrl = `${SITE_URL}${locale}/info/`;
     const hreflangs = Object.keys(LOCALES).map(l =>
       `  <link rel="alternate" hreflang="${l}" href="${SITE_URL}${l}/info/" />`
     ).join('\n');
+    // FAQPage structured data
+    const faqKeys = [1, 2, 3, 4, 5, 6];
+    const faqItems = faqKeys
+      .filter(n => S[`info.faq_q${n}`] && S[`info.faq_a${n}`])
+      .map(n => ({
+        '@type': 'Question',
+        name: S[`info.faq_q${n}`],
+        acceptedAnswer: { '@type': 'Answer', text: S[`info.faq_a${n}`] }
+      }));
+    const faqSchema = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faqItems
+    });
     const headExtras = [
       `  <link rel="canonical" href="${infoUrl}" />`,
       hreflangs,
-      `  <link rel="alternate" hreflang="x-default" href="${SITE_URL}en/info/" />`
+      `  <link rel="alternate" hreflang="x-default" href="${SITE_URL}en/info/" />`,
+      `  <script type="application/ld+json">${faqSchema}</script>`
     ].join('\n');
     if (html.includes(HEAD_MARK_START)) {
       html = html.replace(
@@ -569,7 +609,7 @@ function main() {
     html = injectTemplateStrings(html, S);
 
     // Script tag
-    html = html.replace(SCRIPTS_MARKER, `  <script src="../../theme.js?v=${themeHash}"></script>`);
+    html = html.replace(SCRIPTS_MARKER, `  <script defer src="../../theme.js?v=${themeHash}"></script>`);
 
     const outDir = path.join(ROOT, locale, 'info');
     fs.mkdirSync(outDir, { recursive: true });
@@ -577,14 +617,108 @@ function main() {
     console.log(`  wrote ${locale}/info/index.html`);
   }
 
+  // Educators page — per-locale
+  const educatorsTemplate = fs.readFileSync(path.join(ROOT, 'templates', 'educators.template.html'), 'utf8');
+  for (const [locale, config] of Object.entries(LOCALES)) {
+    const S = loadStrings(config.strings);
+    let html = educatorsTemplate;
+
+    html = html.replace('lang="en"', `lang="${locale}"`);
+    html = html.replace('href="styles.css"', `href="../../styles.css?v=${subCssHash}"`);
+    html = html.replace('href="assets/favicon-we.svg"', `href="../../assets/favicon-we.svg?v=${subFaviconHash}"`);
+
+    const eduUrl = `${SITE_URL}${locale}/for-educators/`;
+    const hreflangs = Object.keys(LOCALES).map(l =>
+      `  <link rel="alternate" hreflang="${l}" href="${SITE_URL}${l}/for-educators/" />`
+    ).join('\n');
+    const headExtras = [
+      `  <link rel="canonical" href="${eduUrl}" />`,
+      hreflangs,
+      `  <link rel="alternate" hreflang="x-default" href="${SITE_URL}en/for-educators/" />`
+    ].join('\n');
+    if (html.includes(HEAD_MARK_START)) {
+      html = html.replace(
+        new RegExp(`${HEAD_MARK_START}[\\s\\S]*?${HEAD_MARK_END}`),
+        headExtras
+      );
+    }
+
+    html = injectTemplateStrings(html, S);
+    html = html.replace(SCRIPTS_MARKER, `  <script defer src="../../theme.js?v=${themeHash}"></script>`);
+
+    const outDir = path.join(ROOT, locale, 'for-educators');
+    fs.mkdirSync(outDir, { recursive: true });
+    fs.writeFileSync(path.join(outDir, 'index.html'), html);
+    console.log(`  wrote ${locale}/for-educators/index.html`);
+  }
+
   // 404 page — root, language-neutral (theme.js handles locale detection)
   const fourOhFourTemplate = fs.readFileSync(path.join(ROOT, 'templates', '404.template.html'), 'utf8');
   let fourOhFour = fourOhFourTemplate;
   fourOhFour = fourOhFour.replace('href="styles.css"', `href="styles.css?v=${subCssHash}"`);
   fourOhFour = fourOhFour.replace('href="assets/favicon-we.svg"', `href="assets/favicon-we.svg?v=${subFaviconHash}"`);
-  fourOhFour = fourOhFour.replace(SCRIPTS_MARKER, `  <script src="theme.js?v=${themeHash}"></script>`);
+  fourOhFour = fourOhFour.replace(SCRIPTS_MARKER, `  <script defer src="theme.js?v=${themeHash}"></script>`);
   fs.writeFileSync(path.join(ROOT, '404.html'), fourOhFour);
   console.log(`  wrote 404.html`);
+
+  // ── OG image check ──
+  const ogPng = path.join(ROOT, 'og-image.png');
+  if (!fs.existsSync(ogPng)) {
+    console.log('\n  warning: og-image.png missing. Export assets/og-image.svg as 1200×630 PNG to root.');
+  }
+
+  // ── Minification (optional — requires esbuild) ──
+  if (esbuild) {
+    console.log('\n── Minifying assets ──');
+    let totalSaved = 0;
+
+    // Minify JS files → .min.js alongside originals
+    const jsFiles = [
+      'core.js', 'citations.js', 'tweaks.js', 'images.js',
+      'reader.js', 'progress.js', 'nav.js', 'search.js',
+      'lang.js', 'app.js', 'theme.js'
+    ];
+    const dataFiles = Object.values(LOCALES).map(c => c.data);
+
+    for (const file of [...jsFiles, ...dataFiles]) {
+      const filePath = path.join(ROOT, file);
+      if (!fs.existsSync(filePath)) continue;
+      const original = fs.readFileSync(filePath, 'utf8');
+      const result = esbuild.transformSync(original, { minify: true, loader: 'js' });
+      const minPath = filePath.replace(/\.js$/, '.min.js');
+      fs.writeFileSync(minPath, result.code);
+      totalSaved += Buffer.byteLength(original) - Buffer.byteLength(result.code);
+    }
+
+    // Minify CSS → styles.min.css
+    const cssPath = path.join(ROOT, 'styles.css');
+    const originalCss = fs.readFileSync(cssPath, 'utf8');
+    const cssResult = esbuild.transformSync(originalCss, { minify: true, loader: 'css' });
+    const minCssPath = path.join(ROOT, 'styles.min.css');
+    fs.writeFileSync(minCssPath, cssResult.code);
+    totalSaved += Buffer.byteLength(originalCss) - Buffer.byteLength(cssResult.code);
+
+    console.log(`  minified ${jsFiles.length + dataFiles.length} JS + 1 CSS (saved ${(totalSaved / 1024).toFixed(1)} KB)`);
+
+    // Rewrite built HTML to reference minified assets
+    const htmlFiles = [
+      path.join(ROOT, 'index.html'),
+      ...Object.keys(LOCALES).map(l => path.join(ROOT, l, 'index.html')),
+      ...Object.keys(LOCALES).map(l => path.join(ROOT, l, 'info', 'index.html')),
+      ...Object.keys(LOCALES).map(l => path.join(ROOT, l, 'for-educators', 'index.html')),
+      path.join(ROOT, '404.html')
+    ];
+    for (const htmlFile of htmlFiles) {
+      if (!fs.existsSync(htmlFile)) continue;
+      let h = fs.readFileSync(htmlFile, 'utf8');
+      h = h.replace(/styles\.css\?v=/g, 'styles.min.css?v=');
+      h = h.replace(/(src="[^"]*?)\.js\?v=/g, '$1.min.js?v=');
+      fs.writeFileSync(htmlFile, h);
+    }
+    console.log(`  rewrote ${htmlFiles.length} HTML files to use minified assets`);
+  } else {
+    console.log('\n(esbuild not installed — skipping minification. Run npm install to enable.)');
+  }
 
   console.log('\nBuild complete.');
 }

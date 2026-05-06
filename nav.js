@@ -54,15 +54,21 @@
   }
 
   // ---- Drawer (hamburger) ----
+  let releaseDrawerTrap = null;
   function openDrawer() {
     const d = document.getElementById("toc-drawer");
     d.classList.add("is-open");
+    d.setAttribute("aria-modal", "true");
     renderToc(d.querySelector(".toc"));
     document.body.style.overflow = "hidden";
+    releaseDrawerTrap = JTC.trapFocus(d);
   }
   function closeDrawer() {
-    document.getElementById("toc-drawer").classList.remove("is-open");
+    const d = document.getElementById("toc-drawer");
+    d.classList.remove("is-open");
+    d.removeAttribute("aria-modal");
     document.body.style.overflow = "";
+    if (releaseDrawerTrap) { releaseDrawerTrap(); releaseDrawerTrap = null; }
   }
 
   // ---- Share popover ----
@@ -96,6 +102,7 @@
       const action = row.dataset.action;
       const url = location.href;
       const title = document.title;
+      JTC.trackEvent('share_clicked');
 
       if (action === "copy") {
         const ok = await copyText(url);

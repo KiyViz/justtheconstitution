@@ -96,6 +96,7 @@
       const opts = { locale, url: SITE_URL };
       const payload = formatCopyPayload(text, source, mode, opts);
       const ok = await copyText(payload);
+      if (ok) JTC.trackEvent('citation_copied');
       showToast(ok ? JTC.t("toast.copied") : JTC.t("toast.copy_failed"));
     });
     host.appendChild(btn);
@@ -454,6 +455,7 @@
   }
 
   function downloadMarkdown() {
+    JTC.trackEvent('download_transcript');
     const blob = new Blob([buildMarkdown()], { type: "text/markdown;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");

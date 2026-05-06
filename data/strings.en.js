@@ -8,13 +8,14 @@ module.exports = {
   "a11y.skip_to_content":     "Skip to the Constitution",
 
   // ── Page metadata ──
-  "meta.title":               "Just the Constitution",
+  "meta.title":               "U.S. Constitution — Full Text & All 27 Amendments | justtheconstitution.org",
   "meta.description":         "The full text of the United States Constitution and its twenty-seven amendments, paired with the original National Archives parchment. No ads. No commentary. Just the info.",
   "meta.og_title":            "Just the Constitution",
-  "meta.og_description":      "The founding document, unabridged. Original text and facsimiles, side by side.",
+  "meta.og_description":      "The full text of the U.S. Constitution and all 27 amendments. No ads. No commentary. No paywall. Just the founding document.",
 
   // ── Document title / heading ──
   "doc.title":                "The Constitution of the United States",
+  "doc.subtitle":             "The complete text, as inscribed in 1787, with all twenty-seven amendments.",
   "doc.tag":                  "We the People \u00b7 September 17, 1787",
 
   // ── Sections ──
@@ -224,10 +225,10 @@ module.exports = {
 
   // ── Download CTA ──
   "download.heading":         "Take it with you.",
-  "download.description":     "The full document \u2014 preamble, articles, signatures, all twenty-seven amendments \u2014 as a single Markdown file. Readable anywhere.",
-  "download.button":          "Download Markdown",
+  "download.description":     "The full document \u2014 preamble, articles, signatures, all twenty-seven amendments \u2014 as a plain text file. Works offline, in any app.",
+  "download.button":          "Download transcript",
   "download.filename":        "us-constitution.md",
-  "download.hint":            "us-constitution.md",
+  "download.hint":            "us-constitution.md \u00b7 plain text",
 
   // ── Markdown export ──
   "md.source_footer":         "Source: [justtheconstitution.org](https://justtheconstitution.org)",
@@ -264,6 +265,7 @@ module.exports = {
   "info.faq_a6":              "Use the copy button on any paragraph to get a formatted citation in Bluebook, MLA, or Chicago style. The citation engine generates the reference automatically.",
 
   "info.privacy_heading":     "Privacy",
+  "info.privacy_updated":     "Last updated May 2026.",
   "info.privacy_no_cookies":  "This site does not use cookies. We do not track you. We do not sell data.",
   "info.privacy_analytics":   "We use Cloudflare Web Analytics to monitor site performance. This collects anonymized, aggregated data (page views, country-level geography, referrer) with no personally identifiable information. It is cookie-free and EU-compliant.",
   "info.privacy_localstorage":"Your reading position and display preferences are saved in your browser’s local storage so you can pick up where you left off. This data never leaves your device.",
@@ -289,6 +291,35 @@ module.exports = {
   // ── Language switcher ──
   "lang.button_aria":         "Change language",
   "lang.button_title":        "Language",
+
+  // ── Educators page ──
+  "educators.title":          "For Educators — Just the Constitution",
+  "educators.meta_description": "Use justtheconstitution.org in your classroom. Direct links to every article and amendment, citation guide, and sharing tools for students.",
+  "educators.heading":        "For Educators",
+  "educators.intro":          "justtheconstitution.org is built for the classroom. Ad-free, distraction-free, and available on any device your students use. No accounts, no logins, no cost.",
+  "educators.use_heading":    "How to use this in your classroom",
+  "educators.use_p1":         "The reading page is designed for both guided and independent study:",
+  "educators.use_li1":        "Assign specific sections using the direct links below — students land exactly where you want them.",
+  "educators.use_li2":        "The built-in citation engine generates Bluebook, MLA, and Chicago references automatically. Students copy a paragraph and get a properly formatted citation.",
+  "educators.use_li3":        "Reading progress is saved locally in each student's browser. They can resume where they left off without creating an account.",
+  "educators.use_li4":        "Works on phones, tablets, and laptops. Dark mode and adjustable text size accommodate different reading environments.",
+  "educators.links_heading":  "Direct links to key sections",
+  "educators.links_intro":    "Share these links with students or paste them into your syllabus. Each opens the reading page scrolled to the exact section.",
+  "educators.link_preamble":  "Preamble",
+  "educators.link_art1":      "Article I — The Legislature",
+  "educators.link_art2":      "Article II — The Executive",
+  "educators.link_art3":      "Article III — The Judiciary",
+  "educators.link_amendments":"All Amendments",
+  "educators.link_bor":       "Bill of Rights (Amendments I–X)",
+  "educators.link_13th":      "13th Amendment — Abolition of Slavery",
+  "educators.link_14th":      "14th Amendment — Equal Protection",
+  "educators.link_19th":      "19th Amendment — Women's Suffrage",
+  "educators.cite_heading":   "How students should cite",
+  "educators.cite_p1":        "Every paragraph on the reading page has a copy button. Tap it to choose a citation format: Bluebook, MLA, Chicago, Markdown, or BibTeX.",
+  "educators.cite_p2":        "The citation engine identifies the exact article, section, and clause automatically. No manual formatting required.",
+  "educators.share_heading":  "Share with your class",
+  "educators.share_p1":       "Copy and send this link to your students. It works on any device, requires no setup, and will never ask them to sign up for anything.",
+  "educators.share_url":      "justtheconstitution.org",
 
   // ── Schema.org ──
   "schema.name":              "Constitution of the United States",

@@ -173,6 +173,7 @@
   let lbDragging = false;
   let lbStart = { x: 0, y: 0 };
 
+  let releaseLbTrap = null;
   function openLightbox() {
     const info = PAGE_IMAGES[currentPage] || PAGE_IMAGES[1];
     const lb = document.getElementById("lightbox");
@@ -181,18 +182,22 @@
     const sub = document.getElementById("lb-sub");
     title.textContent = info.title;
     sub.textContent = info.caption;
-    // Use the full-res image when zoomed
     img.src = info.local;
     img.onerror = () => { img.onerror = null; img.src = info.fallback; };
     lbZoom = 1;
     lbOffset = { x: 0, y: 0 };
     applyLbTransform();
     lb.classList.add("is-open");
+    lb.setAttribute("aria-modal", "true");
     document.body.style.overflow = "hidden";
+    releaseLbTrap = JTC.trapFocus(lb);
   }
   function closeLightbox() {
-    document.getElementById("lightbox").classList.remove("is-open");
+    const lb = document.getElementById("lightbox");
+    lb.classList.remove("is-open");
+    lb.removeAttribute("aria-modal");
     document.body.style.overflow = "";
+    if (releaseLbTrap) { releaseLbTrap(); releaseLbTrap = null; }
   }
   function applyLbTransform() {
     const img = document.getElementById("lb-img");

@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="color-scheme" content="light dark" />
-  <title>Just the Constitution</title>
+  <title>U.S. Constitution — Full Text &amp; All 27 Amendments | justtheconstitution.org</title>
   <meta name="description" content="The full text of the United States Constitution and its twenty-seven amendments, paired with the original National Archives parchment. No ads. No commentary. Just the info." />
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
   <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)" />
@@ -13,7 +13,9 @@
   <meta property="og:type" content="website" />
   <link rel="icon" type="image/svg+xml" href="../assets/favicon-we.svg?v=1188bdda" />
   <!-- Fonts self-hosted in fonts/ — see @font-face rules at top of styles.css -->
-  <link rel="stylesheet" href="../styles.css?v=9d04b7fa" />
+  <link rel="preload" href="../fonts/libre-caslon-text-400-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../fonts/public-sans-400-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="../styles.min.css?v=5da65cfd" />
   <!-- BUILD:HEAD-START -->
   <link rel="canonical" href="https://justtheconstitution.org/en/" />
   <link rel="alternate" hreflang="en" href="https://justtheconstitution.org/en/" />
@@ -21,13 +23,17 @@
   <link rel="alternate" hreflang="x-default" href="https://justtheconstitution.org/en/" />
   <meta property="og:url" content="https://justtheconstitution.org/en/" />
   <meta property="og:title" content="Just the Constitution" />
-  <meta property="og:description" content="The founding document, unabridged. Original text and facsimiles, side by side." />
+  <meta property="og:description" content="The full text of the U.S. Constitution and all 27 amendments. No ads. No commentary. No paywall. Just the founding document." />
   <meta property="og:image" content="https://justtheconstitution.org/og-image.png" />
   <meta name="twitter:card" content="summary_large_image" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Legislation","name":"Constitution of the United States","legislationType":"Constitution","inLanguage":"en","datePublished":"1787-09-17","url":"https://justtheconstitution.org/en/"}</script>
+  <meta name="twitter:title" content="Just the Constitution" />
+  <meta name="twitter:description" content="The full text of the U.S. Constitution and all 27 amendments. No ads. No commentary. No paywall. Just the founding document." />
+  <meta name="twitter:image" content="https://justtheconstitution.org/og-image.png" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Legislation","name":"Constitution of the United States","legislationType":"Constitution","inLanguage":"en","datePublished":"1787-09-17","dateModified":"2026-05-06","url":"https://justtheconstitution.org/en/","author":{"@type":"GovernmentOrganization","name":"Constitutional Convention"},"publisher":{"@type":"Organization","name":"justtheconstitution.org","url":"https://justtheconstitution.org/"},"isPartOf":{"@type":"CreativeWork","name":"Founding Documents of the United States"}}</script>
   <!-- BUILD:HEAD-END -->
 </head>
 <body>
+  <noscript><p style="padding:1em;text-align:center;font-family:sans-serif">The full text is readable below. JavaScript enables search, navigation, and the image pane.</p></noscript>
 
   <!-- ===== Skip link (a11y) — first focusable element on the page.
        Hidden until focused; jumps focus to the Constitution body. ===== -->
@@ -117,6 +123,7 @@
       <!-- Text pane — pre-rendered by build.js, hydrated by app.js. -->
       <article class="text-pane" id="text-pane" aria-label="Constitution text">
       <h1 class="doc-title">The Constitution of the United States</h1>
+      <p class="doc-subtitle">The complete text, as inscribed in 1787, with all twenty-seven amendments.</p>
       <div class="doc-tag">We the People · September 17, 1787</div>
       <section id="preamble" class="anchor" data-chapter="preamble">
         <p class="preamble has-dropcap-we"><span class="dropcap-we" aria-hidden="true"></span><span class="dropcap-letters">We</span> the People of the United States, in Order to form a more perfect Union, establish Justice, insure domestic Tranquility, provide for the common defence, promote the general Welfare, and secure the Blessings of Liberty to ourselves and our Posterity, do ordain and establish this Constitution for the United States of America.</p>
@@ -798,8 +805,8 @@
       </section>
       <section class="download-cta">
         <h2>Take it with you.</h2>
-        <p>The full document — preamble, articles, signatures, all twenty-seven amendments — as a single Markdown file. Readable anywhere.</p>
-        <div class="download-cta__hint">us-constitution.md</div>
+        <p>The full document — preamble, articles, signatures, all twenty-seven amendments — as a plain text file. Works offline, in any app.</p>
+        <div class="download-cta__hint">us-constitution.md · plain text</div>
       </section>
       </article>
 
@@ -943,17 +950,17 @@
   <!-- ===== Toast (share feedback) ===== -->
   <div class="share-toast" id="share-toast" role="status" aria-live="polite" hidden>Link copied</div>
 
-    <script src="strings.min.js"></script>
-  <script src="../data/constitution.js?v=b9b17daf"></script>
-  <script src="../core.js?v=91ec686e"></script>
-  <script src="../citations.js?v=5a18e068"></script>
-  <script src="../tweaks.js?v=d8c2036d"></script>
-  <script src="../images.js?v=7936f8e6"></script>
-  <script src="../reader.js?v=40fd8bd0"></script>
-  <script src="../progress.js?v=35bbd91b"></script>
-  <script src="../nav.js?v=beac78f4"></script>
-  <script src="../search.js?v=82d5e760"></script>
-  <script src="../lang.js?v=1fe0ff27"></script>
-  <script src="../app.js?v=56dcf763"></script>
+    <script defer src="strings.min.js"></script>
+  <script defer src="../data/constitution.min.js?v=b9b17daf"></script>
+  <script defer src="../core.min.js?v=2a4d1e7b"></script>
+  <script defer src="../citations.min.js?v=5a18e068"></script>
+  <script defer src="../tweaks.min.js?v=d8c2036d"></script>
+  <script defer src="../images.min.js?v=d136427c"></script>
+  <script defer src="../reader.min.js?v=ef738a42"></script>
+  <script defer src="../progress.min.js?v=35bbd91b"></script>
+  <script defer src="../nav.min.js?v=c4d169cd"></script>
+  <script defer src="../search.min.js?v=82d5e760"></script>
+  <script defer src="../lang.min.js?v=09004eaa"></script>
+  <script defer src="../app.min.js?v=ae9c3d93"></script>
 </body>
 </html>

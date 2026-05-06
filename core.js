@@ -61,11 +61,45 @@
     setTimeout(() => { window.JTC.suppressHashSync = false; }, 1200);
   }
 
+  function trapFocus(container) {
+    const focusable = 'a[href],button:not([disabled]),input:not([disabled]),select,textarea,[tabindex]:not([tabindex="-1"])';
+    const prev = document.activeElement;
+    const first = container.querySelector(focusable);
+    if (first) first.focus();
+    function handler(e) {
+      if (e.key !== 'Tab') return;
+      const els = Array.from(container.querySelectorAll(focusable));
+      if (!els.length) return;
+      const last = els[els.length - 1];
+      if (e.shiftKey && document.activeElement === els[0]) {
+        e.preventDefault(); last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault(); els[0].focus();
+      }
+    }
+    container.addEventListener('keydown', handler);
+    return function release() {
+      container.removeEventListener('keydown', handler);
+      if (prev && prev.focus) prev.focus();
+    };
+  }
+
+  const tracked = {};
+  function trackEvent(name) {
+    if (tracked[name]) return;
+    tracked[name] = true;
+    if (typeof performance !== 'undefined' && performance.mark) {
+      performance.mark('jtc:' + name);
+    }
+  }
+
   const JTC = window.JTC;
   JTC.el = el;
   JTC.copyText = copyText;
   JTC.showToast = showToast;
   JTC.scrollToId = scrollToId;
+  JTC.trapFocus = trapFocus;
+  JTC.trackEvent = trackEvent;
   JTC.SITE_URL = "https://justtheconstitution.org";
   JTC.suppressHashSync = false;
 })();

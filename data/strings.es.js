@@ -6,13 +6,14 @@ module.exports = {
   "a11y.skip_to_content":     "Saltar a la Constitución",
 
   // ── Metadatos de página ──
-  "meta.title":               "Solo la Constitución",
+  "meta.title":               "Constitución de EE. UU. — Texto completo y las 27 enmiendas | justtheconstitution.org",
   "meta.description":         "El texto completo de la Constitución de los Estados Unidos y sus veintisiete enmiendas, junto al pergamino original de los Archivos Nacionales. Sin anuncios. Sin comentarios. Solo la información.",
   "meta.og_title":            "Solo la Constitución",
-  "meta.og_description":      "El documento fundacional, íntegro. Texto original y facsímiles, lado a lado.",
+  "meta.og_description":      "El texto completo de la Constitución de EE. UU. y las 27 enmiendas. Sin anuncios. Sin comentarios. Solo el documento fundacional.",
 
   // ── Título del documento ──
   "doc.title":                "La Constitución de los Estados Unidos",
+  "doc.subtitle":             "El texto completo, tal como se inscribió en 1787, con las veintisiete enmiendas.",
   "doc.tag":                  "Nosotros, el Pueblo \u00b7 17 de septiembre de 1787",
 
   // ── Secciones ──
@@ -220,9 +221,9 @@ module.exports = {
   // ── Descarga ──
   "download.heading":         "Llévalo contigo.",
   "download.description":     "El documento completo \u2014 preámbulo, artículos, firmas, las veintisiete enmiendas \u2014 como un archivo Markdown. Legible en cualquier lugar.",
-  "download.button":          "Descargar Markdown",
+  "download.button":          "Descargar transcripción",
   "download.filename":        "constitucion-eeuu.md",
-  "download.hint":            "constitucion-eeuu.md",
+  "download.hint":            "constitucion-eeuu.md · texto",
 
   // ── Exportación Markdown ──
   "md.source_footer":         "Fuente: [justtheconstitution.org](https://justtheconstitution.org)",
@@ -259,6 +260,7 @@ module.exports = {
   "info.faq_a6":              "Use el botón de copiar en cualquier párrafo para obtener una cita formateada en estilo Bluebook, MLA o Chicago. El motor de citación genera la referencia automáticamente.",
 
   "info.privacy_heading":     "Privacidad",
+  "info.privacy_updated":     "Última actualización: mayo de 2026.",
   "info.privacy_no_cookies":  "Este sitio no usa cookies. No te rastreamos. No vendemos datos.",
   "info.privacy_analytics":   "Usamos Cloudflare Web Analytics para monitorear el rendimiento del sitio. Esto recopila datos anónimos y agregados (vistas de página, geografía a nivel de país, referente) sin información personal identificable. Es libre de cookies y cumple con la normativa de la UE.",
   "info.privacy_localstorage":"Tu posición de lectura y preferencias de visualización se guardan en el almacenamiento local de tu navegador para que puedas continuar donde lo dejaste. Estos datos nunca salen de tu dispositivo.",
@@ -286,6 +288,35 @@ module.exports = {
   "lang.button_title":        "Idioma",
 
   // ── Schema.org ──
+  // ── Página para educadores ──
+  "educators.title":          "Para educadores — Solo la Constitución",
+  "educators.meta_description": "Use justtheconstitution.org en su aula. Enlaces directos a cada artículo y enmienda, guía de citación y herramientas para compartir con estudiantes.",
+  "educators.heading":        "Para educadores",
+  "educators.intro":          "justtheconstitution.org está diseñado para el aula. Sin anuncios, sin distracciones y disponible en cualquier dispositivo que usen sus estudiantes. Sin cuentas, sin registro, sin costo.",
+  "educators.use_heading":    "Cómo usar esto en su aula",
+  "educators.use_p1":         "La página de lectura está diseñada tanto para estudio guiado como independiente:",
+  "educators.use_li1":        "Asigne secciones específicas usando los enlaces directos a continuación — los estudiantes llegan exactamente donde usted quiere.",
+  "educators.use_li2":        "El motor de citación integrado genera referencias en Bluebook, MLA y Chicago automáticamente. Los estudiantes copian un párrafo y obtienen una cita con formato correcto.",
+  "educators.use_li3":        "El progreso de lectura se guarda localmente en el navegador de cada estudiante. Pueden continuar donde se quedaron sin crear una cuenta.",
+  "educators.use_li4":        "Funciona en teléfonos, tabletas y computadoras portátiles. Modo oscuro y tamaño de texto ajustable para diferentes entornos de lectura.",
+  "educators.links_heading":  "Enlaces directos a secciones clave",
+  "educators.links_intro":    "Comparta estos enlaces con sus estudiantes o péguelos en su plan de estudios. Cada uno abre la página de lectura desplazada a la sección exacta.",
+  "educators.link_preamble":  "Preámbulo",
+  "educators.link_art1":      "Artículo I — El Legislativo",
+  "educators.link_art2":      "Artículo II — El Ejecutivo",
+  "educators.link_art3":      "Artículo III — El Judicial",
+  "educators.link_amendments":"Todas las enmiendas",
+  "educators.link_bor":       "Carta de Derechos (Enmiendas I–X)",
+  "educators.link_13th":      "Enmienda 13 — Abolición de la esclavitud",
+  "educators.link_14th":      "Enmienda 14 — Protección igualitaria",
+  "educators.link_19th":      "Enmienda 19 — Sufragio femenino",
+  "educators.cite_heading":   "Cómo deben citar los estudiantes",
+  "educators.cite_p1":        "Cada párrafo en la página de lectura tiene un botón de copiar. Tóquelo para elegir un formato de cita: Bluebook, MLA, Chicago, Markdown o BibTeX.",
+  "educators.cite_p2":        "El motor de citación identifica el artículo, sección y cláusula exactos automáticamente. Sin formato manual necesario.",
+  "educators.share_heading":  "Comparta con su clase",
+  "educators.share_p1":       "Copie y envíe este enlace a sus estudiantes. Funciona en cualquier dispositivo, no requiere configuración y nunca les pedirá que se registren.",
+  "educators.share_url":      "justtheconstitution.org",
+
   "schema.name":              "Constitución de los Estados Unidos",
 
   // ── Sufijos ordinales (para etiquetas de imágenes de enmiendas) ──

@@ -75,6 +75,9 @@
         requestAnimationFrame(() => {
           updateProgress();
           updateActive();
+          const pct = (window.scrollY + window.innerHeight) / document.documentElement.scrollHeight;
+          if (pct > 0.5) JTC.trackEvent('scroll_depth_50');
+          if (pct > 0.95) JTC.trackEvent('scroll_depth_100');
           ticking = false;
         });
         ticking = true;
