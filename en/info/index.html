@@ -9,7 +9,7 @@
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
   <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)" />
   <link rel="icon" type="image/svg+xml" href="../../assets/favicon-we.svg?v=1188bdda" />
-  <link rel="stylesheet" href="../../styles.css?v=9b2a0485" />
+  <link rel="stylesheet" href="../../styles.css?v=37231a90" />
     <link rel="canonical" href="https://justtheconstitution.org/en/info/" />
   <link rel="alternate" hreflang="en" href="https://justtheconstitution.org/en/info/" />
   <link rel="alternate" hreflang="es" href="https://justtheconstitution.org/es/info/" />
@@ -83,7 +83,7 @@
       <p>Questions, corrections, or feedback—we’d like to hear from you.</p>
 
       <form class="contact-form" id="contact-form" action="https://api.web3forms.com/submit" method="POST">
-        <input type="hidden" name="access_key" value="193c2085-296d-440b-ac75-318642b3fe05" />
+        <input type="hidden" name="access_key" value="fdf79fee-e541-487f-8d41-10cf6695e453" />
         <input type="hidden" name="subject" value="JTC Feedback" />
         <input type="hidden" name="from_name" value="JTC Contact Form" />
         <input type="checkbox" name="botcheck" class="hidden" style="display:none" tabindex="-1" autocomplete="off" />
@@ -94,8 +94,30 @@
         </label>
 
         <label class="form-field">
-          <span>Message</span>
-          <textarea name="message" required rows="5"></textarea>
+          <span>Category</span>
+          <select name="category" required>
+            <option value="" disabled selected>Select a category…</option>
+            <option value="General Feedback">General Feedback</option>
+            <option value="Bug Report">Bug Report</option>
+            <option value="Content Suggestion">Content Suggestion</option>
+            <option value="Accessibility Issue">Accessibility Issue</option>
+          </select>
+        </label>
+
+        <fieldset class="form-field star-rating-field">
+          <legend>How would you rate your experience?</legend>
+          <div class="star-rating" id="star-rating">
+            <input type="radio" name="rating" value="1" id="star1" required /><label for="star1" title="1">&#9733;</label>
+            <input type="radio" name="rating" value="2" id="star2" /><label for="star2" title="2">&#9733;</label>
+            <input type="radio" name="rating" value="3" id="star3" /><label for="star3" title="3">&#9733;</label>
+            <input type="radio" name="rating" value="4" id="star4" /><label for="star4" title="4">&#9733;</label>
+            <input type="radio" name="rating" value="5" id="star5" /><label for="star5" title="5">&#9733;</label>
+          </div>
+        </fieldset>
+
+        <label class="form-field">
+          <span>Tell us why</span>
+          <textarea name="message" required rows="5" placeholder="What prompted this rating?"></textarea>
         </label>
 
         <button type="submit" class="contact-form__btn">Send</button>
@@ -112,6 +134,6 @@
     <p><a href="https://www.kiyviz.com" target="_blank" rel="noopener">A KiyViz project.</a></p>
   </footer>
 
-    <script src="../../theme.js?v=d32001d0"></script>
+    <script src="../../theme.js?v=8b574a5b"></script>
 </body>
 </html>

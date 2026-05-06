@@ -34,6 +34,30 @@
     el.href = isEs ? '/es/' : '/en/';
   });
 
+  // Star rating (info page)
+  const starRating = document.getElementById('star-rating');
+  if (starRating) {
+    const labels = starRating.querySelectorAll('label');
+    const inputs = starRating.querySelectorAll('input');
+    function updateStars() {
+      const checked = starRating.querySelector('input:checked');
+      const val = checked ? parseInt(checked.value) : 0;
+      labels.forEach((lbl, i) => {
+        lbl.classList.toggle('is-active', i < val);
+      });
+    }
+    inputs.forEach(inp => inp.addEventListener('change', updateStars));
+    labels.forEach(lbl => {
+      lbl.addEventListener('mouseenter', () => {
+        const idx = Array.from(labels).indexOf(lbl);
+        labels.forEach((l, i) => l.classList.toggle('is-hover', i <= idx));
+      });
+      lbl.addEventListener('mouseleave', () => {
+        labels.forEach(l => l.classList.remove('is-hover'));
+      });
+    });
+  }
+
   // Contact form (info page)
   const form = document.getElementById('contact-form');
   if (form) {
@@ -54,6 +78,7 @@
           status.className = 'contact-form__status is-success';
           status.hidden = false;
           form.reset();
+          if (starRating) starRating.querySelectorAll('label').forEach(l => l.classList.remove('is-active'));
         } else {
           throw new Error('Submit failed');
         }

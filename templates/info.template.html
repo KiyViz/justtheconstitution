@@ -92,8 +92,30 @@
         </label>
 
         <label class="form-field">
+          <span><!-- S:info.contact_category_label --></span>
+          <select name="category" required>
+            <option value="" disabled selected><!-- S:info.contact_category_placeholder --></option>
+            <option value="General Feedback"><!-- S:info.contact_cat_general --></option>
+            <option value="Bug Report"><!-- S:info.contact_cat_bug --></option>
+            <option value="Content Suggestion"><!-- S:info.contact_cat_content --></option>
+            <option value="Accessibility Issue"><!-- S:info.contact_cat_accessibility --></option>
+          </select>
+        </label>
+
+        <fieldset class="form-field star-rating-field">
+          <legend><!-- S:info.contact_rating_label --></legend>
+          <div class="star-rating" id="star-rating">
+            <input type="radio" name="rating" value="1" id="star1" required /><label for="star1" title="1">&#9733;</label>
+            <input type="radio" name="rating" value="2" id="star2" /><label for="star2" title="2">&#9733;</label>
+            <input type="radio" name="rating" value="3" id="star3" /><label for="star3" title="3">&#9733;</label>
+            <input type="radio" name="rating" value="4" id="star4" /><label for="star4" title="4">&#9733;</label>
+            <input type="radio" name="rating" value="5" id="star5" /><label for="star5" title="5">&#9733;</label>
+          </div>
+        </fieldset>
+
+        <label class="form-field">
           <span><!-- S:info.contact_msg_label --></span>
-          <textarea name="message" required rows="5"></textarea>
+          <textarea name="message" required rows="5" placeholder="<!-- S:info.contact_msg_placeholder -->"></textarea>
         </label>
 
         <button type="submit" class="contact-form__btn"><!-- S:info.contact_submit --></button>
