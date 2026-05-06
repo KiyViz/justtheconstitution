@@ -1625,28 +1625,55 @@ body {
 }
 
 /* ===== Footer =====
-   The footer is entirely citations and source attribution (NARA, National
-   Constitution Center, image credits). It uses the mono register so it
-   reads as metadata about the document rather than continuation of the
-   document or the UI. Three typographic registers across the site:
-     • serif (Libre Caslon Text) — the document
-     • sans  (Public Sans)       — the interface
-     • mono  (Courier Prime)     — citations, footnotes, metadata */
+   Sticky bar at bottom showing nav links; expands to reveal full
+   attribution when the user reaches the page bottom. Uses the mono
+   register (Courier Prime) — citations, footnotes, metadata. */
 .site-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 38;
   border-top: 1px solid var(--hairline);
-  padding: 40px 24px 80px;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 10px 24px;
   color: var(--ink-faint);
   font-family: var(--font-mono);
   font-size: 12px;
   line-height: 1.6;
-  max-width: 900px;
-  margin: 0 auto;
+  transition: background .3s ease, padding .3s ease;
+}
+.site-footer.is-expanded {
+  background: var(--bg);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  padding: 10px 24px 40px;
 }
 .site-footer a { color: var(--ink-soft); text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 2px; }
 .site-footer a:hover { color: var(--ink); }
 .site-footer p { margin: 0 0 10px; }
-.footer-nav { margin-top: 20px; }
+
+.footer-bar {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+.footer-full {
+  max-width: 900px;
+  margin: 0 auto;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  padding-top: 0;
+  transition: max-height .35s ease-out, opacity .25s ease-out, padding-top .3s ease;
+}
+.site-footer.is-expanded .footer-full {
+  max-height: 400px;
+  opacity: 1;
+  padding-top: 20px;
+}
 .footer-byline { margin-top: 4px; }
+.footer-sentinel { height: 0; margin: 0; padding: 0; }
 
 /* ===== Subpage shared chrome ===== */
 .subpage-header {
