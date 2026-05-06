@@ -104,6 +104,15 @@
     if (location.hash) {
       setTimeout(() => scrollToId(location.hash.slice(1)), 60);
     }
+
+    // Sticky footer expand/collapse
+    const footerEl = document.getElementById('site-footer');
+    const sentinel = document.getElementById('footer-sentinel');
+    if (footerEl && sentinel) {
+      new IntersectionObserver(([entry]) => {
+        footerEl.classList.toggle('is-expanded', entry.isIntersecting);
+      }).observe(sentinel);
+    }
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
