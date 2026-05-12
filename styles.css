@@ -543,20 +543,46 @@ body {
 .icon-btn svg { width:16px; height:16px; display:block; }
 .menu-label { display: none; }
 @media (min-width: 720px) { .menu-label { display: inline; } }
-/* Persistent toolbar labels — hidden by default; revealed at desktop
-   widths so the header reads as Search/Share/Reader/Mode/Settings instead
-   of five anonymous glyphs. The 1200px threshold leaves room for the
-   wordmark + 5 labeled buttons + lang switcher without crowding. */
-.icon-btn__label {
-  display: none;
-  font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: -0.005em;
-  white-space: nowrap;
+/* Toolbar labels — expand on hover/focus, mirroring the language switcher.
+   The :has() selector applies the layout overrides (overflow + zero gap +
+   tighter padding) only to icon-btns that contain a label, so menu-btn and
+   lang-btn keep their existing behaviors untouched. */
+.icon-btn:has(.icon-btn__label) {
+  overflow: hidden;
+  gap: 0;
+  padding: 0 10px;
 }
-@media (min-width: 1200px) {
-  .icon-btn__label { display: inline; }
+.icon-btn:has(.icon-btn__label) svg { flex-shrink: 0; }
+.icon-btn__label {
+  display: inline-block;
+  max-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  opacity: 0;
+  margin-left: 0;
+  transition: max-width .2s ease, opacity .15s ease, margin-left .2s ease;
+}
+.icon-btn:hover .icon-btn__label,
+.icon-btn:focus-visible .icon-btn__label {
+  /* 100px fits the longest label in either locale ("Configuración"). */
+  max-width: 100px;
+  margin-left: 6px;
+  opacity: 1;
+}
+@media (hover: none) {
+  /* No hover on touch — show a partial label as a discoverability hint. */
+  .icon-btn__label {
+    max-width: 40px;
+    margin-left: 4px;
+    opacity: 0.8;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .icon-btn__label { transition: none; }
 }
 
 /* ===== Progress bar ===== */
