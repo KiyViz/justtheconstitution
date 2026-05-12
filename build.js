@@ -702,7 +702,12 @@ function main() {
 
     console.log(`  minified ${jsFiles.length + dataFiles.length} JS + 1 CSS (saved ${(totalSaved / 1024).toFixed(1)} KB)`);
 
-    // Rewrite built HTML to reference minified assets
+    // Rewrite built HTML to reference minified assets — AND update each
+    // ?v=hash so it reflects the minified file's content, not the source's.
+    // Without this, esbuild-only changes (or even just a fresh minifier
+    // version) ship without bumping the URL — and Cache-Control: immutable
+    // means stale bundles get pinned in clients forever.
+    const cssMinHash = fileHash(minCssPath);
     const htmlFiles = [
       path.join(ROOT, 'index.html'),
       ...Object.keys(LOCALES).map(l => path.join(ROOT, l, 'index.html')),
@@ -713,8 +718,13 @@ function main() {
     for (const htmlFile of htmlFiles) {
       if (!fs.existsSync(htmlFile)) continue;
       let h = fs.readFileSync(htmlFile, 'utf8');
-      h = h.replace(/styles\.css\?v=/g, 'styles.min.css?v=');
-      h = h.replace(/(src="[^"]*?)\.js\?v=/g, '$1.min.js?v=');
+      h = h.replace(/styles\.css\?v=[a-f0-9]+/g, `styles.min.css?v=${cssMinHash}`);
+      h = h.replace(/(src=")([^"]*?)\.js\?v=[a-f0-9]+/g, (_, prefix, relPath) => {
+        const fromRoot = relPath.replace(/^(?:\.\.\/)+/, '');
+        const minPath = path.join(ROOT, fromRoot + '.min.js');
+        const hash = fs.existsSync(minPath) ? fileHash(minPath) : fileHash(path.join(ROOT, fromRoot + '.js'));
+        return `${prefix}${relPath}.min.js?v=${hash}`;
+      });
       fs.writeFileSync(htmlFile, h);
     }
     console.log(`  rewrote ${htmlFiles.length} HTML files to use minified assets`);
