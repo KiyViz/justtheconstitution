@@ -12,7 +12,7 @@
 
   const TWEAK_DEFAULTS = {
     mode: "light",
-    theme: "parchment",
+    theme: "civic",
     reader: "default",
     toc: "open",
     pane: "open",
@@ -211,23 +211,24 @@
   }
 
   // 3 themes × 3 modes (light, dark, oled).
-  // Only Civic carries a non-monochrome `accent`; Parchment and Modern
-  // are deliberately monochrome (accent = ink) to keep the page quiet.
+  // Civic is the default (first in each list); Parchment and Modern are
+  // deliberately monochrome (accent = ink) to keep the page quiet.
+  // Only Civic carries a non-monochrome accent.
   const LIGHT_THEMES = [
+    { id: "civic",     name: "Civic",     bg: "#f0e4cf", ink: "#2c3a4f", accent: "#b04a35" },
     { id: "parchment", name: "Parchment", bg: "#f0e6d0", ink: "#2a1c0a" },
-    { id: "modern",    name: "Modern",    bg: "#fafaf7", ink: "#1a1a1a" },
-    { id: "civic",     name: "Civic",     bg: "#f0e4cf", ink: "#2c3a4f", accent: "#b04a35" }
+    { id: "modern",    name: "Modern",    bg: "#fafaf7", ink: "#1a1a1a" }
   ];
   const DARK_THEMES = [
+    { id: "civic",     name: "Civic",     bg: "#141a26", ink: "#e8d9b4", accent: "#d5725b" },
     { id: "parchment", name: "Parchment", bg: "#1a140a", ink: "#ebd69a" },
-    { id: "modern",    name: "Modern",    bg: "#14161a", ink: "#ededed" },
-    { id: "civic",     name: "Civic",     bg: "#141a26", ink: "#e8d9b4", accent: "#d5725b" }
+    { id: "modern",    name: "Modern",    bg: "#14161a", ink: "#ededed" }
   ];
   // OLED — pure black bg, ink/accent inherit each theme's identity.
   const OLED_THEMES = [
+    { id: "civic",     name: "Civic",     bg: "#000000", ink: "#e8d9b4", accent: "#e87053" },
     { id: "parchment", name: "Parchment", bg: "#000000", ink: "#ebd69a" },
-    { id: "modern",    name: "Modern",    bg: "#000000", ink: "#f5f5f5" },
-    { id: "civic",     name: "Civic",     bg: "#000000", ink: "#e8d9b4", accent: "#e87053" }
+    { id: "modern",    name: "Modern",    bg: "#000000", ink: "#f5f5f5" }
   ];
   const MODE_THEMES = { light: LIGHT_THEMES, dark: DARK_THEMES, oled: OLED_THEMES };
 
@@ -442,11 +443,11 @@
   }
 
   // Switch mode and pick a theme valid for that mode.
-  // Preserves the current theme id if it exists in the target mode; otherwise falls back to "neutral".
+  // Preserves the current theme id if it exists in the target mode; otherwise falls back to "civic" (the default).
   function setMode(mode) {
     const themes = MODE_THEMES[mode] || LIGHT_THEMES;
     const t = getTweaks();
-    const theme = themes.some(th => th.id === t.theme) ? t.theme : "neutral";
+    const theme = themes.some(th => th.id === t.theme) ? t.theme : "civic";
     setTweaks({ mode, theme });
   }
 

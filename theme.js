@@ -8,7 +8,7 @@
   try { saved = JSON.parse(localStorage.getItem('jtc:tweaks') || '{}'); } catch (e) { /* private browsing */ }
   const t = {
     mode: saved.mode || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'),
-    theme: saved.theme || 'parchment',
+    theme: saved.theme || 'civic',
     saturation: saved.saturation || 'default'
   };
 
