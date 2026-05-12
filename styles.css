@@ -482,8 +482,8 @@ body {
   width: 44px;
   height: 44px;
   opacity: 1;
-  /* Mark clears fast so the writing animation has the stage. */
-  transition: opacity 140ms linear;
+  /* Mark clears fast so the reveal has the stage. */
+  transition: opacity 100ms linear;
 }
 .wordmark__mark svg {
   width: 100%;
@@ -497,12 +497,12 @@ body {
   transform: translateY(-50%);
   white-space: nowrap;
   opacity: 1;
-  /* Default = clipped to nothing on the left. Hover retracts the right
-     inset to 0%, sweeping the text in left-to-right. Linear timing is
-     deliberate — easing curves like expo-out decelerate into the end,
-     which reads as "sliding" instead of "writing". */
-  clip-path: inset(0 100% 0 0);
-  transition: clip-path 520ms linear;
+  /* Default = clipped to a 0-height strip at the top (100% inset from
+     the bottom). Hover retracts the bottom inset to 0%, revealing the
+     text top-down along the Y axis. Faster + eased curve so it feels
+     snappy and responsive to hover rather than a slow write-on. */
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 260ms cubic-bezier(.4, 0, .2, 1);
   pointer-events: none;
 }
 .wordmark:hover .wordmark__mark,
