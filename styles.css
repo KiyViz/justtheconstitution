@@ -543,6 +543,21 @@ body {
 .icon-btn svg { width:16px; height:16px; display:block; }
 .menu-label { display: none; }
 @media (min-width: 720px) { .menu-label { display: inline; } }
+/* Persistent toolbar labels — hidden by default; revealed at desktop
+   widths so the header reads as Search/Share/Reader/Mode/Settings instead
+   of five anonymous glyphs. The 1200px threshold leaves room for the
+   wordmark + 5 labeled buttons + lang switcher without crowding. */
+.icon-btn__label {
+  display: none;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+}
+@media (min-width: 1200px) {
+  .icon-btn__label { display: inline; }
+}
 
 /* ===== Progress bar ===== */
 .progress {
@@ -789,7 +804,9 @@ body {
 /* ===== Layout ===== */
 .layout {
   display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
+  /* 260px TOC (was 240) — long entries like "Article I · The Legislative
+     Branch" wrap at 240 even on plenty-wide screens. */
+  grid-template-columns: 260px minmax(0, 1fr);
   max-width: 1800px;
   margin: 0 auto;
   gap: 0;
@@ -806,6 +823,20 @@ body {
    "Contents" header button is hidden. */
 @media (min-width: 1101px) {
   #menu-btn { display: none; }
+}
+/* 2K+ — at large desktop widths the 1800px container leaves too much gutter
+   and the reading column feels lost. Widen the container, grow the TOC, and
+   bump the reading measure so the freed space actually does something. */
+@media (min-width: 1700px) {
+  .site-header__row,
+  .layout,
+  .progress__track,
+  .progress__labels {
+    max-width: 2200px;
+  }
+  .layout { grid-template-columns: 300px minmax(0, 1fr); }
+  .text-pane { --measure: 72ch; }
+  [data-pane="closed"] .text-pane { --measure: 84ch; max-width: 1080px; }
 }
 
 /* Collapsed image pane — reader becomes single-column and the text widens. */
