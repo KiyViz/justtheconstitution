@@ -667,59 +667,6 @@ function main() {
     console.log('\n  warning: og-image.png missing. Export assets/og-image.svg as 1200×630 PNG to root.');
   }
 
-  // ── Minification (optional — requires esbuild) ──
-  if (esbuild) {
-    console.log('\n── Minifying assets ──');
-    let totalSaved = 0;
-
-    // Minify JS files → .min.js alongside originals
-    const jsFiles = [
-      'core.js', 'citations.js', 'tweaks.js', 'images.js',
-      'reader.js', 'progress.js', 'nav.js', 'search.js',
-      'lang.js', 'app.js', 'theme.js'
-    ];
-    const dataFiles = Object.values(LOCALES).map(c => c.data);
-
-    for (const file of [...jsFiles, ...dataFiles]) {
-      const filePath = path.join(ROOT, file);
-      if (!fs.existsSync(filePath)) continue;
-      const original = fs.readFileSync(filePath, 'utf8');
-      const result = esbuild.transformSync(original, { minify: true, loader: 'js' });
-      const minPath = filePath.replace(/\.js$/, '.min.js');
-      fs.writeFileSync(minPath, result.code);
-      totalSaved += Buffer.byteLength(original) - Buffer.byteLength(result.code);
-    }
-
-    // Minify CSS → styles.min.css
-    const cssPath = path.join(ROOT, 'styles.css');
-    const originalCss = fs.readFileSync(cssPath, 'utf8');
-    const cssResult = esbuild.transformSync(originalCss, { minify: true, loader: 'css' });
-    const minCssPath = path.join(ROOT, 'styles.min.css');
-    fs.writeFileSync(minCssPath, cssResult.code);
-    totalSaved += Buffer.byteLength(originalCss) - Buffer.byteLength(cssResult.code);
-
-    console.log(`  minified ${jsFiles.length + dataFiles.length} JS + 1 CSS (saved ${(totalSaved / 1024).toFixed(1)} KB)`);
-
-    // Rewrite built HTML to reference minified assets
-    const htmlFiles = [
-      path.join(ROOT, 'index.html'),
-      ...Object.keys(LOCALES).map(l => path.join(ROOT, l, 'index.html')),
-      ...Object.keys(LOCALES).map(l => path.join(ROOT, l, 'info', 'index.html')),
-      ...Object.keys(LOCALES).map(l => path.join(ROOT, l, 'for-educators', 'index.html')),
-      path.join(ROOT, '404.html')
-    ];
-    for (const htmlFile of htmlFiles) {
-      if (!fs.existsSync(htmlFile)) continue;
-      let h = fs.readFileSync(htmlFile, 'utf8');
-      h = h.replace(/styles\.css\?v=/g, 'styles.min.css?v=');
-      h = h.replace(/(src="[^"]*?)\.js\?v=/g, '$1.min.js?v=');
-      fs.writeFileSync(htmlFile, h);
-    }
-    console.log(`  rewrote ${htmlFiles.length} HTML files to use minified assets`);
-  } else {
-    console.log('\n(esbuild not installed — skipping minification. Run npm install to enable.)');
-  }
-
   console.log('\nBuild complete.');
 }
 
