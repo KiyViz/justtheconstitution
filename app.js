@@ -67,6 +67,7 @@
       const searchBtn = document.getElementById("search-btn");
       if (searchBtn) searchBtn.addEventListener("click", JTC.openSearch);
     }
+    initShortcuts();
 
     // Scroll handlers
     let ticking = false;
@@ -116,6 +117,62 @@
         footerEl.classList.toggle('is-expanded', entry.isIntersecting);
       }).observe(sentinel);
     }
+  }
+
+  // Centralized keyboard shortcuts. Each fires the click on the corresponding
+  // header button so the existing handlers (state, telemetry, focus mgmt) run
+  // exactly as if the user had clicked. Ctrl/Cmd+F is handled separately in
+  // search.js — it's an older binding that fires even from inside inputs.
+  //
+  // Shortcut table (matches the tooltip strings in data/strings.*.js):
+  //   /        Open search
+  //   ,        Toggle settings panel
+  //   Shift+R  Toggle reader mode
+  //   Shift+S  Toggle share popover
+  //   Shift+D  Cycle display mode (light → dark → OLED)
+  //   Shift+M  Open the TOC drawer (mobile/narrow viewports only)
+  //
+  // All shortcuts bail when the user is typing into an input/textarea, and
+  // bail when Ctrl/Cmd/Alt are pressed so they don't collide with browser
+  // chords. Shift is the only modifier our shortcuts use.
+  function initShortcuts() {
+    document.addEventListener("keydown", (e) => {
+      const t = document.activeElement;
+      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+      const click = (id) => {
+        const btn = document.getElementById(id);
+        if (btn) { btn.click(); return true; }
+        return false;
+      };
+
+      if (e.shiftKey) {
+        switch (e.key) {
+          case "R": if (click("reader-toggle")) e.preventDefault(); return;
+          case "S": if (click("share-btn"))     e.preventDefault(); return;
+          case "D": if (click("mode-toggle"))   e.preventDefault(); return;
+          case "M": {
+            // Only fire at viewport widths where the menu button is actually
+            // visible — on desktop the inline TOC is always shown and the
+            // drawer is hidden chrome.
+            const mb = document.getElementById("menu-btn");
+            if (mb && mb.offsetParent !== null) { e.preventDefault(); mb.click(); }
+            return;
+          }
+        }
+        return;
+      }
+
+      switch (e.key) {
+        case "/":
+          if (JTC.openSearch) { e.preventDefault(); JTC.openSearch(); }
+          return;
+        case ",":
+          if (click("tweaks-btn")) e.preventDefault();
+          return;
+      }
+    });
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
