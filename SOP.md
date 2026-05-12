@@ -24,7 +24,17 @@ edit → git add → git commit → git push
 ```
 
 The pre-commit hook runs `node build.js` and stages the regenerated files
-into the commit automatically. Cloudflare Pages deploys whatever you push.
+into the commit automatically.
+
+## What happens after `git push`
+
+Cloudflare Workers Builds picks up the commit, runs `npm run build` to
+regenerate HTML and any build-time artifacts, then runs `npx wrangler deploy`
+to upload everything in the repo root (except patterns in `.assetsignore`)
+as static assets behind the Worker that serves justtheconstitution.org.
+
+Non-`main` branches deploy to preview URLs (Cloudflare posts the URL as
+a check on each PR). Merging to `main` deploys to production.
 
 ## When to manually run `node build.js`
 
