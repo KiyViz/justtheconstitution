@@ -121,9 +121,27 @@
 
   function updateCount() {
     if (!countEl) return;
-    if (!lastQuery) { countEl.textContent = ''; prevBtn.disabled = true; nextBtn.disabled = true; return; }
-    if (!matches.length) { countEl.textContent = JTC.t("search.no_results"); prevBtn.disabled = true; nextBtn.disabled = true; return; }
-    countEl.textContent = JTC.t("search.counter").replace("{current}", currentIndex + 1).replace("{total}", matches.length);
+    if (!lastQuery) {
+      countEl.textContent = '';
+      countEl.classList.remove('search-bar__count--active');
+      prevBtn.disabled = true; nextBtn.disabled = true;
+      return;
+    }
+    if (!matches.length) {
+      countEl.textContent = JTC.t("search.no_results");
+      countEl.classList.remove('search-bar__count--active');
+      prevBtn.disabled = true; nextBtn.disabled = true;
+      return;
+    }
+    // Echo the query in the counter so users see their input was registered —
+    // without it, the typed text on the left and the count on the right feel
+    // disconnected. Capped at 30 chars so long queries don't push the bar around.
+    const queryEcho = lastQuery.length > 30 ? lastQuery.slice(0, 30) + '…' : lastQuery;
+    countEl.textContent = JTC.t("search.counter")
+      .replace("{current}", currentIndex + 1)
+      .replace("{total}", matches.length)
+      .replace("{query}", queryEcho);
+    countEl.classList.add('search-bar__count--active');
     prevBtn.disabled = false;
     nextBtn.disabled = false;
   }

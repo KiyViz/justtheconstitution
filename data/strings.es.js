@@ -98,7 +98,7 @@ module.exports = {
   "search.close_aria":        "Cerrar búsqueda",
   "search.close_title":       "Cerrar (Esc)",
   "search.no_results":        "Sin resultados",
-  "search.counter":           "{current} de {total}",
+  "search.counter":           "{current} de {total} para «{query}»",
 
   // ── Barra de progreso ──
   "progress.aria":            "Progreso de lectura",
