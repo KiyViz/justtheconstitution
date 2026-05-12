@@ -102,7 +102,7 @@ module.exports = {
   "search.close_aria":        "Close search",
   "search.close_title":       "Close (Esc)",
   "search.no_results":        "No results",
-  "search.counter":           "{current} of {total}",
+  "search.counter":           "{current} of {total} for “{query}”",
 
   // ── Progress bar ──
   "progress.aria":            "Reading progress",

@@ -2378,7 +2378,11 @@ html { scrollbar-color: var(--rule) transparent; }
   white-space: nowrap;
   min-width: 64px;
   text-align: right;
+  transition: color .12s ease;
 }
+/* Active state — bump from --ink-faint to --ink so the count reads as a
+   confirmation, not chrome. Triggered by search.js when results > 0. */
+.search-bar__count--active { color: var(--ink); }
 .search-bar__nav[disabled],
 .search-bar__close[disabled] { opacity: 0.35; cursor: default; }
 .search-bar__nav svg,
