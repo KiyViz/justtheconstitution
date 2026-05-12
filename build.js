@@ -286,7 +286,6 @@ const CLIENT_KEYS = [
   'settings.text_size',
   'settings.size_small', 'settings.size_medium', 'settings.size_large',
   'settings.advanced',
-  'settings.saturation', 'settings.sat_default', 'settings.sat_vibrant',
   'settings.typeface', 'settings.font_default', 'settings.font_serif', 'settings.font_sans', 'settings.font_mono',
   'settings.reset_toast',
   'section.main_document', 'section.amendments', 'section.preamble',

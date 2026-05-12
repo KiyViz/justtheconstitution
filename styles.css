@@ -579,6 +579,15 @@ body {
   cursor: pointer;
   background: transparent;
 }
+/* Invisible expanded hit area — extends the chapter's click target into
+   the .progress padding above and below the visible track, so chapter
+   segments are easier to tap. No visual change. */
+.progress__chapter::before {
+  content: "";
+  position: absolute;
+  inset: -7px 0 -7px;
+  background: transparent;
+}
 .progress__chapter::after {
   content: "";
   position: absolute;
@@ -593,7 +602,7 @@ body {
   position: absolute; left: 50%; top: 100%;
   transform: translate(-50%, 2px);
   background: var(--ink); color: var(--bg);
-  font-size: 11px; letter-spacing: 0.01em;
+  font-size: 12px; letter-spacing: 0.01em;
   padding: 4px 8px; border-radius: 4px;
   white-space: nowrap; opacity: 0; pointer-events: none;
   transition: opacity .12s ease, transform .12s ease;
@@ -604,9 +613,9 @@ body {
 .progress__labels {
   position: relative;
   max-width: 1800px; margin: 6px auto 0;
-  height: 12px;
+  height: 14px;
   font-family: var(--font-sans);
-  font-size: 9px; letter-spacing: 0.04em;
+  font-size: 11px; letter-spacing: 0.06em;
   text-transform: uppercase; color: var(--ink-faint);
 }
 .progress__labels > span {
@@ -733,8 +742,13 @@ body {
 }
 .toc-download svg { width: 12px; height: 12px; display: block; }
 .toc ol, .toc ul { list-style: none; margin: 0; padding: 0; }
+/* TOC link color is biased 70% toward --ink (vs --ink-soft for body
+   metadata) because navigation entries are primary text, not chrome.
+   Particularly noticeable on Civic light, where --ink-soft (#4d5b72)
+   sits too close to the warm-cream bg to read comfortably. */
 .toc a {
-  display: block; color: var(--ink-soft);
+  display: block;
+  color: color-mix(in srgb, var(--ink) 70%, var(--ink-soft));
   text-decoration: none;
   padding: 4px 12px 4px 10px;
   border-left: 2px solid transparent;
@@ -744,7 +758,11 @@ body {
 .toc a:hover { color: var(--ink); }
 .toc a.is-active { color: var(--ink); border-left-color: var(--ink); font-weight: 500; }
 .toc .toc-sub { padding-left: 12px; }
-.toc .toc-sub a { font-size: 12px; color: var(--ink-faint); padding-top: 2px; padding-bottom: 2px; }
+.toc .toc-sub a {
+  font-size: 12px;
+  color: color-mix(in srgb, var(--ink) 55%, var(--ink-faint));
+  padding-top: 2px; padding-bottom: 2px;
+}
 .toc .toc-sub a.is-active { color: var(--ink); border-left-color: var(--ink-soft); }
 
 .toc-drawer {
@@ -1518,23 +1536,6 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .size-swatch { transition: none; }
 }
-
-/* ── Saturation sub-themes ──
-   Default leaves the authored theme alone. Vibrant punches up bg/ink/accent
-   per (theme × mode); for monochromatic themes (Modern, Parchment) Vibrant
-   also adds an accent hue that wasn't there at the default level, so the
-   change is always visible. */
-
-/* === VIBRANT === */
-[data-saturation="vibrant"][data-theme="modern"][data-mode="light"]    { --bg:#f7f8fc; --ink:#15161a; --accent:#1a3a8a; --chip-bg:rgba(26,58,138,0.08);  --chip-ink:#1a3a8a; --progress-fill:#1a3a8a; --progress-seen:rgba(26,58,138,0.28); }
-[data-saturation="vibrant"][data-theme="modern"][data-mode="dark"]     { --bg:#11141c; --ink:#ededf2; --accent:#5a8eff; --chip-bg:rgba(90,142,255,0.14); --chip-ink:#5a8eff; --progress-fill:#5a8eff; --progress-seen:rgba(90,142,255,0.30); }
-[data-saturation="vibrant"][data-theme="modern"][data-mode="oled"]     { --bg:#000000; --ink:#f5f5fa; --accent:#6fa0ff; --chip-bg:rgba(111,160,255,0.14);--chip-ink:#6fa0ff; --progress-fill:#6fa0ff; --progress-seen:rgba(111,160,255,0.30); }
-[data-saturation="vibrant"][data-theme="parchment"][data-mode="light"] { --bg:#f4dfb8; --ink:#2c1a02; --accent:#8a4a1a; --chip-bg:rgba(138,74,26,0.08);  --chip-ink:#8a4a1a; --progress-fill:#8a4a1a; --progress-seen:rgba(138,74,26,0.28); }
-[data-saturation="vibrant"][data-theme="parchment"][data-mode="dark"]  { --bg:#211910; --ink:#ddc28e; --accent:#f4a261; --chip-bg:rgba(244,162,97,0.14); --chip-ink:#f4a261; --progress-fill:#f4a261; --progress-seen:rgba(244,162,97,0.30); }
-[data-saturation="vibrant"][data-theme="parchment"][data-mode="oled"]  { --bg:#000000; --ink:#efd58f; --accent:#ffb573; --chip-bg:rgba(255,181,115,0.14);--chip-ink:#ffb573; --progress-fill:#ffb573; --progress-seen:rgba(255,181,115,0.30); }
-[data-saturation="vibrant"][data-theme="civic"][data-mode="light"]     { --bg:#f4e2c4; --ink:#1f3050; --accent:#c93a1f; --chip-bg:rgba(201,58,31,0.10);  --chip-ink:#c93a1f; --progress-fill:#c93a1f; --progress-seen:rgba(201,58,31,0.30); }
-[data-saturation="vibrant"][data-theme="civic"][data-mode="dark"]      { --bg:#14182a; --ink:#e8d8b4; --accent:#ee6b40; --chip-bg:rgba(238,107,64,0.14); --chip-ink:#ee6b40; --progress-fill:#ee6b40; --progress-seen:rgba(238,107,64,0.30); }
-[data-saturation="vibrant"][data-theme="civic"][data-mode="oled"]      { --bg:#000000; --ink:#f0d8a8; --accent:#ff7340; --chip-bg:rgba(255,115,64,0.14); --chip-ink:#ff7340; --progress-fill:#ff7340; --progress-seen:rgba(255,115,64,0.30); }
 
 /* ── User-override typography ──
    When the user picks a typography option in settings, [data-font] is

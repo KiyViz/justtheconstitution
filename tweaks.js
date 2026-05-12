@@ -1,5 +1,5 @@
 /* ===== justtheconstitution — tweaks =====
-   Mode / theme / typography / saturation / text-size / copy-mode / reader.
+   Mode / theme / typography / text-size / copy-mode / reader.
    Persists via localStorage. Owns the settings panel and the reset action.
    Depends on: core (el, showToast). */
 (() => {
@@ -18,7 +18,6 @@
     pane: "open",
     fontSize: 17,
     copyMode: "plain",
-    saturation: "default",
     font: "default"
   };
   // Citation formats — applies to all in-document copy buttons.
@@ -27,10 +26,6 @@
   const VALID_COPY_MODES = new Set([
     "plain", "bluebook", "mla", "chicago", "markdown", "bibtex"
   ]);
-  // Two saturation levels — Default leaves the authored theme alone;
-  // Vibrant punches up bg/ink/accent per-theme. The old "low-sat" tier
-  // was visually too subtle on monochromatic themes to justify the chip.
-  const VALID_SATURATION = new Set(["default", "vibrant"]);
   // "default" means typography follows the active theme. The other three
   // are explicit user overrides.
   const VALID_FONT = new Set(["default", "serif", "sans", "mono"]);
@@ -94,10 +89,9 @@
     // the user's "I want citations" intent.
     if (merged.copyMode === "full") merged.copyMode = "bluebook";
     if (!VALID_COPY_MODES.has(merged.copyMode)) merged.copyMode = "plain";
-    // Migrate any retired saturation ids (Pkg-7 mono/low, Pkg-8 low-sat)
-    // onto "default". Only "vibrant" survives as a non-default level.
-    if (saved.saturation && saved.saturation !== "vibrant") merged.saturation = "default";
-    if (!VALID_SATURATION.has(merged.saturation)) merged.saturation = "default";
+    // Saturation (vibrant sub-themes) was retired May 2026 — clear any
+    // leftover key so it doesn't linger in localStorage forever.
+    delete merged.saturation;
     // Migrate legacy font ids: simple→sans, traditional→serif, technical→mono.
     if (merged.font === "simple") merged.font = "sans";
     if (merged.font === "traditional") merged.font = "serif";
@@ -137,7 +131,7 @@
     const root = document.documentElement;
     root.dataset.mode = t.mode;
     root.dataset.theme = t.theme;
-    root.dataset.saturation = t.saturation;
+    delete root.dataset.saturation;
     // data-font is only set when the user explicitly overrides typography.
     // "default" means no attribute, so theme-bound CSS rules apply.
     if (t.font === "default") {
@@ -166,9 +160,6 @@
     });
     document.querySelectorAll("[data-copy-toggle]").forEach(b => {
       b.classList.toggle("is-active", b.dataset.copyToggle === t.copyMode);
-    });
-    document.querySelectorAll("[data-saturation-toggle]").forEach(b => {
-      b.classList.toggle("is-active", b.dataset.saturationToggle === t.saturation);
     });
     document.querySelectorAll("[data-font-toggle]").forEach(b => {
       b.classList.toggle("is-active", b.dataset.fontToggle === t.font);
@@ -430,19 +421,6 @@
     ]);
     typoRow.appendChild(typoToggle);
     adv.appendChild(typoRow);
-
-    // Saturation sub-theme — three chips. Each level has explicit per-theme
-    // values in styles.css so all themes show a visible difference, not
-    // just Civic. Default is the authored theme; Low desaturates everything;
-    // Vibrant amplifies bg/ink/accent.
-    const satRow = el("div", { class: "tweak-row" });
-    satRow.appendChild(el("label", {}, JTC.t("settings.saturation")));
-    const satToggle = el("div", { class: "toggle-row" }, [
-      el("button", { class: "toggle-chip", "data-saturation-toggle": "default", onClick: () => setTweak("saturation", "default") }, JTC.t("settings.sat_default")),
-      el("button", { class: "toggle-chip", "data-saturation-toggle": "vibrant", onClick: () => setTweak("saturation", "vibrant") }, JTC.t("settings.sat_vibrant"))
-    ]);
-    satRow.appendChild(satToggle);
-    adv.appendChild(satRow);
 
     // Text size — fine slider (14–22px).
     const fsRow = el("div", { class: "tweak-row slider-row" });
