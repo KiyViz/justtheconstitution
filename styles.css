@@ -620,13 +620,15 @@ body {
   cursor: pointer;
   background: transparent;
 }
-/* Invisible expanded hit area — extends the chapter's click target into
-   the .progress padding above and below the visible track, so chapter
-   segments are easier to tap. No visual change. */
+/* Invisible expanded hit area — extends the chapter's click target up
+   into the padding above the track, AND down across the labels row, so
+   users can click directly on "PRE / I / II / III / …" to jump to that
+   chapter instead of having to land on the 5px track itself. The label
+   row sets pointer-events:none below so clicks pass through to here. */
 .progress__chapter::before {
   content: "";
   position: absolute;
-  inset: -7px 0 -7px;
+  inset: -8px 0 -22px;
   background: transparent;
 }
 .progress__chapter::after {
@@ -658,6 +660,9 @@ body {
   font-family: var(--font-sans);
   font-size: 11px; letter-spacing: 0.06em;
   text-transform: uppercase; color: var(--ink-faint);
+  /* Labels are positional cues — let clicks pass through to the chapter
+     hit-zones underneath (which extend downward to cover this row). */
+  pointer-events: none;
 }
 .progress__labels > span {
   position: absolute;
