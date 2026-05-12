@@ -223,6 +223,10 @@ module.exports = {
   "share.copy_link":          "Copy link",
   "share.email":              "Email",
   "share.more":               "More\u2026",
+  "share.x":                  "X",
+  "share.facebook":           "Facebook",
+  "share.linkedin":           "LinkedIn",
+  "share.reddit":             "Reddit",
   "share.email_body_prefix":  "Thought you might find this useful:\n\n",
   "share.toast_default":      "Link copied",
 

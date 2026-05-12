@@ -72,6 +72,17 @@
   }
 
   // ---- Share popover ----
+  // Intent-URL builders for the social platforms. Each receives the
+  // already-encoded url and title. Opening these in a small popup
+  // (window.open with width/height) matches the share-button conventions
+  // every major platform documents.
+  const SOCIAL_INTENTS = {
+    x:        ({ u, t }) => `https://twitter.com/intent/tweet?url=${u}&text=${t}`,
+    facebook: ({ u })    => `https://www.facebook.com/sharer/sharer.php?u=${u}`,
+    linkedin: ({ u })    => `https://www.linkedin.com/sharing/share-offsite/?url=${u}`,
+    reddit:   ({ u, t }) => `https://www.reddit.com/submit?url=${u}&title=${t}`
+  };
+
   function initShare() {
     const btn = document.getElementById("share-btn");
     const pop = document.getElementById("share-pop");
@@ -117,6 +128,13 @@
         try {
           await navigator.share({ title, url });
         } catch { /* user cancelled or unsupported */ }
+        closePop();
+      } else if (SOCIAL_INTENTS[action]) {
+        const intent = SOCIAL_INTENTS[action]({
+          u: encodeURIComponent(url),
+          t: encodeURIComponent(title)
+        });
+        window.open(intent, "_blank", "noopener,noreferrer,width=580,height=600");
         closePop();
       }
     });
