@@ -2065,7 +2065,12 @@ body {
 }
 
 /* ===== Responsive tweaks ===== */
-@media (max-width: 1100px) { .progress { top: var(--header-h); } }
+/* Tablet (no labels row): the base 8/10 vertical padding is tuned around
+   the labels sitting below the track. Once labels are hidden at <=1100px,
+   that asymmetry reads as a top-crunched, bottom-voided bar. Restore vertical
+   symmetry (6/6) at this breakpoint; keep horizontal 20px so left/right edges
+   still line up with the header. Mobile (<=720px) tightens further to 14px. */
+@media (max-width: 1100px) { .progress { top: var(--header-h); padding: 6px 20px 6px; } }
 @media (max-width: 720px) {
   .wordmark { font-size: 14px; height: 40px; min-width: 154px; }
   .wordmark__mark { width: 40px; height: 40px; }
