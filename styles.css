@@ -831,6 +831,14 @@ body {
 }
 @keyframes slideIn { from { transform: translateX(-12px); opacity: 0; } }
 .toc-drawer__close { position: absolute; top: 12px; right: 12px; }
+.toc-drawer__brand {
+  display: block;
+  width: 64px;
+  height: 64px;
+  color: var(--ink);
+  margin: 0 0 12px;
+}
+.toc-drawer__brand svg { width: 100%; height: 100%; display: block; }
 
 /* ===== Layout ===== */
 .layout {
