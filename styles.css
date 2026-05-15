@@ -801,11 +801,13 @@ body {
   margin-left: -2px;
   transition: color .15s ease, border-color .15s ease;
 }
-/* Hover overshoots past --ink for a more registerable shift. Default direction
-   (light themes) deepens toward black; dark/OLED reverses to brighten toward
-   white. The 80/20 mix self-tunes to each theme via --ink. */
+/* Hover overshoots past --ink. Light themes need a heavier black push: rest
+   state mixes --ink with the lighter --ink-soft, so a small black overshoot
+   barely moves the endpoint. Pulling 60% toward black creates a comparable
+   delta to what dark/OLED gets for free (where rest is dim and hover lands
+   near pure white). */
 .toc a:hover,
-.toc a:focus-visible { color: color-mix(in srgb, var(--ink) 80%, #000 20%); }
+.toc a:focus-visible { color: color-mix(in srgb, var(--ink) 40%, #000 60%); }
 [data-mode="dark"] .toc a:hover,
 [data-mode="dark"] .toc a:focus-visible,
 [data-mode="oled"] .toc a:hover,
