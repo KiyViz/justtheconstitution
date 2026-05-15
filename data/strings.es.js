@@ -6,14 +6,14 @@ module.exports = {
   "a11y.skip_to_content":     "Saltar a la Constitución",
 
   // ── Metadatos de página ──
-  "meta.title":               "Constitución de EE. UU. — Texto completo y las 27 enmiendas | justtheconstitution.org",
-  "meta.description":         "El texto completo de la Constitución de los Estados Unidos y sus veintisiete enmiendas, junto al pergamino original de los Archivos Nacionales. Sin anuncios. Sin comentarios. Solo la información.",
-  "meta.og_title":            "Solo la Constitución",
-  "meta.og_description":      "El texto completo de la Constitución de EE. UU. y las 27 enmiendas. Sin anuncios. Sin comentarios. Solo el documento fundacional.",
+  "meta.title":               "Solo la Constitución — Lea, cite y comparta la Constitución de EE. UU.",
+  "meta.description":         "Lea el texto completo de la Constitución de EE. UU. y las 27 enmiendas en línea. Cite cualquier línea, comparta cualquier cláusula, busque el texto completo. Sin anuncios. Sin comentarios. Sin muro de pago.",
+  "meta.og_title":            "Solo la Constitución — Ratificada en 1788. Hecha para 2026.",
+  "meta.og_description":      "La Constitución de EE. UU., hecha para la web. Lea, cite y comparta el documento fundacional línea por línea. Sin anuncios. Sin comentarios. Sin muro de pago.",
 
   // ── Título del documento ──
   "doc.title":                "La Constitución de los Estados Unidos",
-  "doc.subtitle":             "El texto completo, tal como se inscribió en 1787, con las veintisiete enmiendas.",
+  "doc.subtitle":             "El texto completo, ratificado en 1788, con las veintisiete enmiendas.",
   "doc.tag":                  "Nosotros, el Pueblo \u00b7 17 de septiembre de 1787",
 
   // ── Secciones ──
@@ -224,7 +224,10 @@ module.exports = {
   "share.facebook":           "Facebook",
   "share.linkedin":           "LinkedIn",
   "share.reddit":             "Reddit",
-  "share.email_body_prefix":  "Pensé que esto podría interesarte:\n\n",
+  "share.email_subject_default": "La Constitución, línea por línea",
+  "share.email_body_prefix":  "Una edición web limpia y gratuita de la Constitución de EE. UU. Cite cualquier línea, comparta cualquier cláusula, busque el texto completo. ",
+  "share.page_tweet_text":    "Lea la Constitución de EE. UU. en línea — cada cláusula, a un enlace de distancia.",
+  "share.page_native_title":  "Solo la Constitución — lea, cite y comparta la Constitución de EE. UU. línea por línea.",
   "share.toast_default":      "Enlace copiado",
 
   // ── Descarga ──
@@ -242,7 +245,7 @@ module.exports = {
   "footer.national_archives": "Archivos Nacionales",
   "footer.images":            "Imágenes.",
   "footer.images_link":       "Archivos Nacionales \u2014 Descargas en Alta Resolución",
-  "footer.tagline":           "Sin anuncios. Sin comentarios. Solo la información.",
+  "footer.tagline":           "La Constitución, línea por línea.",
   "footer.byline":            "Un proyecto de KiyViz.",
   "footer.info_link":         "Acerca · Privacidad · Contacto",
   "footer.contact_email":     "feedback@justtheconstitution.org",

@@ -76,15 +76,27 @@
     // Page-level (no source) — preserve today's top-level share behavior.
     if (!source) {
       const url = opts.fallbackUrl || (typeof location !== "undefined" ? location.href : "");
-      const title = opts.fallbackTitle || (typeof document !== "undefined" ? document.title : "");
-      if (platform === "copy") return { text: url, url, title };
+      const docTitle = opts.fallbackTitle || (typeof document !== "undefined" ? document.title : "");
+      // Marketing-copy prefills (en). Locales without these keys (es) fall
+      // back to the document title — the rollout doc is explicit that we do
+      // not machine-translate marketing copy.
+      const STR = JTC.STRINGS || {};
+      const tweetText = STR["share.page_tweet_text"] || docTitle;
+      const nativeTitle = STR["share.page_native_title"] || docTitle;
+      const emailSubject = STR["share.email_subject_default"] || docTitle;
+      if (platform === "copy") return { text: url, url, title: docTitle };
       if (platform === "email") {
-        return { text: (JTC.t ? JTC.t("share.email_body_prefix") : "") + url, url, title };
+        return {
+          text: (JTC.t ? JTC.t("share.email_body_prefix") : "") + url,
+          url,
+          title: emailSubject
+        };
       }
       // Bluesky's intent URL has no separate url= param — link must live
-      // in the text. Other social platforms get title in text and url in url=.
-      if (platform === "bluesky") return { text: `${title} ${url}`, url, title };
-      return { text: title, url, title };
+      // in the text. Other social platforms get text in text= and url in url=.
+      if (platform === "bluesky") return { text: `${tweetText} ${url}`, url, title: nativeTitle };
+      if (platform === "native")  return { text: nativeTitle, url, title: nativeTitle };
+      return { text: tweetText, url, title: nativeTitle };
     }
 
     const cite = citeFor(source);
