@@ -799,9 +799,8 @@ body {
   padding: 4px 12px 4px 10px;
   border-left: 2px solid transparent;
   margin-left: -2px;
-  transition: color .1s ease, border-color .1s ease;
+  transition: color .15s ease, border-color .15s ease;
 }
-.toc a:hover { color: var(--ink); }
 .toc a.is-active { color: var(--ink); border-left-color: var(--ink); font-weight: 500; }
 .toc .toc-sub { padding-left: 12px; }
 .toc .toc-sub a {
@@ -810,6 +809,17 @@ body {
   padding-top: 2px; padding-bottom: 2px;
 }
 .toc .toc-sub a.is-active { color: var(--ink); border-left-color: var(--ink-soft); }
+/* Hover/focus rules MUST come after .is-active and .toc-sub a — they share
+   (0,2,1) specificity and source order is what makes hover win. Previously
+   placed before those rules, the light-mode hover was silently overridden
+   on sub-items and active items; dark/OLED only "worked" because the
+   [data-mode="..."] prefix bumped specificity to (0,3,1). */
+.toc a:hover,
+.toc a:focus-visible { color: color-mix(in srgb, var(--ink) 40%, #000 60%); }
+[data-mode="dark"] .toc a:hover,
+[data-mode="dark"] .toc a:focus-visible,
+[data-mode="oled"] .toc a:hover,
+[data-mode="oled"] .toc a:focus-visible { color: color-mix(in srgb, var(--ink) 80%, #fff 20%); }
 
 .toc-drawer {
   position: fixed; inset: 0;
