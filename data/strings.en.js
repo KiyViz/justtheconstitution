@@ -250,7 +250,7 @@ module.exports = {
   "footer.national_archives": "National Archives",
   "footer.images":            "Images.",
   "footer.images_link":       "National Archives \u2014 High Resolution Downloads",
-  "footer.tagline":           "No ads. No commentary. Just the information.",
+  "footer.tagline":           "The Constitution, line-by-line.",
   "footer.byline":            "A KiyViz project.",
   "footer.info_link":         "About · Privacy · Contact",
   "footer.contact_email":     "feedback@justtheconstitution.org",

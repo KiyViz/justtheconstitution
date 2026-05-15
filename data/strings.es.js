@@ -245,7 +245,7 @@ module.exports = {
   "footer.national_archives": "Archivos Nacionales",
   "footer.images":            "Imágenes.",
   "footer.images_link":       "Archivos Nacionales \u2014 Descargas en Alta Resolución",
-  "footer.tagline":           "Sin anuncios. Sin comentarios. Solo la información.",
+  "footer.tagline":           "La Constitución, línea por línea.",
   "footer.byline":            "Un proyecto de KiyViz.",
   "footer.info_link":         "Acerca · Privacidad · Contacto",
   "footer.contact_email":     "feedback@justtheconstitution.org",
