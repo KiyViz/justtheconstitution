@@ -136,7 +136,7 @@ function renderContent(C, S, locale) {
         if (s.heading) L.push(`${ind}      <h3>${esc(s.heading)}</h3>`);
         L.push(`${ind}    </div>`);
       }
-      s.paragraphs.forEach(p => L.push(`${ind}    <p>${esc(p)}</p>`));
+      s.paragraphs.forEach((p, i) => L.push(`${ind}    <p id="${esc(s.id)}-c${i + 1}">${esc(p)}</p>`));
       L.push(`${ind}  </section>`);
     });
     L.push(`${ind}</section>`);
@@ -195,7 +195,7 @@ function renderContent(C, S, locale) {
     L.push(`${ind}  </div>`);
     L.push(`${ind}  <h3>${esc(am.label)}</h3>`);
     L.push(`${ind}  <div class="amendment__sub">${esc(am.subtitle)}</div>`);
-    am.paragraphs.forEach(p => L.push(`${ind}  <p>${esc(p)}</p>`));
+    am.paragraphs.forEach((p, i) => L.push(`${ind}  <p id="${esc(am.id)}-s${i + 1}">${esc(p)}</p>`));
     L.push(`${ind}</section>`);
   });
 
@@ -301,7 +301,7 @@ const CLIENT_KEYS = [
   'cite.mla.const', 'cite.mla.preamble', 'cite.mla.signatures',
   'cite.mla.art', 'cite.mla.amend', 'cite.mla.section', 'cite.mla.clause',
   'cite.chicago.art', 'cite.chicago.amend', 'cite.chicago.section', 'cite.chicago.clause',
-  'share.email_body_prefix',
+  'share.email_body_prefix', 'share.title',
   'download.button', 'download.filename', 'download.heading',
   'download.description', 'download.hint',
   'md.source_footer', 'doc.title', 'doc.tag',
@@ -355,6 +355,7 @@ function renderScripts(locale, config) {
     `  <script defer src="${src(dataPath)}"></script>`,
     `  <script defer src="${src('../core.js')}"></script>`,
     `  <script defer src="${src('../citations.js')}"></script>`,
+    `  <script defer src="${src('../share.js')}"></script>`,
     `  <script defer src="${src('../tweaks.js')}"></script>`,
     `  <script defer src="${src('../images.js')}"></script>`,
     `  <script defer src="${src('../reader.js')}"></script>`,

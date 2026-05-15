@@ -85,9 +85,12 @@
   }
 
   const tracked = {};
-  function trackEvent(name) {
-    if (tracked[name]) return;
-    tracked[name] = true;
+  function trackEvent(name, opts) {
+    const dedupe = !opts || opts.dedupe !== false;
+    if (dedupe) {
+      if (tracked[name]) return;
+      tracked[name] = true;
+    }
     if (typeof performance !== 'undefined' && performance.mark) {
       performance.mark('jtc:' + name);
     }

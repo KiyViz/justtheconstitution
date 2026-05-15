@@ -215,10 +215,12 @@ module.exports = {
 
   // ── Compartir ──
   "share.aria":               "Compartir",
+  "share.title":              "Compartir este pasaje",
   "share.copy_link":          "Copiar enlace",
   "share.email":              "Correo electrónico",
   "share.more":               "Más\u2026",
   "share.x":                  "X",
+  "share.bluesky":            "Bluesky",
   "share.facebook":           "Facebook",
   "share.linkedin":           "LinkedIn",
   "share.reddit":             "Reddit",

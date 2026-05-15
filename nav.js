@@ -72,21 +72,68 @@
   }
 
   // ---- Share popover ----
-  // Intent-URL builders for the social platforms. Each receives the
-  // already-encoded url and title. Opening these in a small popup
-  // (window.open with width/height) matches the share-button conventions
-  // every major platform documents.
+  // The popover is a singleton (#share-pop). It opens with a per-trigger
+  // "context": page-level (source=null, falls back to document.title +
+  // location.href) or clause/section/article/amendment/etc. — driven by
+  // reader.js when the user clicks a per-passage share button.
+  //
+  // SOCIAL_INTENTS builders receive an opts bag with already-encoded
+  // params; Bluesky has no separate url= param so the URL lives inside
+  // the text.
   const SOCIAL_INTENTS = {
     x:        ({ u, t }) => `https://twitter.com/intent/tweet?url=${u}&text=${t}`,
+    bluesky:  ({ t })    => `https://bsky.app/intent/compose?text=${t}`,
     facebook: ({ u })    => `https://www.facebook.com/sharer/sharer.php?u=${u}`,
     linkedin: ({ u })    => `https://www.linkedin.com/sharing/share-offsite/?url=${u}`,
     reddit:   ({ u, t }) => `https://www.reddit.com/submit?url=${u}&title=${t}`
   };
 
+  // Position the popover near `trigger`. Falls back to the header-default
+  // position if no trigger is provided. The popover is `position: fixed`;
+  // we set inline top/left and clear `right` so JS positioning wins.
+  function positionPopover(pop, trigger) {
+    if (!trigger) {
+      pop.style.top = "";
+      pop.style.left = "";
+      pop.style.right = "";
+      return;
+    }
+    const rect = trigger.getBoundingClientRect();
+    const popW = pop.offsetWidth || 220;
+    const popH = pop.offsetHeight || 320;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const gap = 6;
+    let top = rect.bottom + gap;
+    let left = rect.right - popW;
+    if (top + popH > vh - 8) top = Math.max(8, rect.top - popH - gap);
+    if (left < 8) left = 8;
+    if (left + popW > vw - 8) left = vw - popW - 8;
+    pop.style.top = top + "px";
+    pop.style.left = left + "px";
+    pop.style.right = "auto";
+  }
+
+  // Open the popover with a specific context. context = { source, text,
+  // url, title } where source is null for page-level share. reader.js
+  // calls this via JTC.openShareFor for per-passage triggers.
+  let _activeTrigger = null;
+  function openShareFor(context, triggerEl) {
+    const pop = document.getElementById("share-pop");
+    if (!pop) return;
+    pop._context = context || null;
+    _activeTrigger = triggerEl || null;
+    // Make it temporarily visible-but-hidden so we can measure for placement.
+    pop.style.visibility = "hidden";
+    pop.hidden = false;
+    positionPopover(pop, triggerEl);
+    pop.style.visibility = "";
+  }
+
   function initShare() {
     const btn = document.getElementById("share-btn");
     const pop = document.getElementById("share-pop");
-    if (!btn || !pop) return;
+    if (!pop) return;
 
     // Reveal native share row on supported browsers (mostly mobile)
     if (typeof navigator !== "undefined" && "share" in navigator) {
@@ -94,47 +141,75 @@
       if (native) native.hidden = false;
     }
 
-    const closePop = () => { pop.hidden = true; };
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      pop.hidden = !pop.hidden;
-    });
+    const closePop = () => {
+      pop.hidden = true;
+      pop._context = null;
+      _activeTrigger = null;
+    };
+
+    if (btn) {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (!pop.hidden && _activeTrigger === btn) { closePop(); return; }
+        openShareFor(null, btn);
+      });
+    }
     document.addEventListener("click", (e) => {
       if (pop.hidden) return;
-      if (!pop.contains(e.target) && e.target !== btn && !btn.contains(e.target)) closePop();
+      if (pop.contains(e.target)) return;
+      if (_activeTrigger && _activeTrigger.contains(e.target)) return;
+      closePop();
     });
     document.addEventListener("keydown", (e) => {
-      if (!pop.hidden && e.key === "Escape") closePop();
+      if (!pop.hidden && e.key === "Escape") {
+        const t = _activeTrigger;
+        closePop();
+        if (t && t.focus) t.focus();
+      }
     });
 
     pop.addEventListener("click", async (e) => {
       const row = e.target.closest(".share-row");
       if (!row) return;
       const action = row.dataset.action;
-      const url = location.href;
-      const title = document.title;
-      JTC.trackEvent('share_clicked');
+      const ctx = pop._context;
+      const source = ctx ? ctx.source : null;
+      const kind = source && source.kind ? source.kind : "page";
+      const locale = document.documentElement.dataset.currentLocale
+                  || document.documentElement.lang || "en";
+      const opts = {
+        locale,
+        url: JTC.SITE_URL,
+        fallbackUrl: ctx ? ctx.url : location.href,
+        fallbackTitle: ctx ? ctx.title : document.title
+      };
+      const passage = ctx ? ctx.text : "";
+      const payload = JTC.buildSharePayload(source, passage, action, opts);
+      JTC.trackEvent(`share:${action}:${kind}`, { dedupe: false });
 
       if (action === "copy") {
-        const ok = await copyText(url);
+        const ok = await copyText(payload.text || payload.url);
         showToast(ok ? JTC.t("toast.link_copied") : JTC.t("toast.copy_failed"));
         closePop();
       } else if (action === "email") {
-        const subject = encodeURIComponent(title);
-        const body = encodeURIComponent(JTC.t("share.email_body_prefix") + url);
+        const subject = encodeURIComponent(payload.title || "");
+        const body = encodeURIComponent(payload.text || "");
         location.href = `mailto:?subject=${subject}&body=${body}`;
         closePop();
       } else if (action === "native") {
         try {
-          await navigator.share({ title, url });
+          const arg = { url: payload.url };
+          if (payload.title) arg.title = payload.title;
+          if (payload.text)  arg.text  = payload.text;
+          await navigator.share(arg);
         } catch { /* user cancelled or unsupported */ }
         closePop();
       } else if (SOCIAL_INTENTS[action]) {
         const intent = SOCIAL_INTENTS[action]({
-          u: encodeURIComponent(url),
-          t: encodeURIComponent(title)
+          u: encodeURIComponent(payload.url || ""),
+          t: encodeURIComponent(payload.text || payload.title || "")
         });
-        window.open(intent, "_blank", "noopener,noreferrer,width=580,height=600");
+        window.open(intent, "_blank", "noopener,noreferrer");
         closePop();
       }
     });
@@ -144,4 +219,5 @@
   JTC.openDrawer = openDrawer;
   JTC.closeDrawer = closeDrawer;
   JTC.initShare = initShare;
+  JTC.openShareFor = openShareFor;
 })();
