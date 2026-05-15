@@ -2105,7 +2105,10 @@ html { scrollbar-color: var(--rule) transparent; }
   overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
 }
 
-/* ===== Share popover ===== */
+/* ===== Share popover =====
+   Position is set in JS (nav.js positionPopover) per-trigger so it can
+   anchor to the header share button or any per-passage share button.
+   The defaults below are the fallback when no trigger is supplied. */
 .share-pop {
   position: fixed;
   top: calc(var(--header-h) + 12px);
@@ -2319,6 +2322,60 @@ html { scrollbar-color: var(--rule) transparent; }
   top: 0; right: 0;
   margin-left: 0;
 }
+
+/* ===== Per-passage share buttons =====
+   Sibling of .copy-btn at every copyable host (preamble, articles,
+   sections, clauses, amendments, amendment paragraphs, signatures).
+   Mirrors .copy-btn behavior: hidden until parent hover (desktop),
+   barely visible on touch, no label below 600px. Hands off to the
+   shared #share-pop popover via JTC.openShareFor. */
+.share-btn-passage {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-radius: 5px;
+  color: var(--ink-faint);
+  cursor: pointer;
+  padding: 2px 5px;
+  margin-left: 2px;
+  opacity: 0;
+  vertical-align: middle;
+  transition: opacity .12s ease, color .12s ease, background .12s ease;
+  line-height: 0;
+}
+.share-btn-passage svg { width: 13px; height: 13px; display: inline-block; }
+.share-btn-passage:hover,
+.share-btn-passage:focus-visible {
+  opacity: 1;
+  color: var(--ink);
+  background: var(--chip-bg);
+}
+.text-pane p:hover > .share-btn-passage,
+.text-pane h2:hover > .share-btn-passage,
+.text-pane h3:hover > .share-btn-passage,
+.text-pane .section-head:hover > .share-btn-passage,
+.signatures__pres:hover > .share-btn-passage,
+.share-btn-passage:focus-visible { opacity: 0.8; }
+@media (hover: none) {
+  .share-btn-passage { opacity: 0.5; }
+}
+/* Signatures: pin share button next to the (also absolutely-positioned)
+   copy button so they don't disrupt the centred president layout. */
+.signatures__pres > .share-btn-passage {
+  position: absolute;
+  top: 0; right: 24px;
+  margin-left: 0;
+}
+
+/* Clause anchors: ensure direct-link scroll lands the clause below the
+   sticky header rather than buried under it. The header is ~132px tall;
+   we add a small visual breath above the highlighted paragraph. */
+.text-pane p[id*="-c"],
+.text-pane p[id*="-s"] { scroll-margin-top: 144px; }
+
+/* Hide per-passage share affordance in pure reader mode (matches the
+   top-level share UI suppression above). */
+[data-reader="pure"] .share-btn-passage { display: none !important; }
 
 /* ===== Signatures — footnotes for abbreviated parchment names ===== */
 .signatures { counter-reset: sig-fn; }

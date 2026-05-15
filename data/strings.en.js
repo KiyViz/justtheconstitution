@@ -220,10 +220,12 @@ module.exports = {
 
   // ── Share popover ──
   "share.aria":               "Share",
+  "share.title":              "Share this passage",
   "share.copy_link":          "Copy link",
   "share.email":              "Email",
   "share.more":               "More\u2026",
   "share.x":                  "X",
+  "share.bluesky":            "Bluesky",
   "share.facebook":           "Facebook",
   "share.linkedin":           "LinkedIn",
   "share.reddit":             "Reddit",

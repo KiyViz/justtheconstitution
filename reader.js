@@ -10,6 +10,7 @@
   const C = window.CONSTITUTION;
 
   const COPY_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+  const SHARE_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v14"/></svg>';
 
   // ── Source-object builders ──
   // Each in-document copy point is described by a structured `source` object
@@ -43,7 +44,7 @@
       cl: paraIdx + 1,
       hasMultipleSections: a.sections.length > 1,
       hasMultipleClauses: s.paragraphs.length > 1,
-      anchor: s.id,
+      anchor: `${s.id}-c${paraIdx + 1}`,
       label: `${a.label}${s.label ? ", " + s.label : ""}, ${JTC.t("prefix.paragraph")} ${paraIdx + 1}`
     };
   }
@@ -62,7 +63,7 @@
       am: amendmentNum(am),
       para: paraIdx + 1,
       totalParas: am.paragraphs.length,
-      anchor: am.id,
+      anchor: `${am.id}-s${paraIdx + 1}`,
       label: `${JTC.t("prefix.amendment")} ${am.num}, ${JTC.t("prefix.section")} ${paraIdx + 1}`
     };
   }
@@ -98,6 +99,39 @@
       const ok = await copyText(payload);
       if (ok) JTC.trackEvent('citation_copied');
       showToast(ok ? JTC.t("toast.copied") : JTC.t("toast.copy_failed"));
+    });
+    host.appendChild(btn);
+    // Parity: every copy affordance gets a sibling share affordance.
+    if (source) addShareButton(host, getText, source);
+    return btn;
+  }
+
+  // Per-passage share button. Mirrors addCopyButton's hover-reveal pattern
+  // and is rendered as a sibling so the two affordances appear side-by-
+  // side. Click hands off to JTC.openShareFor in nav.js with a context
+  // that lets the popover build platform-specific payloads (quote +
+  // Bluebook citation + clause-level deep link).
+  function addShareButton(host, getText, source) {
+    const ariaLabel = source && source.label ? `Share — ${source.label}` : "Share";
+    const btn = el("button", {
+      class: "share-btn-passage",
+      type: "button",
+      "aria-label": ariaLabel,
+      title: JTC.t("share.title") || "Share"
+    });
+    btn.innerHTML = SHARE_SVG;
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const text = (typeof getText === "function" ? getText() : getText).trim();
+      const locale = document.documentElement.dataset.currentLocale
+                  || document.documentElement.lang || "en";
+      const url = JTC.cite && JTC.cite._urlFor
+        ? JTC.cite._urlFor(source, { locale, url: SITE_URL })
+        : "";
+      if (JTC.openShareFor) {
+        JTC.openShareFor({ source, text, url, title: source && source.label }, btn);
+      }
     });
     host.appendChild(btn);
     return btn;
@@ -224,7 +258,7 @@
           sec.appendChild(sh);
         }
         s.paragraphs.forEach((p, i) => {
-          const paraEl = el("p", {}, p);
+          const paraEl = el("p", { id: `${s.id}-c${i + 1}` }, p);
           addCopyButton(paraEl, p, paragraphSrc(a, s, i), JTC.t("copy.excerpt"));
           sec.appendChild(paraEl);
         });
@@ -299,7 +333,7 @@
       box.appendChild(amH3);
       box.appendChild(el("div", { class: "amendment__sub" }, am.subtitle));
       am.paragraphs.forEach((p, i) => {
-        const paraEl = el("p", {}, p);
+        const paraEl = el("p", { id: `${am.id}-s${i + 1}` }, p);
         addCopyButton(paraEl, p, amendmentParaSrc(am, i), JTC.t("copy.excerpt"));
         box.appendChild(paraEl);
       });
@@ -469,6 +503,7 @@
 
   JTC.renderText = renderText;
   JTC.addCopyButton = addCopyButton;
+  JTC.addShareButton = addShareButton;
   JTC.articleFullText = articleFullText;
   JTC.sectionFullText = sectionFullText;
   JTC.amendmentFullText = amendmentFullText;
