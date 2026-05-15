@@ -13,7 +13,7 @@ module.exports = {
 
   // ── Título del documento ──
   "doc.title":                "La Constitución de los Estados Unidos",
-  "doc.subtitle":             "El texto completo, tal como se inscribió en 1787, con las veintisiete enmiendas.",
+  "doc.subtitle":             "El texto completo, ratificado en 1788, con las veintisiete enmiendas.",
   "doc.tag":                  "Nosotros, el Pueblo \u00b7 17 de septiembre de 1787",
 
   // ── Secciones ──

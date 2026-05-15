@@ -15,7 +15,7 @@ module.exports = {
 
   // ── Document title / heading ──
   "doc.title":                "The Constitution of the United States",
-  "doc.subtitle":             "The complete text, as inscribed in 1787, with all twenty-seven amendments.",
+  "doc.subtitle":             "The complete text, ratified in 1788, with all twenty-seven amendments.",
   "doc.tag":                  "We the People \u00b7 September 17, 1787",
 
   // ── Sections ──
