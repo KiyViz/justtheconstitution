@@ -8,10 +8,10 @@ module.exports = {
   "a11y.skip_to_content":     "Skip to the Constitution",
 
   // ── Page metadata ──
-  "meta.title":               "U.S. Constitution — Full Text & All 27 Amendments | justtheconstitution.org",
-  "meta.description":         "The full text of the United States Constitution and its twenty-seven amendments, paired with the original National Archives parchment. No ads. No commentary. Just the info.",
-  "meta.og_title":            "Just the Constitution",
-  "meta.og_description":      "The full text of the U.S. Constitution and all 27 amendments. No ads. No commentary. No paywall. Just the founding document.",
+  "meta.title":               "Just the Constitution — Read, Cite & Share the U.S. Constitution",
+  "meta.description":         "Read the full U.S. Constitution and all 27 amendments online. Cite any line, share any clause, search the full text. No ads, no commentary, no paywall.",
+  "meta.og_title":            "Just the Constitution — Ratified in 1788. Built for 2026.",
+  "meta.og_description":      "The U.S. Constitution, made for the web. Read, cite, and share the founding document line-by-line. No ads. No commentary. No paywall.",
 
   // ── Document title / heading ──
   "doc.title":                "The Constitution of the United States",
@@ -229,7 +229,10 @@ module.exports = {
   "share.facebook":           "Facebook",
   "share.linkedin":           "LinkedIn",
   "share.reddit":             "Reddit",
-  "share.email_body_prefix":  "Thought you might find this useful:\n\n",
+  "share.email_subject_default": "The Constitution, line-by-line",
+  "share.email_body_prefix":  "A clean, free web edition of the U.S. Constitution. Cite any line, share any clause, search the full text. ",
+  "share.page_tweet_text":    "Read the U.S. Constitution online — every clause, one link away.",
+  "share.page_native_title":  "Just the Constitution — read, cite, and share the U.S. Constitution line-by-line.",
   "share.toast_default":      "Link copied",
 
   // ── Download CTA ──
