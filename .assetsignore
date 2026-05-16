@@ -26,6 +26,9 @@ wrangler.jsonc
 # Repo docs and helpers not meant for visitors.
 SOP.md
 typography-recommendation.md
+marketing-copy.md
+marketing-copy-rollout.md
+internal/
 LICENSE
 
 # Local dev / editor / other-platform artifacts.
