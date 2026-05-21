@@ -187,15 +187,18 @@
       const payload = JTC.buildSharePayload(source, passage, action, opts);
       JTC.trackEvent(`share:${action}:${kind}`, { dedupe: false });
 
+      // Close immediately so the tap registers visibly and the toast for
+      // "copy" isn't competing with an open menu for attention. Anything
+      // async (clipboard write, native share sheet) runs afterwards.
+      closePop();
+
       if (action === "copy") {
         const ok = await copyText(payload.text || payload.url);
         showToast(ok ? JTC.t("toast.link_copied") : JTC.t("toast.copy_failed"));
-        closePop();
       } else if (action === "email") {
         const subject = encodeURIComponent(payload.title || "");
         const body = encodeURIComponent(payload.text || "");
         location.href = `mailto:?subject=${subject}&body=${body}`;
-        closePop();
       } else if (action === "native") {
         try {
           const arg = { url: payload.url };
@@ -203,14 +206,12 @@
           if (payload.text)  arg.text  = payload.text;
           await navigator.share(arg);
         } catch { /* user cancelled or unsupported */ }
-        closePop();
       } else if (SOCIAL_INTENTS[action]) {
         const intent = SOCIAL_INTENTS[action]({
           u: encodeURIComponent(payload.url || ""),
           t: encodeURIComponent(payload.text || payload.title || "")
         });
         window.open(intent, "_blank", "noopener,noreferrer");
-        closePop();
       }
     });
   }
