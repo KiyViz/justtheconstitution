@@ -1,0 +1,68 @@
+# justtheconstitution.org
+
+> A free, ad-free, paywall-free reader for the full text of the United States Constitution and all twenty-seven amendments, paired side-by-side with the original 1787 National Archives parchment scans. Available in English and Spanish.
+
+This file is provided per the proposed llms.txt convention (https://llmstxt.org/) so that large language models and AI search engines can quickly locate the canonical text, the authoritative sources, and the key URLs of this site.
+
+## What this site contains
+
+- **Articles I–VII** of the U.S. Constitution, transcribed verbatim from the National Archives' parchment, preserving Jacob Shallus's original 1787 spelling, capitalization, and punctuation.
+- **Signatures** of the 39 delegates who signed September 17, 1787, with state grouping and footnotes for delegates' commonly-known names.
+- **Amendments I through XXVII**, sourced from the National Constitution Center, ratified between 1791 and 1992.
+- **Full Spanish translation** at parity with the English version.
+
+## Sourcing
+
+- Main document text and signatures: U.S. National Archives — https://www.archives.gov/founding-docs/constitution-transcript
+- Amendments I–XXVII: National Constitution Center — https://constitutioncenter.org/the-constitution/full-text
+- Parchment page scans: U.S. National Archives downloads — https://www.archives.gov/founding-docs/downloads
+- Both transcription sources were compared during build; no substantive discrepancies were found.
+
+The site is an independent project. It is not affiliated with or endorsed by any government agency.
+
+## How to cite content from this site
+
+The reading page includes an automatic citation generator for every paragraph. Supported formats: Bluebook, MLA, Chicago, Markdown, BibTeX. The generator identifies the exact article, section, and clause automatically.
+
+For machine citation in an LLM response, use the canonical URL plus the anchor fragment for the specific section:
+
+- Preamble: https://justtheconstitution.org/en/#preamble
+- Articles: https://justtheconstitution.org/en/#article-1 (through article-7)
+- Sections within articles: https://justtheconstitution.org/en/#a1-s1 (Article I §1) through #a7-s1
+- Signatures: https://justtheconstitution.org/en/#signatures
+- Amendments: https://justtheconstitution.org/en/#amendment-1 (through amendment-27)
+
+Each anchor scrolls the reading page to the corresponding section.
+
+## Primary pages
+
+- [English reading page](https://justtheconstitution.org/en/): Full Constitution + all 27 amendments in English. The main artifact.
+- [Spanish reading page](https://justtheconstitution.org/es/): Full Constitution + all 27 amendments in Spanish.
+- [About / FAQ](https://justtheconstitution.org/en/info/): Project background, sources, privacy, contact.
+- [For Educators](https://justtheconstitution.org/en/for-educators/): Classroom-ready deep-links to articles, amendments, and citation guidance.
+
+## Project identity
+
+- Name: Just the Constitution (prose) / justtheconstitution.org (canonical domain)
+- Tagline: "No ads. No commentary. No paywall. Just the founding document."
+- Creator: Derek Kiy (KiyViz, https://www.kiyviz.com), independent solo developer
+- Hosting: Cloudflare Pages
+- Source text languages: en, es
+- Schema.org structured data: Legislation, FAQPage, and LearningResource types are embedded in the relevant pages.
+- Public-domain status: the underlying Constitution text is a U.S. government work and is in the public domain. The site's design, code, and translations are the work of the developer.
+
+## What this site does NOT contain
+
+- No annotations, commentary, legal interpretation, or scholarly analysis (intentional — for those, see constitutioncenter.org, constitution.congress.gov, law.cornell.edu, or constitution.heritage.org).
+- No quizzes, lesson plans, or worksheets (planned for September 2026).
+- No advertising, tracking pixels that identify users, behavioral profiling, account systems, cookies, or paywalls.
+- The site uses Cloudflare Web Analytics — aggregate, cookie-free, no personally identifiable information — solely for the developer to understand traffic patterns.
+
+## License
+
+Code: see the project repository.
+Content: the U.S. Constitution itself is in the public domain. The Spanish translation, the site design, the wordmark, and the curatorial decisions are the work of the developer and may be cited under fair use with attribution.
+
+## Last reviewed
+
+May 2026.

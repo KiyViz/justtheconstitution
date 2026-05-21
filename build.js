@@ -25,6 +25,20 @@ const MARKER = '<!-- BUILD:CONTENT -->';
 const SCRIPTS_MARKER = '<!-- BUILD:SCRIPTS -->';
 const HEAD_MARK_START = '<!-- BUILD:HEAD-START -->';
 const HEAD_MARK_END = '<!-- BUILD:HEAD-END -->';
+const ANALYTICS_MARKER = '<!-- BUILD:ANALYTICS -->';
+
+// Cloudflare Web Analytics beacon. Cookie-free, no PII, fires once per page
+// load. Token is supplied via the CF_BEACON_TOKEN env var so it can be set in
+// Cloudflare Pages → Settings → Environment Variables without committing to
+// the repo. Locally / on forks without a token, render a visible HTML comment
+// instead of an inert script so the privacy posture stays auditable.
+function renderAnalyticsBeacon() {
+  const token = process.env.CF_BEACON_TOKEN;
+  if (token && /^[a-f0-9]{32}$/i.test(token)) {
+    return `  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"${token}","spa":false}'></script>`;
+  }
+  return `  <!-- Cloudflare Web Analytics: set CF_BEACON_TOKEN (32-char hex) in Cloudflare Pages → Settings → Environment Variables to enable. See https://developers.cloudflare.com/web-analytics/ -->`;
+}
 
 // ── Locale configuration ──
 const LOCALES = {
@@ -213,6 +227,14 @@ function renderContent(C, S, locale) {
 function renderHeadExtras(locale, S) {
   const localeUrl = `${SITE_URL}${locale}/`;
   const buildDate = new Date().toISOString().slice(0, 10);
+  const ogImage = `${SITE_URL}og-image.png`;
+
+  // Legislation schema — describes the legal artifact and the digital edition.
+  // - author: the original authors of the legislation (government, 1787)
+  // - creator: the maker of THIS digital edition (the dev — separate Person)
+  // - publisher: the entity hosting the digital edition
+  // - sameAs: social profile URLs of the publisher (uncomment once handles
+  //   are reserved — see audit-workspace/templates/brand-checklist.md)
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Legislation',
@@ -222,13 +244,35 @@ function renderHeadExtras(locale, S) {
     datePublished: '1787-09-17',
     dateModified: buildDate,
     url: localeUrl,
-    author: { '@type': 'GovernmentOrganization', name: 'Constitutional Convention' },
-    publisher: { '@type': 'Organization', name: 'justtheconstitution.org', url: SITE_URL },
-    isPartOf: { '@type': 'CreativeWork', name: 'Founding Documents of the United States' }
+    image: ogImage,
+    author: {
+      '@type': 'GovernmentOrganization',
+      name: 'Constitutional Convention',
+      url: 'https://www.archives.gov/founding-docs/constitution'
+    },
+    creator: {
+      '@type': 'Person',
+      name: 'Derek Kiy',
+      url: 'https://www.kiyviz.com',
+      affiliation: { '@type': 'Organization', name: 'KiyViz' }
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'justtheconstitution.org',
+      url: SITE_URL,
+      logo: { '@type': 'ImageObject', url: `${SITE_URL}assets/favicon-we.svg` }
+      // sameAs: ['https://x.com/...', 'https://bsky.app/profile/...'] — add once handles reserved
+    },
+    isBasedOn: [
+      { '@type': 'CreativeWork', name: 'U.S. Constitution transcription', url: 'https://www.archives.gov/founding-docs/constitution-transcript' },
+      { '@type': 'CreativeWork', name: 'National Constitution Center — Full Text', url: 'https://constitutioncenter.org/the-constitution/full-text' }
+    ],
+    isPartOf: { '@type': 'CreativeWork', name: 'Founding Documents of the United States' },
+    isAccessibleForFree: true,
+    license: 'https://www.usa.gov/government-works'
   };
   const ogTitle = esc(S['meta.og_title'] || S['meta.title']);
   const ogDesc = esc(S['meta.og_description']);
-  const ogImage = `${SITE_URL}og-image.png`;
   const lines = [
     `  <link rel="canonical" href="${localeUrl}" />`,
     ...Object.keys(LOCALES).map(l =>
@@ -239,6 +283,13 @@ function renderHeadExtras(locale, S) {
     `  <meta property="og:title" content="${ogTitle}" />`,
     `  <meta property="og:description" content="${ogDesc}" />`,
     `  <meta property="og:image" content="${ogImage}" />`,
+    // og:image dimensions match the current 400×370 export. Update to
+    // 1200×630 when the asset is re-exported (see F-05 in the audit workspace).
+    `  <meta property="og:image:width" content="400" />`,
+    `  <meta property="og:image:height" content="370" />`,
+    `  <meta property="og:image:alt" content="${ogTitle}" />`,
+    `  <meta property="og:site_name" content="justtheconstitution.org" />`,
+    `  <meta property="og:locale" content="${locale === 'es' ? 'es_ES' : 'en_US'}" />`,
     `  <meta name="twitter:card" content="summary_large_image" />`,
     `  <meta name="twitter:title" content="${ogTitle}" />`,
     `  <meta name="twitter:description" content="${ogDesc}" />`,
@@ -514,6 +565,9 @@ function main() {
       `$1${esc(S['meta.description'])}$2`
     );
 
+    // Cloudflare Web Analytics beacon (or auditable fallback comment)
+    html = html.replace(ANALYTICS_MARKER, renderAnalyticsBeacon());
+
     // Replace script tags
     if (html.includes(SCRIPTS_MARKER)) {
       html = html.replace(SCRIPTS_MARKER, renderScripts(locale, config));
@@ -613,6 +667,9 @@ function main() {
     // Script tag
     html = html.replace(SCRIPTS_MARKER, `  <script defer src="../../theme.js?v=${themeHash}"></script>`);
 
+    // Analytics beacon (or auditable fallback comment)
+    html = html.replace(ANALYTICS_MARKER, renderAnalyticsBeacon());
+
     const outDir = path.join(ROOT, locale, 'info');
     fs.mkdirSync(outDir, { recursive: true });
     fs.writeFileSync(path.join(outDir, 'index.html'), html);
@@ -633,10 +690,37 @@ function main() {
     const hreflangs = Object.keys(LOCALES).map(l =>
       `  <link rel="alternate" hreflang="${l}" href="${SITE_URL}${l}/for-educators/" />`
     ).join('\n');
+    // LearningResource structured data — tells educator-facing search
+    // surfaces (Google Classroom, AI search) that this is a teacher resource.
+    const learningResource = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'LearningResource',
+      name: S['educators.title'] || 'For Educators — Just the Constitution',
+      description: S['educators.meta_description'] || 'A free, ad-free reading platform for the U.S. Constitution, built for the classroom.',
+      url: eduUrl,
+      inLanguage: locale,
+      isAccessibleForFree: true,
+      learningResourceType: 'Reference',
+      educationalUse: ['Constitution Day teaching', 'Civics instruction', 'Primary source analysis'],
+      educationalLevel: ['high school', 'undergraduate', 'middle school'],
+      audience: { '@type': 'EducationalAudience', educationalRole: 'teacher' },
+      teaches: 'United States Constitution and Bill of Rights',
+      provider: {
+        '@type': 'Organization',
+        name: 'justtheconstitution.org',
+        url: SITE_URL
+      },
+      isPartOf: {
+        '@type': 'WebSite',
+        name: 'justtheconstitution.org',
+        url: SITE_URL
+      }
+    });
     const headExtras = [
       `  <link rel="canonical" href="${eduUrl}" />`,
       hreflangs,
-      `  <link rel="alternate" hreflang="x-default" href="${SITE_URL}en/for-educators/" />`
+      `  <link rel="alternate" hreflang="x-default" href="${SITE_URL}en/for-educators/" />`,
+      `  <script type="application/ld+json">${learningResource}</script>`
     ].join('\n');
     if (html.includes(HEAD_MARK_START)) {
       html = html.replace(
@@ -647,6 +731,9 @@ function main() {
 
     html = injectTemplateStrings(html, S);
     html = html.replace(SCRIPTS_MARKER, `  <script defer src="../../theme.js?v=${themeHash}"></script>`);
+
+    // Analytics beacon (or auditable fallback comment)
+    html = html.replace(ANALYTICS_MARKER, renderAnalyticsBeacon());
 
     const outDir = path.join(ROOT, locale, 'for-educators');
     fs.mkdirSync(outDir, { recursive: true });
@@ -660,6 +747,7 @@ function main() {
   fourOhFour = fourOhFour.replace('href="styles.css"', `href="styles.css?v=${subCssHash}"`);
   fourOhFour = fourOhFour.replace('href="assets/favicon-we.svg"', `href="assets/favicon-we.svg?v=${subFaviconHash}"`);
   fourOhFour = fourOhFour.replace(SCRIPTS_MARKER, `  <script defer src="theme.js?v=${themeHash}"></script>`);
+  fourOhFour = fourOhFour.replace(ANALYTICS_MARKER, renderAnalyticsBeacon());
   fs.writeFileSync(path.join(ROOT, '404.html'), fourOhFour);
   console.log(`  wrote 404.html`);
 
