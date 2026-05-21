@@ -2086,6 +2086,13 @@ body {
   /* Reveal Tools row on mobile only — it duplicates desktop header
      actions, so showing it on desktop would be redundant chrome. */
   .tools-row { display: block; }
+  /* Icon-only on phones: the (hover: none) partial-label hint above
+     reserves 40px and causes cutoff at narrow widths. Drop labels
+     entirely here and re-center the icon (undoing icon-btn:has(label)'s
+     10px padding from the base rule). aria-label keeps the buttons
+     readable to assistive tech. */
+  .icon-btn__label { display: none; }
+  .icon-btn:has(.icon-btn__label) { padding: 0; min-width: 36px; justify-content: center; }
 }
 
 html { scrollbar-color: var(--rule) transparent; }
