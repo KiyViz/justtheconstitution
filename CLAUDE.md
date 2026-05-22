@@ -27,5 +27,5 @@ Keep this file small. Pull in a detail file when the task calls for it:
 
 - Branch from `origin/main` as `claude/<short-name>`. One source edit pulls in
   many regenerated outputs — commit them together.
-- **After a PR merges, add a one-line entry at the top of the list in
-  `docs/pr-log.md`.** This is what keeps history cheap to recover.
+- `docs/pr-log.md` is updated automatically when a PR merges, by the
+  `Log merged PR` GitHub Action — no manual step needed.
