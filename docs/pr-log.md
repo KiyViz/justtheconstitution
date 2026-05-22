@@ -3,9 +3,12 @@
 Chronological record of merged pull requests, newest first. Lets a session
 recover project history by reading one file instead of querying `gh` / `git`.
 
-**Maintaining this file:** after a PR merges, add one line at the **top** of
-the list below: `- **#NN** (YYYY-MM-DD) — <PR title>`. If it ever drifts,
-rebuild from scratch with:
+**Maintaining this file:** updated automatically by the `Log merged PR`
+GitHub Action (`.github/workflows/log-merged-pr.yml`) — each merge into `main`
+prepends one line to the list below. No manual step needed. To add an entry
+by hand (e.g. the Action is disabled), use the format
+`- **#NN** (YYYY-MM-DD) — <PR title>` at the top of the list. If it ever
+drifts, rebuild from scratch with:
 
 ```
 gh pr list --state merged --limit 200 --json number,title,mergedAt \
@@ -14,6 +17,7 @@ gh pr list --state merged --limit 200 --json number,title,mergedAt \
 
 ---
 
+- **#45** (2026-05-22) — docs: add progressive-disclosure CLAUDE.md + context files
 - **#44** (2026-05-21) — fix: prevent iOS auto-zoom on search input focus
 - **#43** (2026-05-21) — fix: close share menu on selection and surface copy toast
 - **#42** (2026-05-21) — fix: icon-only header buttons on mobile

@@ -7,6 +7,7 @@ node_modules/
 
 # Git internals (present in the Cloudflare build container after the repo is cloned).
 .git/
+.github/
 .gitignore
 .gitattributes
 .githooks/

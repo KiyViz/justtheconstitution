@@ -1,0 +1,65 @@
+name: Log merged PR
+
+# Appends a one-line entry to docs/pr-log.md whenever a PR is merged into
+# main, so project history stays recoverable from one file without querying
+# the GitHub API. Fires only on merge (not on close-without-merge).
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+# Serialize runs — two near-simultaneous merges must not race on pushing main.
+concurrency:
+  group: pr-log
+
+jobs:
+  log:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Append entry to docs/pr-log.md
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_MERGED_AT: ${{ github.event.pull_request.merged_at }}
+        run: |
+          set -euo pipefail
+          # Idempotent — re-runs of the workflow must not double-log.
+          if grep -qF "**#${PR_NUMBER}**" docs/pr-log.md; then
+            echo "PR #${PR_NUMBER} already logged — nothing to do."
+            exit 0
+          fi
+          ENTRY="- **#${PR_NUMBER}** (${PR_MERGED_AT:0:10}) — ${PR_TITLE}"
+          export ENTRY
+          # Insert before the first existing entry to keep the list newest-first.
+          # awk reads the title via ENVIRON so an attacker-controlled PR title
+          # is never interpolated into a shell command.
+          awk 'BEGIN { e = ENVIRON["ENTRY"] }
+               !done && /^- \*\*#/ { print e; done = 1 }
+               { print }
+               END { if (!done) print e }' docs/pr-log.md > docs/pr-log.tmp
+          mv docs/pr-log.tmp docs/pr-log.md
+
+      - name: Commit and push
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- docs/pr-log.md; then
+            echo "No change to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/pr-log.md
+          # [skip ci] keeps the bot's tiny doc commit from triggering a redeploy.
+          git commit -m "chore: log PR #${PR_NUMBER} in pr-log.md [skip ci]"
+          git push origin HEAD:main
