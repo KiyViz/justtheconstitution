@@ -24,6 +24,8 @@ wrangler.jsonc
 .wrangler/
 
 # Repo docs and helpers not meant for visitors.
+CLAUDE.md
+docs/
 SOP.md
 typography-recommendation.md
 marketing-copy.md
