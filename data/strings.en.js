@@ -181,14 +181,15 @@ module.exports = {
   "settings.mode_dark":       "Dark",
   "settings.mode_oled":       "OLED",
   "settings.color":           "Color",
-  // Copy / citation format — shown above the fold in the settings pane.
-  // Short labels, characters at a premium.
-  "settings.copy_label":      "Copy",
-  "settings.copy_plain":      "Plain",
+  // Citation format — shown above the fold in the settings pane.
+  // Each chip names the style it produces so users can pick by name
+  // rather than guessing what an abbreviation means.
+  "settings.copy_label":      "Citation style",
+  "settings.copy_plain":      "Plain text",
   "settings.copy_bluebook":   "Bluebook",
   "settings.copy_mla":        "MLA",
   "settings.copy_chicago":    "Chicago",
-  "settings.copy_markdown":   "MD",
+  "settings.copy_markdown":   "Markdown",
   "settings.copy_bibtex":     "BibTeX",
   "settings.text_size":       "Text size",
   "settings.size_small":      "Small",

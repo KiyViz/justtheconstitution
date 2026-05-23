@@ -177,13 +177,14 @@ module.exports = {
   "settings.mode_dark":       "Oscuro",
   "settings.mode_oled":       "OLED",
   "settings.color":           "Color",
-  // Copiar / formato de cita — chips arriba del pliegue. Etiquetas cortas.
-  "settings.copy_label":      "Copiar",
-  "settings.copy_plain":      "Plano",
+  // Formato de cita — chips arriba del pliegue. Cada chip nombra
+  // el estilo que produce para que el usuario elija por nombre.
+  "settings.copy_label":      "Estilo de cita",
+  "settings.copy_plain":      "Texto plano",
   "settings.copy_bluebook":   "Bluebook",
   "settings.copy_mla":        "MLA",
   "settings.copy_chicago":    "Chicago",
-  "settings.copy_markdown":   "MD",
+  "settings.copy_markdown":   "Markdown",
   "settings.copy_bibtex":     "BibTeX",
   "settings.text_size":       "Tamaño de texto",
   "settings.size_small":      "Pequeño",
