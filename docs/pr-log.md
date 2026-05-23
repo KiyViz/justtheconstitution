@@ -17,6 +17,7 @@ gh pr list --state merged --limit 200 --json number,title,mergedAt \
 
 ---
 
+- **#46** (2026-05-22) — ci: auto-log merged PRs to docs/pr-log.md
 - **#45** (2026-05-22) — docs: add progressive-disclosure CLAUDE.md + context files
 - **#44** (2026-05-21) — fix: prevent iOS auto-zoom on search input focus
 - **#43** (2026-05-21) — fix: close share menu on selection and surface copy toast
