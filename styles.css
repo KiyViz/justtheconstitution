@@ -568,8 +568,9 @@ body {
 }
 .icon-btn:hover .icon-btn__label,
 .icon-btn:focus-visible .icon-btn__label {
-  /* 100px fits the longest label in either locale ("Configuración"). */
-  max-width: 100px;
+  /* 200px fits the longest title in either locale
+     ("Search (Ctrl/Cmd+F or /)" / "Buscar (Ctrl/Cmd+F o /)"). */
+  max-width: 200px;
   margin-left: 6px;
   opacity: 1;
 }
