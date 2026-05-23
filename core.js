@@ -96,6 +96,17 @@
     }
   }
 
+  // Tool mutual-exclusion coordinator. Each top-level panel (search,
+  // drawer, share, settings) registers its own close fn at init time;
+  // opening any one panel closes every other registered one. This keeps
+  // overlapping popovers from stacking — without an event bus, just a
+  // shared registry on JTC.
+  const _tools = {};
+  function registerTool(name, closeFn) { _tools[name] = closeFn; }
+  function openTool(name) {
+    for (const k in _tools) if (k !== name) _tools[k]();
+  }
+
   const JTC = window.JTC;
   JTC.el = el;
   JTC.copyText = copyText;
@@ -103,6 +114,8 @@
   JTC.scrollToId = scrollToId;
   JTC.trapFocus = trapFocus;
   JTC.trackEvent = trackEvent;
+  JTC.registerTool = registerTool;
+  JTC.openTool = openTool;
   JTC.SITE_URL = "https://justtheconstitution.org";
   JTC.suppressHashSync = false;
 })();
