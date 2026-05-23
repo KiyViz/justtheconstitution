@@ -17,6 +17,7 @@ gh pr list --state merged --limit 200 --json number,title,mergedAt \
 
 ---
 
+- **#50** (2026-05-23) — fix: close settings panel when entering reader mode
 - **#51** (2026-05-23) — fix: iOS Chrome cutting off bottom of TOC drawer
 - **#48** (2026-05-23) — chore: delete stale SOP.md and prune .assetsignore
 - **#47** (2026-05-23) — chore: backfill #46 in pr-log.md
