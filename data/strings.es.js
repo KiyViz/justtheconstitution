@@ -230,8 +230,8 @@ module.exports = {
   "share.page_tweet_text":    "Lea la Constitución de EE. UU. en línea — cada cláusula, a un enlace de distancia.",
   "share.page_native_title":  "Solo la Constitución — lea, cite y comparta la Constitución de EE. UU. línea por línea.",
   "share.toast_default":      "Enlace copiado",
-  "share.toast_paste_instagram": "Copiado — pega en Instagram",
-  "share.toast_paste_tiktok": "Copiado — pega en TikTok",
+  "share.toast_paste_instagram": "Texto y enlace copiados — pega en Instagram",
+  "share.toast_paste_tiktok": "Texto y enlace copiados — pega en TikTok",
 
   // ── Descarga ──
   "download.heading":         "Llévalo contigo.",
