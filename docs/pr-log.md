@@ -17,6 +17,7 @@ gh pr list --state merged --limit 200 --json number,title,mergedAt \
 
 ---
 
+- **#54** (2026-05-23) — feat: show keyboard shortcuts in desktop tool-button hover labels
 - **#53** (2026-05-23) — fix: og:image dimensions + clearer IG/TikTok toast wording
 - **#52** (2026-05-23) — fix: ship share.js bundle, swap Bluesky → Instagram + TikTok
 - **#49** (2026-05-23) — fix: close other tool panels when one opens
