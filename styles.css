@@ -823,6 +823,10 @@ body {
 
 .toc-drawer {
   position: fixed; inset: 0;
+  /* 100dvh tracks the dynamic viewport so the panel's bottom: 0 lands at
+     the visible bottom on iOS Chrome (whose bottom toolbar overlays the
+     layout viewport and otherwise hides the last few TOC links). */
+  height: 100dvh;
   background: color-mix(in srgb, var(--bg-sunken) 40%, transparent);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
@@ -834,7 +838,7 @@ body {
   width: min(340px, 86vw);
   background: var(--bg-elev);
   border-right: 1px solid var(--rule);
-  padding: 20px 8px 20px 20px;
+  padding: 20px 8px calc(20px + env(safe-area-inset-bottom, 0px)) 20px;
   box-shadow: var(--shadow);
   overflow-y: auto;
   animation: slideIn .18s ease-out;
