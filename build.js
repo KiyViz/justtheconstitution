@@ -283,10 +283,11 @@ function renderHeadExtras(locale, S) {
     `  <meta property="og:title" content="${ogTitle}" />`,
     `  <meta property="og:description" content="${ogDesc}" />`,
     `  <meta property="og:image" content="${ogImage}" />`,
-    // og:image dimensions match the current 400×370 export. Update to
-    // 1200×630 when the asset is re-exported (see F-05 in the audit workspace).
-    `  <meta property="og:image:width" content="400" />`,
-    `  <meta property="og:image:height" content="370" />`,
+    // Dimensions match the actual og-image.png file (1200×630, the standard
+    // Facebook / Twitter summary_large_image size). Keep these in sync if the
+    // asset is ever re-exported.
+    `  <meta property="og:image:width" content="1200" />`,
+    `  <meta property="og:image:height" content="630" />`,
     `  <meta property="og:image:alt" content="${ogTitle}" />`,
     `  <meta property="og:site_name" content="justtheconstitution.org" />`,
     `  <meta property="og:locale" content="${locale === 'es' ? 'es_ES' : 'en_US'}" />`,

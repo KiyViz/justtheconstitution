@@ -235,8 +235,8 @@ module.exports = {
   "share.page_tweet_text":    "Read the U.S. Constitution online — every clause, one link away.",
   "share.page_native_title":  "Just the Constitution — read, cite, and share the U.S. Constitution line-by-line.",
   "share.toast_default":      "Link copied",
-  "share.toast_paste_instagram": "Copied — paste into Instagram",
-  "share.toast_paste_tiktok": "Copied — paste into TikTok",
+  "share.toast_paste_instagram": "Caption + link copied — paste into Instagram",
+  "share.toast_paste_tiktok": "Caption + link copied — paste into TikTok",
 
   // ── Download CTA ──
   "download.heading":         "Take it with you.",
