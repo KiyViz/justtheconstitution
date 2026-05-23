@@ -17,6 +17,7 @@ gh pr list --state merged --limit 200 --json number,title,mergedAt \
 
 ---
 
+- **#55** (2026-05-23) — copy: relabel settings citation row as "Citation style"
 - **#54** (2026-05-23) — feat: show keyboard shortcuts in desktop tool-button hover labels
 - **#53** (2026-05-23) — fix: og:image dimensions + clearer IG/TikTok toast wording
 - **#52** (2026-05-23) — fix: ship share.js bundle, swap Bluesky → Instagram + TikTok
