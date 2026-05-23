@@ -79,14 +79,23 @@
   // reader.js when the user clicks a per-passage share button.
   //
   // SOCIAL_INTENTS builders receive an opts bag with already-encoded
-  // params; Bluesky has no separate url= param so the URL lives inside
-  // the text.
+  // params. Instagram and TikTok have no web share intent — handled
+  // separately as copy-to-clipboard with a "paste into ..." toast.
   const SOCIAL_INTENTS = {
     x:        ({ u, t }) => `https://twitter.com/intent/tweet?url=${u}&text=${t}`,
-    bluesky:  ({ t })    => `https://bsky.app/intent/compose?text=${t}`,
     facebook: ({ u })    => `https://www.facebook.com/sharer/sharer.php?u=${u}`,
     linkedin: ({ u })    => `https://www.linkedin.com/sharing/share-offsite/?url=${u}`,
     reddit:   ({ u, t }) => `https://www.reddit.com/submit?url=${u}&title=${t}`
+  };
+
+  // Apps without a public web share intent — Instagram and TikTok both
+  // require the user to paste content inside their composer. We copy the
+  // share text + URL to the clipboard and tell the user which app to
+  // open. "More" (Web Share API) is the better path on mobile devices
+  // that have the app installed; this is the desktop fallback.
+  const CLIPBOARD_ONLY = {
+    instagram: "share.toast_paste_instagram",
+    tiktok:    "share.toast_paste_tiktok"
   };
 
   // Position the popover near `trigger`. Falls back to the header-default
@@ -198,6 +207,10 @@
       if (action === "copy") {
         const ok = await copyText(payload.text || payload.url);
         showToast(ok ? JTC.t("toast.link_copied") : JTC.t("toast.copy_failed"));
+      } else if (CLIPBOARD_ONLY[action]) {
+        // Instagram / TikTok — copy and show a "paste into X" toast.
+        const ok = await copyText(payload.text || payload.url);
+        showToast(ok ? JTC.t(CLIPBOARD_ONLY[action]) : JTC.t("toast.copy_failed"));
       } else if (action === "email") {
         const subject = encodeURIComponent(payload.title || "");
         const body = encodeURIComponent(payload.text || "");

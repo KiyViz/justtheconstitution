@@ -355,6 +355,7 @@ const CLIENT_KEYS = [
   'share.email_body_prefix', 'share.email_subject_default',
   'share.page_tweet_text', 'share.page_native_title',
   'share.title',
+  'share.toast_paste_instagram', 'share.toast_paste_tiktok',
   'download.button', 'download.filename', 'download.heading',
   'download.description', 'download.hint',
   'md.source_footer', 'doc.title', 'doc.tag',
@@ -767,7 +768,7 @@ function main() {
 
     // Minify JS files → .min.js alongside originals
     const jsFiles = [
-      'core.js', 'citations.js', 'tweaks.js', 'images.js',
+      'core.js', 'citations.js', 'share.js', 'tweaks.js', 'images.js',
       'reader.js', 'progress.js', 'nav.js', 'search.js',
       'lang.js', 'app.js', 'theme.js'
     ];
@@ -813,7 +814,15 @@ function main() {
       h = h.replace(/(src=")([^"]*?)\.js\?v=[a-f0-9]+/g, (_, prefix, relPath) => {
         const fromRoot = relPath.replace(/^(?:\.\.\/)+/, '');
         const minPath = path.join(ROOT, fromRoot + '.min.js');
-        const hash = fs.existsSync(minPath) ? fileHash(minPath) : fileHash(path.join(ROOT, fromRoot + '.js'));
+        if (!fs.existsSync(minPath)) {
+          // A referenced source isn't being minified — the deployed HTML
+          // would 404 on its .min.js. Fail loudly so it's caught in CI.
+          throw new Error(
+            `${path.basename(htmlFile)} references ${relPath}.js but no ${fromRoot}.min.js exists. ` +
+            `Add '${fromRoot}.js' to the jsFiles list in build.js.`
+          );
+        }
+        const hash = fileHash(minPath);
         return `${prefix}${relPath}.min.js?v=${hash}`;
       });
       fs.writeFileSync(htmlFile, h);

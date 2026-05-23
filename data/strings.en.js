@@ -225,7 +225,8 @@ module.exports = {
   "share.email":              "Email",
   "share.more":               "More\u2026",
   "share.x":                  "X",
-  "share.bluesky":            "Bluesky",
+  "share.instagram":          "Instagram",
+  "share.tiktok":             "TikTok",
   "share.facebook":           "Facebook",
   "share.linkedin":           "LinkedIn",
   "share.reddit":             "Reddit",
@@ -234,6 +235,8 @@ module.exports = {
   "share.page_tweet_text":    "Read the U.S. Constitution online — every clause, one link away.",
   "share.page_native_title":  "Just the Constitution — read, cite, and share the U.S. Constitution line-by-line.",
   "share.toast_default":      "Link copied",
+  "share.toast_paste_instagram": "Copied — paste into Instagram",
+  "share.toast_paste_tiktok": "Copied — paste into TikTok",
 
   // ── Download CTA ──
   "download.heading":         "Take it with you.",
