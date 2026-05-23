@@ -220,7 +220,8 @@ module.exports = {
   "share.email":              "Correo electrónico",
   "share.more":               "Más\u2026",
   "share.x":                  "X",
-  "share.bluesky":            "Bluesky",
+  "share.instagram":          "Instagram",
+  "share.tiktok":             "TikTok",
   "share.facebook":           "Facebook",
   "share.linkedin":           "LinkedIn",
   "share.reddit":             "Reddit",
@@ -229,6 +230,8 @@ module.exports = {
   "share.page_tweet_text":    "Lea la Constitución de EE. UU. en línea — cada cláusula, a un enlace de distancia.",
   "share.page_native_title":  "Solo la Constitución — lea, cite y comparta la Constitución de EE. UU. línea por línea.",
   "share.toast_default":      "Enlace copiado",
+  "share.toast_paste_instagram": "Copiado — pega en Instagram",
+  "share.toast_paste_tiktok": "Copiado — pega en TikTok",
 
   // ── Descarga ──
   "download.heading":         "Llévalo contigo.",

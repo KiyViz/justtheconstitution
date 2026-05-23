@@ -27,8 +27,7 @@
   // Conservative character budgets per platform. Reserve headroom over
   // the published cap so the user can edit slightly without re-truncating.
   const BUDGET = {
-    x: 250,        // X cap 280 — t.co shortens URLs to 23 chars in counted length
-    bluesky: 270   // Bluesky cap 300 — no link shortening, counts full URL
+    x: 250        // X cap 280 — t.co shortens URLs to 23 chars in counted length
   };
 
   // ── Citation + URL primitives ──
@@ -92,9 +91,11 @@
           title: emailSubject
         };
       }
-      // Bluesky's intent URL has no separate url= param — link must live
-      // in the text. Other social platforms get text in text= and url in url=.
-      if (platform === "bluesky") return { text: `${tweetText} ${url}`, url, title: nativeTitle };
+      // Instagram and TikTok are clipboard-only — give them the same
+      // tweet-style text + URL so the user can paste it into the app.
+      if (platform === "instagram" || platform === "tiktok") {
+        return { text: `${tweetText} ${url}`, url, title: nativeTitle };
+      }
       if (platform === "native")  return { text: nativeTitle, url, title: nativeTitle };
       return { text: tweetText, url, title: nativeTitle };
     }
@@ -109,9 +110,12 @@
         const body = truncateQuote(q, suffix, BUDGET.x);
         return { text: body + suffix, url, title: cite };
       }
-      case "bluesky": {
+      case "instagram":
+      case "tiktok": {
+        // Clipboard-only — paste into the app's composer. Use the same
+        // x-style body+citation so quotes hit a sensible length.
         const suffix = ` — ${cite} ${url}`;
-        const body = truncateQuote(q, suffix, BUDGET.bluesky);
+        const body = truncateQuote(q, suffix, BUDGET.x);
         return { text: body + suffix, url, title: cite };
       }
       case "reddit": {
