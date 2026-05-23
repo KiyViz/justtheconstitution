@@ -102,5 +102,15 @@ the Worker — except paths listed in `.assetsignore` (build inputs,
 - Non-`main` branches → preview URLs (posted as a PR check).
 - Merge to `main` → production.
 
-> The repo's `SOP.md` describes an older single-locale flow and predates the
-> minification pipeline. This file supersedes it for build/deploy details.
+## Troubleshooting
+
+**CSP violation on live site after deploy.** Open DevTools Console on the
+live URL — the browser logs which resource was blocked. If it's legit (a new
+third-party script you added intentionally), amend the
+`Content-Security-Policy` line in `_headers`. If it's unexpected, figure out
+what introduced the external request.
+
+**Roll back CSP to Report-Only if things break.** In `_headers`, change the
+`Content-Security-Policy:` header back to `Content-Security-Policy-Report-Only:`,
+commit, push. Violations will be logged to the browser console instead of
+blocking resources while you investigate.
