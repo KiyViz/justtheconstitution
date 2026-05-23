@@ -2209,7 +2209,7 @@ html { scrollbar-color: var(--rule) transparent; }
 }
 .lang-btn:hover .lang-label,
 .lang-btn:focus-visible .lang-label {
-  max-width: 80px;
+  max-width: 160px;
   margin-left: 6px;
   opacity: 1;
 }

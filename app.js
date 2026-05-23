@@ -136,6 +136,7 @@
   //   Shift+R  Toggle reader mode
   //   Shift+S  Toggle share popover
   //   Shift+D  Cycle display mode (light → dark → OLED)
+  //   Shift+L  Switch language (cycles configured locales)
   //   Shift+M  Open the TOC drawer (mobile/narrow viewports only)
   //
   // All shortcuts bail when the user is typing into an input/textarea, and
@@ -158,6 +159,7 @@
           case "R": if (click("reader-toggle")) e.preventDefault(); return;
           case "S": if (click("share-btn"))     e.preventDefault(); return;
           case "D": if (click("mode-toggle"))   e.preventDefault(); return;
+          case "L": if (click("lang-btn"))      e.preventDefault(); return;
           case "M": {
             // Only fire at viewport widths where the menu button is actually
             // visible — on desktop the inline TOC is always shown and the

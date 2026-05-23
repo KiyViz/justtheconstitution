@@ -301,7 +301,7 @@ module.exports = {
 
   // ── Selector de idioma ──
   "lang.button_aria":         "Cambiar idioma",
-  "lang.button_title":        "Idioma",
+  "lang.button_title":        "Idioma (Shift+L)",
 
   // ── Schema.org ──
   // ── Página para educadores ──

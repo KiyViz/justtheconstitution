@@ -306,7 +306,7 @@ module.exports = {
 
   // ── Language switcher ──
   "lang.button_aria":         "Change language",
-  "lang.button_title":        "Language",
+  "lang.button_title":        "Language (Shift+L)",
 
   // ── Educators page ──
   "educators.title":          "For Educators — Just the Constitution",

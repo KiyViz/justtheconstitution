@@ -16,9 +16,11 @@
     const label = document.getElementById("lang-label");
     if (!btn || !label) return;
 
-    // Show current language name on hover
+    // Show current language name + keyboard shortcut on hover. The shortcut
+    // suffix mirrors how other header tool buttons advertise their bindings
+    // in their slide-out labels (e.g., "Reader mode (Shift+R)").
     const currentLocale = locales.find(l => l.code === current);
-    if (currentLocale) label.textContent = currentLocale.name;
+    if (currentLocale) label.textContent = currentLocale.name + " (Shift+L)";
 
     // Find the next locale to switch to
     const currentIdx = locales.findIndex(l => l.code === current);
