@@ -42,13 +42,19 @@
     document.getElementById("reader-exit").addEventListener("click", () => setTweak("reader", "default"));
     document.getElementById("pane-collapse").addEventListener("click", () => { const t = getTweaks(); setTweak("pane", t.pane === "open" ? "closed" : "open"); });
     document.getElementById("pane-expand").addEventListener("click", () => setTweak("pane", "open"));
-    const toggleTweaksPanel = () => {
-      document.getElementById("tweaks").classList.toggle("is-open");
+    const tweaksEl = document.getElementById("tweaks");
+    const openTweaks = () => {
+      if (JTC.openTool) JTC.openTool('settings');
+      tweaksEl.classList.add("is-open");
     };
+    const closeTweaks = () => { tweaksEl.classList.remove("is-open"); };
+    const toggleTweaksPanel = () => {
+      if (tweaksEl.classList.contains("is-open")) closeTweaks();
+      else openTweaks();
+    };
+    if (JTC.registerTool) JTC.registerTool('settings', closeTweaks);
     document.getElementById("tweaks-btn").addEventListener("click", toggleTweaksPanel);
-    document.getElementById("tweaks-close").addEventListener("click", () => {
-      document.getElementById("tweaks").classList.remove("is-open");
-    });
+    document.getElementById("tweaks-close").addEventListener("click", closeTweaks);
     const tweaksReset = document.getElementById("tweaks-reset");
     if (tweaksReset && JTC.resetTweaks) tweaksReset.addEventListener("click", JTC.resetTweaks);
 

@@ -160,6 +160,7 @@
 
   function open() {
     if (!bar) return;
+    if (JTC.openTool) JTC.openTool('search');
     bar.hidden = false;
     input.focus();
     input.select();
@@ -210,6 +211,7 @@
     prevBtn.addEventListener('click', prev);
     nextBtn.addEventListener('click', next);
     document.getElementById('search-close').addEventListener('click', close);
+    if (JTC.registerTool) JTC.registerTool('search', close);
 
     // Global Ctrl/Cmd+F — intercept native find so users get the
     // in-document highlight/counter instead.

@@ -56,6 +56,7 @@
   // ---- Drawer (hamburger) ----
   let releaseDrawerTrap = null;
   function openDrawer() {
+    if (JTC.openTool) JTC.openTool('drawer');
     const d = document.getElementById("toc-drawer");
     d.classList.add("is-open");
     d.setAttribute("aria-modal", "true");
@@ -121,6 +122,7 @@
   function openShareFor(context, triggerEl) {
     const pop = document.getElementById("share-pop");
     if (!pop) return;
+    if (JTC.openTool) JTC.openTool('share');
     pop._context = context || null;
     _activeTrigger = triggerEl || null;
     // Make it temporarily visible-but-hidden so we can measure for placement.
@@ -146,6 +148,7 @@
       pop._context = null;
       _activeTrigger = null;
     };
+    if (JTC.registerTool) JTC.registerTool('share', closePop);
 
     if (btn) {
       btn.addEventListener("click", (e) => {
@@ -221,4 +224,5 @@
   JTC.closeDrawer = closeDrawer;
   JTC.initShare = initShare;
   JTC.openShareFor = openShareFor;
+  if (JTC.registerTool) JTC.registerTool('drawer', closeDrawer);
 })();
