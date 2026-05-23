@@ -459,7 +459,16 @@
   }
   function toggleReader() {
     const t = getTweaks();
-    setTweak("reader", t.reader === "pure" ? "default" : "pure");
+    const next = t.reader === "pure" ? "default" : "pure";
+    setTweak("reader", next);
+    // Entering reader mode while the settings panel is open (the common
+    // path on mobile, where the toggle lives inside settings) leaves a
+    // clipped popup over the reader UI. Close it so the user lands in a
+    // clean reader view without having to dismiss it manually.
+    if (next === "pure") {
+      const tweaks = document.getElementById("tweaks");
+      if (tweaks) tweaks.classList.remove("is-open");
+    }
   }
 
   JTC.getTweaks = getTweaks;
