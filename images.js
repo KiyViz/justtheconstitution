@@ -174,6 +174,9 @@
   let lbStart = { x: 0, y: 0 };
 
   let releaseLbTrap = null;
+  // Captured once from the template's static alt so repeated opens don't stack
+  // the page-title suffix.
+  let lbBaseAlt = null;
   function openLightbox() {
     const info = PAGE_IMAGES[currentPage] || PAGE_IMAGES[1];
     const lb = document.getElementById("lightbox");
@@ -184,6 +187,8 @@
     sub.textContent = info.caption;
     img.src = info.local;
     img.onerror = () => { img.onerror = null; img.src = info.fallback; };
+    if (lbBaseAlt === null) lbBaseAlt = img.getAttribute("alt") || "";
+    img.alt = info.title ? `${lbBaseAlt} — ${info.title}` : lbBaseAlt;
     lbZoom = 1;
     lbOffset = { x: 0, y: 0 };
     applyLbTransform();

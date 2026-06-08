@@ -26,6 +26,33 @@
     try { localStorage.setItem('jtc:tweaks', JSON.stringify(saved)); } catch (e) { /* quota/private */ }
   });
 
+  // Language toggle (info + educators subpages). The main reader wires the globe
+  // button in lang.js via the <html data-locales> attributes, but subpages load
+  // only this file — so derive the locale from the path and swap just the leading
+  // /en|/es segment, preserving the rest of the path (/info/, /for-educators/).
+  const langBtn = document.getElementById('lang-btn');
+  if (langBtn) {
+    const NAMES = { en: 'English', es: 'Español' };
+    const current = /^\/es(\/|$)/.test(location.pathname) ? 'es' : 'en';
+    const next = current === 'es' ? 'en' : 'es';
+    const langLabel = document.getElementById('lang-label');
+    if (langLabel) langLabel.textContent = NAMES[current] + ' (Shift+L)';
+    const swapLang = () => {
+      try { localStorage.setItem('jtc:lang', next); } catch (e) { /* quota/private */ }
+      location.href = location.pathname.replace(/^\/(en|es)/, '/' + next);
+    };
+    langBtn.addEventListener('click', swapLang);
+    // Mirror the main reader's Shift+L shortcut, but ignore it while typing.
+    document.addEventListener('keydown', (e) => {
+      if (e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey &&
+          e.key.toLowerCase() === 'l' &&
+          !(e.target.closest && e.target.closest('input, textarea, select'))) {
+        e.preventDefault();
+        swapLang();
+      }
+    });
+  }
+
   // Locale detection for 404 page
   const isEs = /^\/es(\/|$)/.test(location.pathname);
   document.querySelectorAll('[data-locale-es]').forEach(el => {

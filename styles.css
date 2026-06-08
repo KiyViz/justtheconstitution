@@ -1783,6 +1783,7 @@ body {
 }
 .subpage-header .wordmark { text-decoration: none; }
 .subpage-header #lang-btn { display: inline-flex; }
+.subpage-header__actions { display: inline-flex; align-items: center; gap: 8px; }
 
 /* ===== 404 page ===== */
 .page-404 {
@@ -1854,6 +1855,25 @@ body {
   margin: 0 0 12px;
   max-width: 60ch;
 }
+/* Voluntary support CTA (Support section on the info page). Mirrors the pill
+   styling of .contact-form__btn / .page-404__btn. */
+.support-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 12px 28px;
+  background: var(--ink);
+  color: var(--bg);
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: transform .1s ease, opacity .1s ease;
+}
+.support-btn:hover { transform: translateY(-1px); opacity: 0.92; }
 
 /* FAQ accordion */
 .faq-item {

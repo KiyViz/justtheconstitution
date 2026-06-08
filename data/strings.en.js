@@ -256,6 +256,7 @@ module.exports = {
   "footer.images_link":       "National Archives \u2014 High Resolution Downloads",
   "footer.tagline":           "The Constitution, line-by-line.",
   "footer.byline":            "A KiyViz project.",
+  "footer.support":           "Support this project",
   "footer.info_link":         "About · Privacy · Contact",
   "footer.contact_email":     "feedback@justtheconstitution.org",
 
@@ -265,6 +266,11 @@ module.exports = {
   "info.mission_heading":     "About this site",
   "info.mission_p1":          "justtheconstitution.org presents the full text of the United States Constitution and its twenty-seven amendments alongside facsimiles of the original parchment. No ads. No commentary. No paywall. Just the founding document, readable and free.",
   "info.mission_p2":          "The site is open to everyone—students, educators, researchers, or anyone who wants to read the document that defines American governance.",
+
+  "info.support_heading":     "Support this project",
+  "info.support_p1":          "This site is built and maintained by one person. No ads. No trackers. No paywall.",
+  "info.support_p2":          "If it's useful to you, a contribution helps cover hosting and domain costs and keeps it free for everyone.",
+  "info.support_button":      "Support on Ko-fi",
 
   "info.faq_heading":         "Frequently Asked Questions",
   "info.faq_q1":              "What is this site?",
@@ -286,6 +292,7 @@ module.exports = {
   "info.privacy_analytics":   "We use Cloudflare Web Analytics to monitor site performance. This collects anonymized, aggregated data (page views, country-level geography, referrer) with no personally identifiable information. It is cookie-free and EU-compliant.",
   "info.privacy_localstorage":"Your reading position and display preferences are saved in your browser’s local storage so you can pick up where you left off. This data never leaves your device.",
   "info.privacy_contact":     "If you contact us through the form below, we use your email address solely to reply. We do not add you to any mailing list or share your information with third parties.",
+  "info.privacy_web3forms_link": "See how Web3Forms handles your data.",
 
   "info.contact_heading":     "Contact",
   "info.contact_intro":       "Questions, corrections, or feedback—we’d like to hear from you.",
