@@ -251,6 +251,7 @@ module.exports = {
   "footer.images_link":       "Archivos Nacionales \u2014 Descargas en Alta Resolución",
   "footer.tagline":           "La Constitución, línea por línea.",
   "footer.byline":            "Un proyecto de KiyViz.",
+  "footer.support":           "Apoya este proyecto",
   "footer.info_link":         "Acerca · Privacidad · Contacto",
   "footer.contact_email":     "feedback@justtheconstitution.org",
 
@@ -260,6 +261,11 @@ module.exports = {
   "info.mission_heading":     "Acerca de este sitio",
   "info.mission_p1":          "justtheconstitution.org presenta el texto completo de la Constitución de los Estados Unidos y sus veintisiete enmiendas junto a facsímiles del pergamino original. Sin anuncios. Sin comentarios. Sin muro de pago. Solo el documento fundacional, legible y gratuito.",
   "info.mission_p2":          "El sitio está abierto a todos—estudiantes, educadores, investigadores, o cualquier persona que quiera leer el documento que define la gobernanza estadounidense.",
+
+  "info.support_heading":     "Apoya este proyecto",
+  "info.support_p1":          "Este sitio está creado y mantenido por una sola persona. Sin anuncios. Sin rastreadores. Sin muro de pago.",
+  "info.support_p2":          "Si te resulta útil, una contribución ayuda a cubrir el alojamiento y el dominio, y lo mantiene gratuito para todos.",
+  "info.support_button":      "Apóyanos en Ko-fi",
 
   "info.faq_heading":         "Preguntas Frecuentes",
   "info.faq_q1":              "¿Qué es este sitio?",
@@ -281,6 +287,7 @@ module.exports = {
   "info.privacy_analytics":   "Usamos Cloudflare Web Analytics para monitorear el rendimiento del sitio. Esto recopila datos anónimos y agregados (vistas de página, geografía a nivel de país, referente) sin información personal identificable. Es libre de cookies y cumple con la normativa de la UE.",
   "info.privacy_localstorage":"Tu posición de lectura y preferencias de visualización se guardan en el almacenamiento local de tu navegador para que puedas continuar donde lo dejaste. Estos datos nunca salen de tu dispositivo.",
   "info.privacy_contact":     "Si nos contactas a través del formulario a continuación, usamos tu correo electrónico únicamente para responder. No te agregamos a ninguna lista de correo ni compartimos tu información con terceros.",
+  "info.privacy_web3forms_link": "Mira cómo Web3Forms maneja tus datos.",
 
   "info.contact_heading":     "Contacto",
   "info.contact_intro":       "Preguntas, correcciones o comentarios—nos gustaría saber de ti.",

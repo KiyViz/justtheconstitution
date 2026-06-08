@@ -28,10 +28,15 @@
       </span>
       <span class="wordmark__text" aria-hidden="true">just<b>the</b>constitution<span class="dot">.org</span></span>
     </a>
-    <button class="icon-btn lang-btn" id="lang-btn" aria-label="<!-- S:lang.button_aria -->" title="<!-- S:lang.button_title -->">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z"/></svg>
-      <span class="lang-label" id="lang-label"></span>
-    </button>
+    <div class="subpage-header__actions">
+      <button class="icon-btn lang-btn" id="lang-btn" aria-label="<!-- S:lang.button_aria -->" title="<!-- S:lang.button_title -->">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z"/></svg>
+        <span class="lang-label" id="lang-label"></span>
+      </button>
+      <button class="icon-btn" id="mode-toggle" aria-label="<!-- S:btn.mode_aria -->" title="<!-- S:btn.mode_title -->">
+        <svg id="mode-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
+      </button>
+    </div>
   </header>
 
   <main class="info-page">
@@ -40,6 +45,14 @@
       <h1><!-- S:info.mission_heading --></h1>
       <p><!-- S:info.mission_p1 --></p>
       <p><!-- S:info.mission_p2 --></p>
+    </section>
+
+    <!-- ===== Support ===== -->
+    <section class="info-section" id="support">
+      <h2><!-- S:info.support_heading --></h2>
+      <p><!-- S:info.support_p1 --></p>
+      <p><!-- S:info.support_p2 --></p>
+      <a class="support-btn" href="https://ko-fi.com/justtheconstitution" target="_blank" rel="noopener"><!-- S:info.support_button --></a>
     </section>
 
     <!-- ===== FAQ ===== -->
@@ -84,7 +97,7 @@
       <p><!-- S:info.privacy_no_cookies --></p>
       <p><!-- S:info.privacy_analytics --></p>
       <p><!-- S:info.privacy_localstorage --></p>
-      <p><!-- S:info.privacy_contact --></p>
+      <p><!-- S:info.privacy_contact --> <a href="https://web3forms.com/privacy" target="_blank" rel="noopener"><!-- S:info.privacy_web3forms_link --></a></p>
     </section>
 
     <!-- ===== Contact ===== -->
@@ -141,6 +154,7 @@
 
   <footer class="site-footer">
     <p><!-- S:footer.tagline --></p>
+    <p><a href="https://ko-fi.com/justtheconstitution" target="_blank" rel="noopener"><!-- S:footer.support --></a></p>
     <p><a href="https://www.kiyviz.com" target="_blank" rel="noopener"><!-- S:footer.byline --></a></p>
   </footer>
 
