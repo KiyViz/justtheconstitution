@@ -266,9 +266,11 @@ module.exports = {
   "info.mission_heading":     "About this site",
   "info.mission_p1":          "justtheconstitution.org presents the full text of the United States Constitution and its twenty-seven amendments alongside facsimiles of the original parchment. No ads. No commentary. No paywall. Just the founding document, readable and free.",
   "info.mission_p2":          "The site is open to everyone—students, educators, researchers, or anyone who wants to read the document that defines American governance.",
+  "info.mission_p3":          "This site is built and maintained by one person. I wanted a copy of the Constitution I could read on my phone, cite in a sentence, and share with a link—so I built one. It is self-funded, open source, and free for everyone.",
+  "info.mission_beta":        "The site is in beta ahead of a full release on Constitution Day, September 17, 2026. If something is wrong or missing, the contact form below reaches me directly.",
 
   "info.support_heading":     "Support this project",
-  "info.support_p1":          "This site is built and maintained by one person. No ads. No trackers. No paywall.",
+  "info.support_p1":          "This site is built and maintained by one person. No ads. No cookies. No paywall.",
   "info.support_p2":          "If it's useful to you, a contribution helps cover hosting and domain costs and keeps it free for everyone.",
   "info.support_button":      "Support on Ko-fi",
 
@@ -287,7 +289,7 @@ module.exports = {
   "info.faq_a6":              "Use the copy button on any paragraph to get a formatted citation in Bluebook, MLA, or Chicago style. The citation engine generates the reference automatically.",
 
   "info.privacy_heading":     "Privacy",
-  "info.privacy_updated":     "Last updated May 2026.",
+  "info.privacy_updated":     "Last updated July 2026.",
   "info.privacy_no_cookies":  "This site does not use cookies. We do not track you. We do not sell data.",
   "info.privacy_analytics":   "We use Cloudflare Web Analytics to monitor site performance. This collects anonymized, aggregated data (page views, country-level geography, referrer) with no personally identifiable information. It is cookie-free and EU-compliant.",
   "info.privacy_localstorage":"Your reading position and display preferences are saved in your browser’s local storage so you can pick up where you left off. This data never leaves your device.",

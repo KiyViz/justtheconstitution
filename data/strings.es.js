@@ -261,9 +261,11 @@ module.exports = {
   "info.mission_heading":     "Acerca de este sitio",
   "info.mission_p1":          "justtheconstitution.org presenta el texto completo de la Constitución de los Estados Unidos y sus veintisiete enmiendas junto a facsímiles del pergamino original. Sin anuncios. Sin comentarios. Sin muro de pago. Solo el documento fundacional, legible y gratuito.",
   "info.mission_p2":          "El sitio está abierto a todos—estudiantes, educadores, investigadores, o cualquier persona que quiera leer el documento que define la gobernanza estadounidense.",
+  "info.mission_p3":          "Este sitio está creado y mantenido por una sola persona. Quería una copia de la Constitución que pudiera leer en mi teléfono, citar en una oración y compartir con un enlace—así que la construí. Es autofinanciado, de código abierto y gratuito para todos.",
+  "info.mission_beta":        "El sitio está en beta antes de su lanzamiento completo el Día de la Constitución, el 17 de septiembre de 2026. Si algo está mal o falta, el formulario de contacto a continuación me llega directamente.",
 
   "info.support_heading":     "Apoya este proyecto",
-  "info.support_p1":          "Este sitio está creado y mantenido por una sola persona. Sin anuncios. Sin rastreadores. Sin muro de pago.",
+  "info.support_p1":          "Este sitio está creado y mantenido por una sola persona. Sin anuncios. Sin cookies. Sin muro de pago.",
   "info.support_p2":          "Si te resulta útil, una contribución ayuda a cubrir el alojamiento y el dominio, y lo mantiene gratuito para todos.",
   "info.support_button":      "Apóyanos en Ko-fi",
 
@@ -282,7 +284,7 @@ module.exports = {
   "info.faq_a6":              "Use el botón de copiar en cualquier párrafo para obtener una cita formateada en estilo Bluebook, MLA o Chicago. El motor de citación genera la referencia automáticamente.",
 
   "info.privacy_heading":     "Privacidad",
-  "info.privacy_updated":     "Última actualización: mayo de 2026.",
+  "info.privacy_updated":     "Última actualización: julio de 2026.",
   "info.privacy_no_cookies":  "Este sitio no usa cookies. No te rastreamos. No vendemos datos.",
   "info.privacy_analytics":   "Usamos Cloudflare Web Analytics para monitorear el rendimiento del sitio. Esto recopila datos anónimos y agregados (vistas de página, geografía a nivel de país, referente) sin información personal identificable. Es libre de cookies y cumple con la normativa de la UE.",
   "info.privacy_localstorage":"Tu posición de lectura y preferencias de visualización se guardan en el almacenamiento local de tu navegador para que puedas continuar donde lo dejaste. Estos datos nunca salen de tu dispositivo.",
