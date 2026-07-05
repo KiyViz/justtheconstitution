@@ -638,13 +638,14 @@ function main() {
       `  <link rel="alternate" hreflang="${l}" href="${SITE_URL}${l}/info/" />`
     ).join('\n');
     // FAQPage structured data
-    const faqKeys = [1, 2, 3, 4, 5, 6];
+    const faqKeys = [1, 2, 3, 4, 5, 7, 6]; // q7 (languages) displays between spelling and citation
     const faqItems = faqKeys
       .filter(n => S[`info.faq_q${n}`] && S[`info.faq_a${n}`])
       .map(n => ({
         '@type': 'Question',
         name: S[`info.faq_q${n}`],
-        acceptedAnswer: { '@type': 'Answer', text: S[`info.faq_a${n}`] }
+        // include the optional second paragraph so the schema matches the full visible answer
+        acceptedAnswer: { '@type': 'Answer', text: [S[`info.faq_a${n}`], S[`info.faq_a${n}b`]].filter(Boolean).join(' ') }
       }));
     const faqSchema = JSON.stringify({
       '@context': 'https://schema.org',
