@@ -288,8 +288,8 @@ module.exports = {
   "info.faq_a6":              "Use el botón de copiar en cualquier párrafo para obtener una cita formateada en Bluebook, MLA, Chicago, Markdown, BibTeX o texto sin formato. El motor de citación genera la referencia automáticamente.",
   "info.faq_a6b":             "En la página de lectura, use la Configuración (icono de engranaje o tecla [,]) para elegir su estilo de cita preferido.",
   "info.faq_q7":              "¿Por qué está disponible en español? ¿Y otros idiomas?",
-  "info.faq_a7":              "Soy bilingüe y hablo español. La Constitución rige y protege a todos, sin importar el idioma que hablen. La traducción de la Constitución en este sitio se basa en traducciones publicadas por el Departamento de Estado de los EE. UU. y USCIS.",
-  "info.faq_a7b":             "Mi ambición es ampliar la lista de idiomas disponibles con la ayuda de hablantes nativos.",
+  "info.faq_a7":              "I'm bilingual and speak English. The Constitution governs and protects everyone, regardless of the language they speak. The Spanish translation of the Constitution on this site is based on translations published by the U.S. State Department and USCIS.",
+  "info.faq_a7b":             "My ambition is to add more supported languages with the help of native speakers.",
 
   "info.privacy_heading":     "Privacidad",
   "info.privacy_updated":     "Última actualización: julio de 2026.",
