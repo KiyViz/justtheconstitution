@@ -2005,7 +2005,7 @@ body {
 }
 .contact-form__btn {
   align-self: flex-start;
-  margin-top: 8px;
+  margin-top: 16px;
   padding: 10px 24px;
   background: var(--ink);
   color: var(--bg);
@@ -2030,7 +2030,7 @@ body {
   font-family: var(--font-mono);
   font-size: 12px;
   color: var(--ink-faint);
-  margin-top: 32px;
+  margin-top: 48px;
 }
 
 /* ── Tools row (settings panel, mobile only) ──
