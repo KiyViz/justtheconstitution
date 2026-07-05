@@ -2026,11 +2026,13 @@ body {
 }
 .contact-form__status.is-success { color: var(--ink-soft); }
 .contact-form__status.is-error { color: #b91c1c; }
-.contact-form__alt {
+/* Must out-rank .info-section p (0,1,1), whose margin shorthand zeroes
+   margin-top and silently kills the gap below the send button. */
+.info-section .contact-form__alt {
   font-family: var(--font-mono);
   font-size: 12px;
   color: var(--ink-faint);
-  margin-top: 48px;
+  margin-top: 32px;
 }
 
 /* ── Tools row (settings panel, mobile only) ──
