@@ -17,6 +17,7 @@ gh pr list --state merged --limit 200 --json number,title,mergedAt \
 
 ---
 
+- **#58** (2026-07-05) — feat: beta-announcement readiness — humanized About, 404 fix, README
 - **#57** (2026-06-08) — feat: Ko-fi support links + launch-readiness polish
 - **#56** (2026-05-23) — feat: add Shift+L keyboard shortcut for language swap
 - **#55** (2026-05-23) — copy: relabel settings citation row as "Citation style"
