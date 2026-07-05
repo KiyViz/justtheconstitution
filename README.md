@@ -72,7 +72,7 @@ government agency.
 
 ## Feedback and support
 
-The site is in beta ahead of a full release on Constitution Day,
+The site is in **beta 0.1** ahead of a full release on Constitution Day,
 September 17, 2026.
 
 - **Feedback**: the [contact form](https://justtheconstitution.org/en/info/)
