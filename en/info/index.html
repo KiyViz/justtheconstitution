@@ -9,8 +9,8 @@
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
   <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)" />
   <link rel="icon" type="image/svg+xml" href="../../assets/favicon-we.svg?v=1188bdda" />
-  <link rel="preconnect" href="https://api.web3forms.com" />
-  <link rel="stylesheet" href="../../styles.min.css?v=7c1aa600" />
+  <link rel="preconnect" href="https://challenges.cloudflare.com" />
+  <link rel="stylesheet" href="../../styles.min.css?v=c382067b" />
     <link rel="canonical" href="https://justtheconstitution.org/en/info/" />
   <link rel="alternate" hreflang="en" href="https://justtheconstitution.org/en/info/" />
   <link rel="alternate" hreflang="es" href="https://justtheconstitution.org/es/info/" />
@@ -113,6 +113,7 @@
       <p>We use Cloudflare Web Analytics to monitor site performance. This collects anonymized, aggregated data (page views, country-level geography, referrer) with no personally identifiable information. It is cookie-free and EU-compliant.</p>
       <p>Your reading position and display preferences are saved in your browser’s local storage so you can pick up where you left off. This data never leaves your device.</p>
       <p>If you contact us through the form below, we use your email address solely to reply. We do not add you to any mailing list or share your information with third parties. <a href="https://web3forms.com/privacy" target="_blank" rel="noopener">See how Web3Forms handles your data.</a></p>
+      <p>The contact form is protected by Cloudflare Turnstile, a cookie-free bot check.</p>
     </section>
 
     <!-- ===== Contact ===== -->
@@ -120,10 +121,11 @@
       <h2>Contact</h2>
       <p>Questions, corrections, or feedback—we’d like to hear from you.</p>
 
-      <form class="contact-form" id="contact-form" action="https://api.web3forms.com/submit" method="POST">
-        <input type="hidden" name="access_key" value="fdf79fee-e541-487f-8d41-10cf6695e453" />
-        <input type="hidden" name="subject" value="JTC Feedback" />
-        <input type="hidden" name="from_name" value="JTC Contact Form" />
+      <!-- Posts to our own Worker (worker.js), which verifies the Turnstile
+           token and holds the Web3Forms key as a secret. Subject and sender
+           are set server-side. -->
+      <form class="contact-form" id="contact-form" action="/api/contact" method="POST">
+        <input type="hidden" name="locale" value="en" />
         <input type="checkbox" name="botcheck" class="hidden" tabindex="-1" autocomplete="off" />
 
         <label class="form-field">
@@ -155,13 +157,15 @@
 
         <label class="form-field">
           <span>Tell us why</span>
-          <textarea name="message" required rows="5" placeholder="What prompted this rating?"></textarea>
+          <textarea name="message" required rows="5" maxlength="5000" placeholder="What prompted this rating?"></textarea>
         </label>
+
+        <div class="cf-turnstile" data-sitekey="TURNSTILE_SITEKEY_HERE" data-theme="auto" data-language="en"></div>
 
         <button type="submit" class="contact-form__btn">Send</button>
       </form>
 
-      <div class="contact-form__status" id="form-status" hidden data-success="Message sent. Thank you." data-error="Something went wrong. Please try the email link below."></div>
+      <div class="contact-form__status" id="form-status" hidden data-success="Message sent. Thank you." data-error="Something went wrong. Please try the email link below." data-error-verify="Verification didn’t complete. Please try again."></div>
 
       <p class="contact-form__alt">Or email directly: feedback@justtheconstitution.org</p>
     </section>
@@ -173,6 +177,9 @@
     <p><a href="https://www.kiyviz.com" target="_blank" rel="noopener">A KiyViz project.</a></p>
   </footer>
 
-    <script defer src="../../theme.min.js?v=5835731f"></script>
+    <script defer src="../../theme.min.js?v=8ef59696"></script>
+  <!-- After BUILD:SCRIPTS so theme.js runs first and can set the widget's
+       colour scheme before Turnstile scans the DOM. -->
+  <script defer src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
 </body>
 </html>

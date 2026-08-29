@@ -2003,6 +2003,18 @@ body {
 .star-rating label.is-hover {
   color: #f59e0b;
 }
+/* Turnstile widget. Reserve the managed widget's footprint so the async
+   iframe doesn't shift the button down on load, and size the iframe here —
+   style-src 'self' blocks the inline sizing Turnstile would otherwise set. */
+.cf-turnstile {
+  margin-top: 16px;
+  min-height: 65px;
+}
+.cf-turnstile iframe {
+  width: 300px;
+  height: 65px;
+  max-width: 100%;
+}
 .contact-form__btn {
   align-self: flex-start;
   margin-top: 16px;

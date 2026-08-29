@@ -9,8 +9,8 @@
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
   <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)" />
   <link rel="icon" type="image/svg+xml" href="../../assets/favicon-we.svg?v=1188bdda" />
-  <link rel="preconnect" href="https://api.web3forms.com" />
-  <link rel="stylesheet" href="../../styles.min.css?v=7c1aa600" />
+  <link rel="preconnect" href="https://challenges.cloudflare.com" />
+  <link rel="stylesheet" href="../../styles.min.css?v=c382067b" />
     <link rel="canonical" href="https://justtheconstitution.org/es/info/" />
   <link rel="alternate" hreflang="en" href="https://justtheconstitution.org/en/info/" />
   <link rel="alternate" hreflang="es" href="https://justtheconstitution.org/es/info/" />
@@ -113,6 +113,7 @@
       <p>Usamos Cloudflare Web Analytics para monitorear el rendimiento del sitio. Esto recopila datos anónimos y agregados (vistas de página, geografía a nivel de país, referente) sin información personal identificable. Es libre de cookies y cumple con la normativa de la UE.</p>
       <p>Tu posición de lectura y preferencias de visualización se guardan en el almacenamiento local de tu navegador para que puedas continuar donde lo dejaste. Estos datos nunca salen de tu dispositivo.</p>
       <p>Si nos contactas a través del formulario a continuación, usamos tu correo electrónico únicamente para responder. No te agregamos a ninguna lista de correo ni compartimos tu información con terceros. <a href="https://web3forms.com/privacy" target="_blank" rel="noopener">Mira cómo Web3Forms maneja tus datos.</a></p>
+      <p>El formulario de contacto está protegido por Cloudflare Turnstile, una verificación contra bots sin cookies.</p>
     </section>
 
     <!-- ===== Contact ===== -->
@@ -120,10 +121,11 @@
       <h2>Contacto</h2>
       <p>Preguntas, correcciones o comentarios—nos gustaría saber de ti.</p>
 
-      <form class="contact-form" id="contact-form" action="https://api.web3forms.com/submit" method="POST">
-        <input type="hidden" name="access_key" value="fdf79fee-e541-487f-8d41-10cf6695e453" />
-        <input type="hidden" name="subject" value="JTC Feedback" />
-        <input type="hidden" name="from_name" value="JTC Contact Form" />
+      <!-- Posts to our own Worker (worker.js), which verifies the Turnstile
+           token and holds the Web3Forms key as a secret. Subject and sender
+           are set server-side. -->
+      <form class="contact-form" id="contact-form" action="/api/contact" method="POST">
+        <input type="hidden" name="locale" value="es" />
         <input type="checkbox" name="botcheck" class="hidden" tabindex="-1" autocomplete="off" />
 
         <label class="form-field">
@@ -155,13 +157,15 @@
 
         <label class="form-field">
           <span>Cuéntanos por qué</span>
-          <textarea name="message" required rows="5" placeholder="¿Qué motivó esta calificación?"></textarea>
+          <textarea name="message" required rows="5" maxlength="5000" placeholder="¿Qué motivó esta calificación?"></textarea>
         </label>
+
+        <div class="cf-turnstile" data-sitekey="TURNSTILE_SITEKEY_HERE" data-theme="auto" data-language="es"></div>
 
         <button type="submit" class="contact-form__btn">Enviar</button>
       </form>
 
-      <div class="contact-form__status" id="form-status" hidden data-success="Mensaje enviado. Gracias." data-error="Algo salió mal. Por favor intenta el enlace de correo a continuación."></div>
+      <div class="contact-form__status" id="form-status" hidden data-success="Mensaje enviado. Gracias." data-error="Algo salió mal. Por favor intenta el enlace de correo a continuación." data-error-verify="No se pudo completar la verificación. Inténtalo de nuevo."></div>
 
       <p class="contact-form__alt">O escribe directamente a: feedback@justtheconstitution.org</p>
     </section>
@@ -173,6 +177,9 @@
     <p><a href="https://www.kiyviz.com" target="_blank" rel="noopener">Un proyecto de KiyViz.</a></p>
   </footer>
 
-    <script defer src="../../theme.min.js?v=5835731f"></script>
+    <script defer src="../../theme.min.js?v=8ef59696"></script>
+  <!-- After BUILD:SCRIPTS so theme.js runs first and can set the widget's
+       colour scheme before Turnstile scans the DOM. -->
+  <script defer src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
 </body>
 </html>

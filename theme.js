@@ -17,6 +17,12 @@
   root.dataset.theme = t.theme;
   root.dataset.saturation = t.saturation;
 
+  // Match the Turnstile widget to the page. This runs before Turnstile's own
+  // script (which is deferred after this one), so the attribute is in place
+  // when the widget renders. A later mode toggle won't restyle it.
+  const turnstileEl = document.querySelector('.cf-turnstile');
+  if (turnstileEl) turnstileEl.dataset.theme = t.mode === 'light' ? 'light' : 'dark';
+
   const btn = document.getElementById('mode-toggle');
   if (btn) btn.addEventListener('click', () => {
     const idx = MODES.indexOf(t.mode);
@@ -88,6 +94,18 @@
 
   // Contact form (info page)
   const form = document.getElementById('contact-form');
+
+  // The no-JS path posts the form normally and the Worker redirects back here
+  // with ?sent=1. Show the same confirmation, then drop the param so a reload
+  // doesn't repeat it.
+  if (form && new URLSearchParams(location.search).has('sent')) {
+    const status = document.getElementById('form-status');
+    status.textContent = status.dataset.success || 'Message sent. Thank you.';
+    status.className = 'contact-form__status is-success';
+    status.hidden = false;
+    history.replaceState(null, '', location.pathname + '#contact');
+  }
+
   if (form) {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -108,13 +126,25 @@
           form.reset();
           if (starRating) starRating.querySelectorAll('label').forEach(l => l.classList.remove('is-active'));
         } else {
-          throw new Error('Submit failed');
+          // Turnstile tokens expire after a few minutes, so a slow typer gets a
+          // retryable failure — worth its own message rather than sending them
+          // to the email fallback.
+          const body = await res.json().catch(() => ({}));
+          if (body.error === 'verification_failed') {
+            status.textContent = status.dataset.errorVerify || status.dataset.error || 'Verification failed.';
+            status.className = 'contact-form__status is-error';
+            status.hidden = false;
+          } else {
+            throw new Error('Submit failed');
+          }
         }
       } catch {
         status.textContent = status.dataset.error || 'Something went wrong.';
         status.className = 'contact-form__status is-error';
         status.hidden = false;
       }
+      // Tokens are single-use: clear it so a retry gets a fresh one.
+      if (window.turnstile) { try { window.turnstile.reset(); } catch (e) { /* not rendered */ } }
       btn.disabled = false;
     });
   }
