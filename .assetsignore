@@ -20,8 +20,9 @@ _scripts/
 package.json
 package-lock.json
 
-# Worker config — runtime config consumed by wrangler, not a static asset.
+# Worker config and source — consumed by wrangler, not static assets.
 wrangler.jsonc
+worker.js
 .wrangler/
 
 # Repo docs and helpers not meant for visitors.

@@ -24,6 +24,7 @@ Referenced from `CLAUDE.md`. Read this before any build or file-structure work.
 | `data/constitution.es.js` | Spanish document text. |
 | `data/strings.en.js`, `data/strings.es.js` | UI string tables that resolve `<!-- S:key -->`. |
 | `build.js`, `_scripts/extract-fonts.js` | Build tooling. |
+| `worker.js` | Cloudflare Worker entry — see below. Bundled by wrangler, untouched by `build.js`. |
 | `_headers`, `_redirects`, `wrangler.jsonc`, `.assetsignore` | Cloudflare config. |
 | `fonts/*.woff2`, `images/*`, `assets/*` | Static assets. |
 
@@ -92,12 +93,76 @@ output yourself.
 | `lang.js` | Locale switching. |
 | `citations.js` | Citation engine. |
 
+## The Worker (`worker.js`)
+
+The site is static assets, with one exception: `POST /api/contact`.
+
+The contact form used to post straight to Web3Forms with the access key
+visible in the page. Bots scraped the key and posted to Web3Forms directly,
+bypassing the page and every client-side check (see `docs/pr-log.md`).
+`worker.js` now sits in front: it verifies the form's Cloudflare Turnstile
+token server-side, re-validates every field, and only then relays to
+Web3Forms using a key held as a Worker secret. Everything else falls through
+to `env.ASSETS.fetch()` — and `run_worker_first: ["/api/*"]` in
+`wrangler.jsonc` means non-API routes never invoke the Worker at all.
+
+**Rotate the Web3Forms key before setting it.** A Web3Forms access key is a
+bearer credential with no origin binding: whoever holds it can post to
+`api.web3forms.com` directly and set `subject`, `from_name`, `ccemail`, and
+`redirect` — none of which the Worker can prevent, because the request never
+reaches us. The key this site shipped in its HTML (and which still sits in git
+history) is public forever. Moving a key into a Worker secret does **not**
+invalidate it. Regenerate it in the Web3Forms dashboard first, then put the
+*new* value in the secret; otherwise the Worker, the field validation, the
+honeypot, and Turnstile are all decoration and the original attack path stays
+wide open.
+
+**Secrets** (Worker, set once — the Worker returns a 503 `not_configured`
+until they exist):
+
+```
+npx wrangler secret put TURNSTILE_SECRET_KEY
+npx wrangler secret put WEB3FORMS_ACCESS_KEY   # the NEW key, post-rotation
+```
+
+**Local dev:** `Copy-Item .dev.vars.example .dev.vars` — pre-filled with
+Turnstile's always-pass test secret and a dummy Web3Forms key, so a local
+submission runs the whole chain but fails at the relay with `upstream_error`
+instead of sending mail. Swap in the real key for a deliberate end-to-end test.
+
+⚠️ **`npx wrangler dev` does not work in this repo.** `assets.directory` is
+the repo root, and wrangler writes its own bundle to `.wrangler/tmp/` — inside
+that watched directory. Each write retriggers the watcher, so the server
+reload-loops several times a second and never serves a request.
+`--persist-to` and `--no-bundle` don't avoid it (the tmp bundle is written
+either way). Deploys are unaffected — `wrangler deploy` doesn't watch.
+
+To exercise the Worker locally, copy `worker.js` and a minimal config into a
+scratch directory outside the repo and run `wrangler dev` there:
+
+```jsonc
+// <scratch>/wrangler.jsonc — plus a copy of worker.js and .dev.vars
+{ "name": "jtc-worker-test", "main": "worker.js",
+  "compatibility_date": "2026-04-29", "compatibility_flags": ["nodejs_compat"] }
+```
+
+`/api/contact` then behaves exactly as in production (there is no ASSETS
+binding, so non-API paths throw — that path is a one-line passthrough). Keep
+the scratch directory's path short: workerd fails to open its SQLite state
+under very long Windows paths.
+
+The Turnstile **sitekey** is public and lives in
+`templates/info.template.html`. `build.js` warns if the placeholder is still
+in place; unreplaced, the widget never renders and every submission is
+rejected.
+
 ## Deploy
 
 Cloudflare Workers Builds watches the repo. On push it runs `npm run build`
 then `npx wrangler deploy`, uploading the repo root as static assets behind
 the Worker — except paths listed in `.assetsignore` (build inputs,
-`node_modules/`, `docs/`, `CLAUDE.md`, other repo docs).
+`node_modules/`, `docs/`, `CLAUDE.md`, other repo docs). `wrangler.jsonc` has
+`main: worker.js`, so script and assets deploy together.
 
 - Non-`main` branches → preview URLs (posted as a PR check).
 - Merge to `main` → production.

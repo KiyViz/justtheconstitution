@@ -1,0 +1,13 @@
+# Copy to .dev.vars for `npx wrangler dev`. Never commit .dev.vars.
+# Production values live as Worker secrets:
+#   npx wrangler secret put TURNSTILE_SECRET_KEY
+#   npx wrangler secret put WEB3FORMS_ACCESS_KEY
+
+# Turnstile always-passes test secret — accepts any token, any sitekey.
+# Swap to 2x0000000000000000000000000000000AA to always fail verification.
+TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
+
+# Dummy by default so local submits can't send real email (the relay fails
+# with upstream_error, which still exercises the whole pipeline). Paste the
+# real key only for a deliberate end-to-end send test.
+WEB3FORMS_ACCESS_KEY=local-dev-dummy

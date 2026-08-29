@@ -9,7 +9,7 @@
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
   <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)" />
   <link rel="icon" type="image/svg+xml" href="assets/favicon-we.svg" />
-  <link rel="preconnect" href="https://api.web3forms.com" />
+  <link rel="preconnect" href="https://challenges.cloudflare.com" />
   <link rel="stylesheet" href="styles.css" />
   <!-- BUILD:HEAD-START -->
   <!-- BUILD:HEAD-END -->
@@ -110,6 +110,7 @@
       <p><!-- S:info.privacy_analytics --></p>
       <p><!-- S:info.privacy_localstorage --></p>
       <p><!-- S:info.privacy_contact --> <a href="https://web3forms.com/privacy" target="_blank" rel="noopener"><!-- S:info.privacy_web3forms_link --></a></p>
+      <p><!-- S:info.privacy_turnstile --></p>
     </section>
 
     <!-- ===== Contact ===== -->
@@ -117,10 +118,11 @@
       <h2><!-- S:info.contact_heading --></h2>
       <p><!-- S:info.contact_intro --></p>
 
-      <form class="contact-form" id="contact-form" action="https://api.web3forms.com/submit" method="POST">
-        <input type="hidden" name="access_key" value="fdf79fee-e541-487f-8d41-10cf6695e453" />
-        <input type="hidden" name="subject" value="JTC Feedback" />
-        <input type="hidden" name="from_name" value="JTC Contact Form" />
+      <!-- Posts to our own Worker (worker.js), which verifies the Turnstile
+           token and holds the Web3Forms key as a secret. Subject and sender
+           are set server-side. -->
+      <form class="contact-form" id="contact-form" action="/api/contact" method="POST">
+        <input type="hidden" name="locale" value="<!-- S:info.locale_code -->" />
         <input type="checkbox" name="botcheck" class="hidden" tabindex="-1" autocomplete="off" />
 
         <label class="form-field">
@@ -152,13 +154,15 @@
 
         <label class="form-field">
           <span><!-- S:info.contact_msg_label --></span>
-          <textarea name="message" required rows="5" placeholder="<!-- S:info.contact_msg_placeholder -->"></textarea>
+          <textarea name="message" required rows="5" maxlength="5000" placeholder="<!-- S:info.contact_msg_placeholder -->"></textarea>
         </label>
+
+        <div class="cf-turnstile" data-sitekey="0x4AAAAAAEhNAZDaRJb81p8u" data-theme="auto" data-language="<!-- S:info.locale_code -->"></div>
 
         <button type="submit" class="contact-form__btn"><!-- S:info.contact_submit --></button>
       </form>
 
-      <div class="contact-form__status" id="form-status" hidden data-success="<!-- S:info.contact_success -->" data-error="<!-- S:info.contact_error -->"></div>
+      <div class="contact-form__status" id="form-status" hidden data-success="<!-- S:info.contact_success -->" data-error="<!-- S:info.contact_error -->" data-error-verify="<!-- S:info.contact_error_verify -->"></div>
 
       <p class="contact-form__alt"><!-- S:info.contact_alt --></p>
     </section>
@@ -171,5 +175,8 @@
   </footer>
 
   <!-- BUILD:SCRIPTS -->
+  <!-- After BUILD:SCRIPTS so theme.js runs first and can set the widget's
+       colour scheme before Turnstile scans the DOM. -->
+  <script defer src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
 </body>
 </html>

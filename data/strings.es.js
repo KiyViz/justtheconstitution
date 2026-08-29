@@ -298,8 +298,10 @@ module.exports = {
   "info.privacy_localstorage":"Tu posición de lectura y preferencias de visualización se guardan en el almacenamiento local de tu navegador para que puedas continuar donde lo dejaste. Estos datos nunca salen de tu dispositivo.",
   "info.privacy_contact":     "Si nos contactas a través del formulario a continuación, usamos tu correo electrónico únicamente para responder. No te agregamos a ninguna lista de correo ni compartimos tu información con terceros.",
   "info.privacy_web3forms_link": "Mira cómo Web3Forms maneja tus datos.",
+  "info.privacy_turnstile":   "El formulario de contacto está protegido por Cloudflare Turnstile, una verificación contra bots sin cookies.",
 
   "info.contact_heading":     "Contacto",
+  "info.locale_code":         "es",
   "info.contact_intro":       "Preguntas, correcciones o comentarios—nos gustaría saber de ti.",
   "info.contact_email_label": "Tu correo electrónico",
   "info.contact_category_label": "Categoría",
@@ -314,6 +316,7 @@ module.exports = {
   "info.contact_submit":      "Enviar",
   "info.contact_success":     "Mensaje enviado. Gracias.",
   "info.contact_error":       "Algo salió mal. Por favor intenta el enlace de correo a continuación.",
+  "info.contact_error_verify":"No se pudo completar la verificación. Inténtalo de nuevo.",
   "info.contact_alt":         "O escribe directamente a: feedback@justtheconstitution.org",
 
   // ── Selector de idioma ──
