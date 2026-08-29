@@ -25,6 +25,15 @@ const SUPPORT_EMAIL = 'feedback@justtheconstitution.org';
 const SITEVERIFY = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
 const WEB3FORMS = 'https://api.web3forms.com/submit';
 
+// _headers only decorates static-asset responses, so Worker replies need their
+// own. The style-src allowance covers the error page's inline <style>.
+const SECURITY_HEADERS = {
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'Content-Security-Policy': "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'"
+};
+
 // Only reached on the no-JS failure path, so these stay inline rather than
 // coupling the Worker to data/strings.*.js. Keep in sync with info.contact_*.
 const COPY = {
@@ -165,7 +174,11 @@ function succeed(wantsJson, locale) {
   if (wantsJson) return json({ success: true }, 200);
   return new Response(null, {
     status: 303,
-    headers: { Location: `/${locale}/info/?sent=1#contact`, 'Cache-Control': 'no-store' }
+    headers: {
+      Location: `/${locale}/info/?sent=1#contact`,
+      'Cache-Control': 'no-store',
+      ...SECURITY_HEADERS
+    }
   });
 }
 
@@ -173,7 +186,11 @@ function fail(wantsJson, locale, error, status) {
   if (wantsJson) return json({ success: false, error }, status);
   return new Response(errorPage(locale, error), {
     status,
-    headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' }
+    headers: {
+      'Content-Type': 'text/html; charset=utf-8',
+      'Cache-Control': 'no-store',
+      ...SECURITY_HEADERS
+    }
   });
 }
 
@@ -183,6 +200,7 @@ function json(body, status, extraHeaders) {
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
       'Cache-Control': 'no-store',
+      ...SECURITY_HEADERS,
       ...extraHeaders
     }
   });

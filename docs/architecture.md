@@ -106,12 +106,23 @@ Web3Forms using a key held as a Worker secret. Everything else falls through
 to `env.ASSETS.fetch()` — and `run_worker_first: ["/api/*"]` in
 `wrangler.jsonc` means non-API routes never invoke the Worker at all.
 
+**Rotate the Web3Forms key before setting it.** A Web3Forms access key is a
+bearer credential with no origin binding: whoever holds it can post to
+`api.web3forms.com` directly and set `subject`, `from_name`, `ccemail`, and
+`redirect` — none of which the Worker can prevent, because the request never
+reaches us. The key this site shipped in its HTML (and which still sits in git
+history) is public forever. Moving a key into a Worker secret does **not**
+invalidate it. Regenerate it in the Web3Forms dashboard first, then put the
+*new* value in the secret; otherwise the Worker, the field validation, the
+honeypot, and Turnstile are all decoration and the original attack path stays
+wide open.
+
 **Secrets** (Worker, set once — the Worker returns a 503 `not_configured`
 until they exist):
 
 ```
 npx wrangler secret put TURNSTILE_SECRET_KEY
-npx wrangler secret put WEB3FORMS_ACCESS_KEY
+npx wrangler secret put WEB3FORMS_ACCESS_KEY   # the NEW key, post-rotation
 ```
 
 **Local dev:** `Copy-Item .dev.vars.example .dev.vars` — pre-filled with
