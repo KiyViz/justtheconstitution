@@ -37,9 +37,9 @@ Referenced from `CLAUDE.md`. Read this before any build or file-structure work.
 - `en/info/index.html`, `es/info/index.html`
 - `en/for-educators/index.html`, `es/for-educators/index.html`
 - `404.html`
-- `*.min.js` (every JS module), `styles.min.css`
+- `*.min.js` (every JS module), `styles.min.css` — ignored deploy artifacts
 - `data/constitution.min.js`, `data/constitution.es.min.js`
-- `en/strings.min.js`, `es/strings.min.js`
+- `en/strings.min.js`, `es/strings.min.js` — tracked runtime string tables
 - `sitemap.xml`, `en/sitemap.xml`, `es/sitemap.xml`, `robots.txt`
 
 When a task says "change X on the page," find X in `index.template.html` /
@@ -71,9 +71,15 @@ git config core.hooksPath .githooks
 ```
 
 The hook only `git add`s `index.html` + `sitemap.xml`. **All other generated
-files (`en/`, `es/`, `404.html`, `*.min.*`) must be staged manually.** After a
+files (`en/`, `es/`, `404.html`) must be staged manually.** After a
 CSS/JS/template change, run `node build.js` and `git add` every modified
-output yourself.
+tracked output yourself. Do not force-add ignored minified assets.
+
+Regression checks: `npm test` (build, output and contact tests) and
+`npm run test:browser` (Playwright reader checks). The browser reader restores stable
+passage IDs through guarded local storage; explicit links take precedence.
+Locale runtime scripts use content-versioned URLs with conservative revalidation.
+Sitemaps and schema do not stamp builds as content changes.
 
 ## JS module map
 
@@ -127,8 +133,10 @@ npx wrangler secret put WEB3FORMS_ACCESS_KEY   # the NEW key, post-rotation
 
 **Local dev:** `Copy-Item .dev.vars.example .dev.vars` — pre-filled with
 Turnstile's always-pass test secret and a dummy Web3Forms key, so a local
-submission runs the whole chain but fails at the relay with `upstream_error`
-instead of sending mail. Swap in the real key for a deliberate end-to-end test.
+submission uses no real mail key. Dummy Turnstile metadata may fail the strict
+hostname/action checks, so use the mocked contact tests for repeatable development
+validation. See [security-delivery-implementation.md](security-delivery-implementation.md)
+for explicit local/preview configuration and the required production HTTPS rule.
 
 ⚠️ **`npx wrangler dev` does not work in this repo.** `assets.directory` is
 the repo root, and wrangler writes its own bundle to `.wrangler/tmp/` — inside

@@ -6,12 +6,19 @@
   "observability": {
     "enabled": true
   },
+  // Explicit additional hosts for approved preview deployments only. Production
+  // hosts are fixed in worker.js; no wildcard or implicit localhost allowance.
+  "vars": {
+    "TURNSTILE_ALLOWED_HOSTNAMES": "justtheconstitution.org,www.justtheconstitution.org"
+  },
   "assets": {
     "directory": ".",
     "binding": "ASSETS",
     "not_found_handling": "404-page",
     // Only the contact-form API reaches the Worker; every other route is
     // served straight from static assets with no Worker invocation.
+    // HTTPS enforcement therefore also requires the zone Single Redirect in
+    // docs/security-delivery-implementation.md; _redirects cannot match scheme.
     "run_worker_first": ["/api/*"]
   },
   "compatibility_flags": [

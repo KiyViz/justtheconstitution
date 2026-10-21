@@ -56,18 +56,23 @@
   // ---- Drawer (hamburger) ----
   let releaseDrawerTrap = null;
   function openDrawer() {
-    if (JTC.openTool) JTC.openTool('drawer');
     const d = document.getElementById("toc-drawer");
+    if (d.classList.contains('is-open')) return;
+    if (JTC.openTool) JTC.openTool('drawer');
     d.classList.add("is-open");
     d.setAttribute("aria-modal", "true");
+    document.getElementById('menu-btn').setAttribute('aria-expanded', 'true');
+    document.getElementById('menu-btn').setAttribute('aria-controls', 'toc-drawer');
     renderToc(d.querySelector(".toc"));
     document.body.style.overflow = "hidden";
     releaseDrawerTrap = JTC.trapFocus(d);
   }
   function closeDrawer() {
     const d = document.getElementById("toc-drawer");
+    if (!d.classList.contains('is-open')) return;
     d.classList.remove("is-open");
     d.removeAttribute("aria-modal");
+    document.getElementById('menu-btn').setAttribute('aria-expanded', 'false');
     document.body.style.overflow = "";
     if (releaseDrawerTrap) { releaseDrawerTrap(); releaseDrawerTrap = null; }
   }
@@ -133,18 +138,27 @@
     if (!pop) return;
     if (JTC.openTool) JTC.openTool('share');
     pop._context = context || null;
+    if (_activeTrigger) _activeTrigger.setAttribute('aria-expanded', 'false');
     _activeTrigger = triggerEl || null;
+    if (_activeTrigger) {
+      _activeTrigger.setAttribute('aria-controls', 'share-pop');
+      _activeTrigger.setAttribute('aria-expanded', 'true');
+    }
     // Make it temporarily visible-but-hidden so we can measure for placement.
     pop.style.visibility = "hidden";
     pop.hidden = false;
     positionPopover(pop, triggerEl);
     pop.style.visibility = "";
+    JTC.focusFirst(pop);
   }
 
   function initShare() {
     const btn = document.getElementById("share-btn");
     const pop = document.getElementById("share-pop");
     if (!pop) return;
+    // Ordinary buttons in a nonmodal region use normal Tab navigation.
+    pop.setAttribute('role', 'region');
+    pop.querySelectorAll('[role="menuitem"]').forEach(row => row.removeAttribute('role'));
 
     // Reveal native share row on supported browsers (mostly mobile)
     if (typeof navigator !== "undefined" && "share" in navigator) {
@@ -153,9 +167,14 @@
     }
 
     const closePop = () => {
+      if (pop.hidden) return;
+      const returnToTrigger = pop.contains(document.activeElement);
+      const trigger = _activeTrigger;
+      if (trigger) trigger.setAttribute('aria-expanded', 'false');
       pop.hidden = true;
       pop._context = null;
       _activeTrigger = null;
+      if (returnToTrigger) JTC.returnFocus(trigger);
     };
     if (JTC.registerTool) JTC.registerTool('share', closePop);
 
@@ -174,9 +193,8 @@
     });
     document.addEventListener("keydown", (e) => {
       if (!pop.hidden && e.key === "Escape") {
-        const t = _activeTrigger;
+        e.preventDefault();
         closePop();
-        if (t && t.focus) t.focus();
       }
     });
 
@@ -238,4 +256,9 @@
   JTC.initShare = initShare;
   JTC.openShareFor = openShareFor;
   if (JTC.registerTool) JTC.registerTool('drawer', closeDrawer);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && document.getElementById('toc-drawer').classList.contains('is-open')) {
+      e.preventDefault(); closeDrawer();
+    }
+  });
 })();

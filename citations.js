@@ -243,12 +243,16 @@
     const title = escapeBibTeX(longTitle(source));
     const url   = urlFor(source, opts);
     const note  = escapeBibTeX(text.length > 200 ? text.slice(0, 197) + "..." : text);
+    // Original document: signing year. Amendments: ratification year from
+    // the same document metadata displayed beside the amendment.
+    const amendment = (window.CONSTITUTION?.amendments || []).find(am => am.id === `am-${source.am}`);
+    const year = source.kind.startsWith('amendment') ? amendment?.year : 1787;
     const lines = [
       `@misc{${key},`,
       `  title  = {${title}},`,
-      `  author = {{United States}},`,
-      `  year   = {1787},`
+      `  author = {{United States}},`
     ];
+    if (year) lines.push(`  year   = {${year}},`);
     if (url)  lines.push(`  url    = {${url}},`);
     if (note) lines.push(`  note   = {${note}}`);
     lines.push("}");

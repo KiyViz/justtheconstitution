@@ -22,7 +22,8 @@ shareable, and searchable. No ads. No commentary. No paywall.
   clause are identified automatically.
 - **Original parchment, side by side** — high-resolution National Archives
   facsimiles paired with the text.
-- **English and Spanish** — full parity, validated at build time.
+- **English and Spanish** — matching document structure, validated at build time.
+  The Spanish text is the National Archives translation; see the sources below.
 - **Full-text search**, dark mode, reader mode, keyboard shortcuts, and a
   Markdown download of the complete document.
 - **[For educators](https://justtheconstitution.org/en/for-educators/)** — a
@@ -47,13 +48,14 @@ script:
 - The build validates EN/ES structural parity (same articles, sections, and
   paragraphs) and injects meta tags, JSON-LD, sitemaps, and cache-busting
   hashes.
-- Generated output (`index.html`, `en/`, `es/`, `404.html`, minified assets)
-  is committed alongside source. **Edit source, not generated files** — the
-  next build overwrites them.
+- Generated HTML, sitemaps, and locale runtime strings are committed alongside
+  source. Other minified assets are ignored and rebuilt for deployment.
+  **Edit source, not generated files** — the next build overwrites them.
 
 ```
 npm install
 node build.js
+npm test
 ```
 
 Deployed on Cloudflare Workers as static assets.
@@ -63,12 +65,25 @@ Deployed on Cloudflare Workers as static assets.
 - Articles I–VII and signatures: transcribed from the
   [National Archives](https://www.archives.gov/founding-docs/constitution-transcript).
 - Amendments I–XXVII: [National Constitution Center](https://constitutioncenter.org/the-constitution/full-text).
-- Both sources were compared during the build; no substantive discrepancies
-  were found.
+- Spanish text: the [National Archives translation](https://www.archives.gov/espanol/constitucion),
+  copied verbatim. Gaps and passage handling are documented in
+  [Text provenance and review scope](docs/text-provenance.md).
 - Parchment scans: [National Archives downloads](https://www.archives.gov/founding-docs/downloads).
 
 This is an independent project. It is not affiliated with or endorsed by any
 government agency.
+
+## Regression checks and deployment notes
+
+`npm test` runs the minified build, deterministic-output and citation checks,
+Markdown/clipboard checks, and 43 isolated contact tests with mocked upstreams.
+`npm run test:browser` additionally uses an externally installed Playwright
+and Edge (`JTC_BROWSER=chrome` selects Chrome). Set `NODE_PATH` to the directory
+containing Playwright if it is not on the usual module path. The browser checks
+serve local files and submit no real contact messages.
+
+See the
+[required production HTTPS/Turnstile configuration](docs/security-delivery-implementation.md).
 
 ## Feedback and support
 

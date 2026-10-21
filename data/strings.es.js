@@ -2,6 +2,9 @@
 // Este archivo es leído por build.js, NO se sirve directamente al navegador.
 
 module.exports = {
+  "footer.translation_link":  "Fuente de la traducción",
+  "footer.translation":       "El texto en español es la traducción de los Archivos Nacionales.",
+  "info.translation_archives": "Archivos Nacionales: Constitución y enmiendas en español",
   // ── Accesibilidad ──
   "a11y.skip_to_content":     "Saltar a la Constitución",
 
@@ -247,8 +250,15 @@ module.exports = {
   // ── Pie de página ──
   "footer.sources":           "Fuentes.",
   "footer.national_archives": "Archivos Nacionales",
+  "footer.sources_pre":       "Transcripción de los Artículos I–VII y las firmas tomada de los",
+  "footer.sources_post":      ", conservando la ortografía y la puntuación originales tal como las inscribió Jacob Shallus en el pergamino que se exhibe en la Rotonda del Museo de los Archivos Nacionales.",
+  "footer.sources_amend_pre": "Enmiendas I–XXVII tomadas del",
+  "footer.ncc":               "National Constitution Center",
+  "footer.sources_compared":  "Se compararon ambas fuentes; no se encontraron discrepancias sustanciales.",
   "footer.images":            "Imágenes.",
+  "footer.images_pre":        "Las imágenes de las páginas son cortesía de los",
   "footer.images_link":       "Archivos Nacionales \u2014 Descargas en Alta Resolución",
+  "footer.images_post":       ". Allí están disponibles los archivos TIFF y JPEG en resolución completa para impresión.",
   "footer.tagline":           "La Constitución, línea por línea.",
   "footer.byline":            "Un proyecto de KiyViz.",
   "footer.support":           "Apoya este proyecto",
@@ -288,15 +298,15 @@ module.exports = {
   "info.faq_a6":              "Use el botón de copiar en cualquier párrafo para obtener una cita formateada en Bluebook, MLA, Chicago, Markdown, BibTeX o texto sin formato. El motor de citación genera la referencia automáticamente.",
   "info.faq_a6b":             "En la página de lectura, use la Configuración (icono de engranaje o tecla [,]) para elegir su estilo de cita preferido.",
   "info.faq_q7":              "¿Por qué está disponible en español? ¿Y otros idiomas?",
-  "info.faq_a7":              "I'm bilingual and speak English. The Constitution governs and protects everyone, regardless of the language they speak. The Spanish translation of the Constitution on this site is based on translations published by the U.S. State Department and USCIS.",
+  "info.faq_a7":              "I'm bilingual and speak English. The Constitution governs and protects everyone, regardless of the language they speak. The Spanish text of the Constitution on this site is the translation published by the U.S. National Archives, linked below.",
   "info.faq_a7b":             "My ambition is to add more supported languages with the help of native speakers.",
 
   "info.privacy_heading":     "Privacidad",
-  "info.privacy_updated":     "Última actualización: julio de 2026.",
+  "info.privacy_updated": "Última actualización: octubre de 2026.",
   "info.privacy_no_cookies":  "Este sitio no usa cookies. No te rastreamos. No vendemos datos.",
   "info.privacy_analytics":   "Usamos Cloudflare Web Analytics para monitorear el rendimiento del sitio. Esto recopila datos anónimos y agregados (vistas de página, geografía a nivel de país, referente) sin información personal identificable. Es libre de cookies y cumple con la normativa de la UE.",
   "info.privacy_localstorage":"Tu posición de lectura y preferencias de visualización se guardan en el almacenamiento local de tu navegador para que puedas continuar donde lo dejaste. Estos datos nunca salen de tu dispositivo.",
-  "info.privacy_contact":     "Si nos contactas a través del formulario a continuación, usamos tu correo electrónico únicamente para responder. No te agregamos a ninguna lista de correo ni compartimos tu información con terceros.",
+  "info.privacy_contact": "Si usa el formulario de contacto, Cloudflare procesa el envío y Web3Forms procesa su correo electrónico, mensaje, categoría y calificación opcional para entregárnoslos. Usamos esta información para responder a sus comentarios. No la vendemos ni lo añadimos a listas de mercadotecnia.",
   "info.privacy_web3forms_link": "Mira cómo Web3Forms maneja tus datos.",
   "info.privacy_turnstile":   "El formulario de contacto está protegido por Cloudflare Turnstile, una verificación contra bots sin cookies.",
 
@@ -347,7 +357,7 @@ module.exports = {
   "educators.link_14th":      "Enmienda 14 — Protección igualitaria",
   "educators.link_19th":      "Enmienda 19 — Sufragio femenino",
   "educators.cite_heading":   "Cómo deben citar los estudiantes",
-  "educators.cite_p1":        "Cada párrafo en la página de lectura tiene un botón de copiar. Tóquelo para elegir un formato de cita: Bluebook, MLA, Chicago, Markdown o BibTeX.",
+  "educators.cite_p1": "Primero elija el estilo de cita en Configuración: texto sin formato, Bluebook, MLA, Chicago, Markdown o BibTeX. Después use el botón de copiar de cualquier párrafo para copiarlo directamente en ese estilo.",
   "educators.cite_p2":        "El motor de citación identifica el artículo, sección y cláusula exactos automáticamente. Sin formato manual necesario.",
   "educators.share_heading":  "Comparta con su clase",
   "educators.share_p1":       "Copie y envíe este enlace a sus estudiantes. Funciona en cualquier dispositivo, no requiere configuración y nunca les pedirá que se registren.",

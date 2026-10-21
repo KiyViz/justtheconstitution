@@ -117,8 +117,6 @@
       ce.classList.toggle("progress__chapter--seen", pct >= rightPct);
     });
 
-    // Persist reading position
-    localStorage.setItem("jtc:lastScroll", String(window.scrollY));
   }
 
   // ---- Active TOC & current page tracking ----
@@ -164,7 +162,9 @@
           const lr = link.getBoundingClientRect();
           const tr = tocEl.getBoundingClientRect();
           if (lr.top < tr.top + 40 || lr.bottom > tr.bottom - 40) {
-            link.scrollIntoView({ block: "nearest" });
+            // Scroll only the TOC, never its document ancestors (which would
+            // move the reader away from the requested passage).
+            tocEl.scrollTop += lr.top - tr.top - 40;
           }
         }
       });
@@ -174,29 +174,49 @@
   }
 
   // ---- URL hash sync on scroll ----
-  // Keeps location.hash in sync with the anchor sitting in the reader's
-  // sweet spot (20-25% from the top of the viewport). scrollToId() in core.js
-  // flips JTC.suppressHashSync during smooth-scroll so we don't flicker
-  // through every anchor along the way.
+  // Track the passage just below the fixed controls, including paragraph IDs.
+  // Startup and intentional scrolling suppress tracking until they settle.
+  let passages = [];
+  function getReadingPassage() {
+    let id = 'preamble';
+    const cutoff = JTC.scrollOffset() + 8;
+    for (const passage of passages) {
+      if (passage.getBoundingClientRect().top <= cutoff) id = passage.id;
+      else break;
+    }
+    return id;
+  }
+  function getSavedPassage() {
+    const saved = JTC.storage.readJSON('jtc:readingPosition');
+    if (!saved || saved.version !== 1 || typeof saved.id !== 'string') return null;
+    return passages.some(p => p.id === saved.id) ? saved.id : null;
+  }
+  function saveReadingPosition() {
+    if (!JTC.readerReady || JTC.suppressHashSync) return;
+    JTC.storage.setItem('jtc:readingPosition', JSON.stringify({ version: 1, id: JTC.currentPassage || getReadingPassage() }));
+  }
   function initHashSync() {
-    const observer = new IntersectionObserver(entries => {
-      if (JTC.suppressHashSync) return;
-      const visible = entries
-        .filter(e => e.isIntersecting)
-        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-      if (visible.length) {
-        const id = visible[0].target.id;
-        if (id && `#${id}` !== location.hash) {
-          history.replaceState(null, "", `#${id}`);
-        }
-      }
-    }, { rootMargin: "-20% 0px -75% 0px" });
-
-    document.querySelectorAll(".anchor").forEach(el => observer.observe(el));
+    passages = Array.from(document.querySelectorAll('#text-pane .anchor, #text-pane p[id]'));
+    let timer;
+    window.addEventListener('scroll', () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        if (!JTC.readerReady || JTC.suppressHashSync) return;
+        const id = getReadingPassage();
+        JTC.currentPassage = id;
+        if (`#${id}` !== location.hash) history.replaceState(null, '', `#${id}`);
+        saveReadingPosition();
+      }, 150);
+    }, { passive: true });
+    window.addEventListener('pagehide', saveReadingPosition);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) saveReadingPosition(); });
   }
 
   JTC.renderProgress = renderProgress;
   JTC.updateProgress = updateProgress;
   JTC.updateActive = updateActive;
   JTC.initHashSync = initHashSync;
+  JTC.getReadingPassage = getReadingPassage;
+  JTC.getSavedPassage = getSavedPassage;
+  JTC.saveReadingPosition = saveReadingPosition;
 })();

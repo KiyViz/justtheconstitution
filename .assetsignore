@@ -17,6 +17,7 @@ build.js
 index.template.html
 templates/
 _scripts/
+tests/
 package.json
 package-lock.json
 

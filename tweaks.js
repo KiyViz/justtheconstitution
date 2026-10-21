@@ -68,7 +68,8 @@
   const VALID_OLED_THEMES = new Set(["parchment", "modern", "civic"]);
 
   function getTweaks() {
-    const saved = JSON.parse(localStorage.getItem("jtc:tweaks") || "{}");
+    const raw = JTC.storage.readJSON("jtc:tweaks");
+    const saved = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
     const merged = { ...TWEAK_DEFAULTS, ...saved };
     // Follow OS prefers-color-scheme when the user hasn't picked a mode
     // explicitly. Once they touch the mode toggle their choice persists in
@@ -81,6 +82,9 @@
     }
     if (!["open", "closed"].includes(merged.toc)) merged.toc = "open";
     if (!["open", "closed"].includes(merged.pane)) merged.pane = "open";
+    if (!["default", "pure"].includes(merged.reader)) merged.reader = "default";
+    if (typeof merged.fontSize !== 'number' || !Number.isFinite(merged.fontSize)) merged.fontSize = 17;
+    merged.fontSize = Math.max(14, Math.min(22, merged.fontSize));
     if (merged.theme === "oled") { merged.mode = "oled"; merged.theme = "modern"; }
     if (!["light", "dark", "oled"].includes(merged.mode)) merged.mode = "light";
     // Migrate the legacy two-value enum (full / plain) to the new six-format
@@ -114,7 +118,7 @@
     // applyTweaks runs before renderTweaks, the freshly-built grids never
     // get the .is-hidden class for non-active modes, and all 9 swatches
     // appear at once.
-    localStorage.removeItem("jtc:tweaks");
+    JTC.storage.removeItem("jtc:tweaks");
     renderTweaks();
     applyTweaks();
     if (JTC.showToast) JTC.showToast(JTC.t("settings.reset_toast"));
@@ -122,11 +126,12 @@
   function setTweak(key, val) {
     const t = getTweaks();
     t[key] = val;
-    localStorage.setItem("jtc:tweaks", JSON.stringify(t));
+    JTC.storage.setItem("jtc:tweaks", JSON.stringify(t));
     applyTweaks();
   }
 
   function applyTweaks() {
+    const passage = JTC.readerReady && window.scrollY > 0 ? JTC.currentPassage : null;
     const t = getTweaks();
     const root = document.documentElement;
     root.dataset.mode = t.mode;
@@ -143,6 +148,7 @@
     root.dataset.toc = t.toc;
     root.dataset.pane = t.pane;
     root.style.setProperty("--fs-body", `${t.fontSize}px`);
+    if (JTC.refreshImagePane) JTC.refreshImagePane();
 
     // Reflect in tweak panel
     document.querySelectorAll(".theme-swatch").forEach(sw => {
@@ -208,6 +214,8 @@
     // Image pane collapse icon direction
     const pcb = document.getElementById("pane-collapse");
     if (pcb) pcb.setAttribute("aria-expanded", t.pane === "open" ? "true" : "false");
+    if (passage) JTC.scrollToId(passage, { behavior: 'instant' });
+    if (JTC.readerReady && JTC.renderProgress) { JTC.renderProgress(); JTC.updateProgress(); }
   }
 
   // 3 themes × 3 modes (light, dark, oled).
@@ -438,7 +446,7 @@
   function setTweaks(patch) {
     const t = getTweaks();
     Object.assign(t, patch);
-    localStorage.setItem("jtc:tweaks", JSON.stringify(t));
+    JTC.storage.setItem("jtc:tweaks", JSON.stringify(t));
     applyTweaks();
   }
 
@@ -466,8 +474,8 @@
     // clipped popup over the reader UI. Close it so the user lands in a
     // clean reader view without having to dismiss it manually.
     if (next === "pure") {
-      const tweaks = document.getElementById("tweaks");
-      if (tweaks) tweaks.classList.remove("is-open");
+      if (JTC.closeTweaks) JTC.closeTweaks();
+      JTC.returnFocus(document.getElementById('reader-exit'));
     }
   }
 

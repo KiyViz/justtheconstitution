@@ -20,6 +20,12 @@ const CATEGORIES = [
 const RATINGS = ['1', '2', '3', '4', '5'];
 const MAX_MESSAGE = 5000;
 const MAX_EMAIL = 254;
+const MAX_TOKEN = 2048;
+const MAX_BODY_BYTES = 64 * 1024;
+const MAX_UPSTREAM_BYTES = 16 * 1024;
+const BODY_TIMEOUT_MS = 10_000;
+const UPSTREAM_TIMEOUT_MS = 8_000;
+const PRODUCTION_HOSTNAMES = ['justtheconstitution.org', 'www.justtheconstitution.org'];
 const SUPPORT_EMAIL = 'feedback@justtheconstitution.org';
 
 const SITEVERIFY = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
@@ -64,6 +70,16 @@ export default {
     const url = new URL(request.url);
 
     if (url.pathname.startsWith('/api/')) {
+      // Static requests bypass this script: the zone redirect documented in
+      // docs/security-delivery-implementation.md is still required.
+      const localHttp = env.CONTACT_LOCAL_DEVELOPMENT === 'true' &&
+        ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname);
+      if (url.protocol === 'http:' && !localHttp) {
+        url.protocol = 'https:';
+        return new Response(null, { status: 308, headers: {
+          Location: url.href, 'Cache-Control': 'no-store', ...SECURITY_HEADERS
+        } });
+      }
       if (url.pathname !== '/api/contact') return json({ success: false, error: 'not_found' }, 404);
       if (request.method !== 'POST') {
         return json({ success: false, error: 'method_not_allowed' }, 405, { Allow: 'POST' });
@@ -82,12 +98,30 @@ async function handleContact(request, env) {
 
   let form;
   try {
-    form = await request.formData();
+    const length = request.headers.get('Content-Length');
+    if (length && (!/^\d+$/.test(length) || Number(length) > MAX_BODY_BYTES)) {
+      return fail(wantsJson, 'en', 'invalid_input', 413);
+    }
+    const type = (request.headers.get('Content-Type') || '').split(';')[0].trim().toLowerCase();
+    if (!['multipart/form-data', 'application/x-www-form-urlencoded'].includes(type)) {
+      return fail(wantsJson, 'en', 'invalid_input', 400);
+    }
+    // Count actual bytes too: Content-Length can be absent or misleading.
+    const body = await withDeadline(BODY_TIMEOUT_MS, signal =>
+      readLimitedBody(request.body, MAX_BODY_BYTES, signal));
+    form = await new Response(body, { headers: {
+      'Content-Type': request.headers.get('Content-Type')
+    } }).formData();
   } catch {
     return fail(wantsJson, 'en', 'invalid_input', 400);
   }
 
   const locale = form.get('locale') === 'es' ? 'es' : 'en';
+
+  // This endpoint accepts text only, including optional/unknown fields.
+  if ([...form.values()].some(value => typeof value !== 'string')) {
+    return fail(wantsJson, locale, 'invalid_input', 400);
+  }
 
   if (!env.WEB3FORMS_ACCESS_KEY || !env.TURNSTILE_SECRET_KEY) {
     console.log('contact: missing secrets');
@@ -113,7 +147,7 @@ async function handleContact(request, env) {
   }
 
   const token = str(form.get('cf-turnstile-response'));
-  if (!token || !(await verifyTurnstile(token, env, request))) {
+  if (!token || token.length > MAX_TOKEN || !(await verifyTurnstile(token, env, request))) {
     return fail(wantsJson, locale, 'verification_failed', 403);
   }
 
@@ -130,17 +164,17 @@ async function handleContact(request, env) {
 
   let upstream;
   try {
-    upstream = await fetch(WEB3FORMS, {
+    upstream = await fetchJson(WEB3FORMS, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify(payload)
     });
-  } catch (e) {
-    console.log('contact: web3forms unreachable', String(e));
+  } catch {
+    console.log('contact: web3forms request failed');
     return fail(wantsJson, locale, 'upstream_error', 502);
   }
-  if (!upstream.ok) {
-    console.log('contact: web3forms responded', upstream.status);
+  if (upstream?.success !== true) {
+    console.log('contact: web3forms rejected submission');
     return fail(wantsJson, locale, 'upstream_error', 502);
   }
 
@@ -149,7 +183,7 @@ async function handleContact(request, env) {
 
 async function verifyTurnstile(token, env, request) {
   try {
-    const res = await fetch(SITEVERIFY, {
+    const outcome = await fetchJson(SITEVERIFY, {
       method: 'POST',
       body: new URLSearchParams({
         secret: env.TURNSTILE_SECRET_KEY,
@@ -157,13 +191,74 @@ async function verifyTurnstile(token, env, request) {
         remoteip: request.headers.get('CF-Connecting-IP') || ''
       })
     });
-    const outcome = await res.json();
-    if (!outcome.success) console.log('contact: turnstile rejected', JSON.stringify(outcome['error-codes'] || []));
-    return outcome.success === true;
-  } catch (e) {
-    console.log('contact: turnstile unreachable', String(e));
+    const hostname = new URL(request.url).hostname;
+    // Production hosts cannot be weakened by preview/local configuration.
+    const allowed = PRODUCTION_HOSTNAMES.includes(hostname) ? PRODUCTION_HOSTNAMES :
+      String(env.TURNSTILE_ALLOWED_HOSTNAMES || '').split(',').map(value => value.trim()).filter(Boolean);
+    const valid = outcome?.success === true && outcome.action === 'contact' &&
+      outcome.hostname === hostname && allowed.includes(hostname);
+    if (!valid) console.log('contact: turnstile rejected');
+    return valid;
+  } catch {
+    console.log('contact: turnstile request failed');
     return false;
   }
+}
+
+// Keep the deadline active through response-body consumption, not just headers.
+async function withDeadline(ms, operation) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
+  try {
+    return await operation(controller.signal);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function readLimitedBody(body, limit, signal) {
+  if (!body) return new Uint8Array();
+  const reader = body.getReader();
+  const cancel = () => { void reader.cancel().catch(() => {}); };
+  signal.addEventListener('abort', cancel, { once: true });
+  const chunks = [];
+  let size = 0;
+  try {
+    while (true) {
+      if (signal.aborted) throw new Error('Body deadline exceeded');
+      const { done, value } = await reader.read();
+      if (signal.aborted) throw new Error('Body deadline exceeded');
+      if (done) break;
+      size += value.byteLength;
+      if (size > limit) throw new Error('Body too large');
+      chunks.push(value);
+    }
+    const bytes = new Uint8Array(size);
+    let offset = 0;
+    for (const chunk of chunks) {
+      bytes.set(chunk, offset);
+      offset += chunk.byteLength;
+    }
+    return bytes;
+  } catch (error) {
+    cancel();
+    throw error;
+  } finally {
+    signal.removeEventListener('abort', cancel);
+    reader.releaseLock();
+  }
+}
+
+async function fetchJson(url, init) {
+  return withDeadline(UPSTREAM_TIMEOUT_MS, async signal => {
+    const response = await fetch(url, { ...init, signal, redirect: 'error' });
+    if (!response.ok) {
+      if (response.body) void response.body.cancel().catch(() => {});
+      throw new Error('Upstream HTTP error');
+    }
+    const bytes = await readLimitedBody(response.body, MAX_UPSTREAM_BYTES, signal);
+    return JSON.parse(new TextDecoder().decode(bytes));
+  });
 }
 
 // ── Responses ──

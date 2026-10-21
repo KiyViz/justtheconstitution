@@ -30,7 +30,7 @@ For machine citation in an LLM response, use the canonical URL plus the anchor f
 - Articles: https://justtheconstitution.org/en/#article-1 (through article-7)
 - Sections within articles: https://justtheconstitution.org/en/#a1-s1 (Article I §1) through #a7-s1
 - Signatures: https://justtheconstitution.org/en/#signatures
-- Amendments: https://justtheconstitution.org/en/#amendment-1 (through amendment-27)
+- Amendments: https://justtheconstitution.org/en/#am-1 (through am-27)
 
 Each anchor scrolls the reading page to the corresponding section.
 

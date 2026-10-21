@@ -12,6 +12,7 @@
   let currentIndex = -1;
   let lastQuery = '';
   let debounceTimer = null;
+  let searchTrigger = null;
 
   // Elements resolved in init()
   let bar, input, countEl, prevBtn, nextBtn;
@@ -41,7 +42,7 @@
   function collectTextNodes(pane) {
     const walker = document.createTreeWalker(pane, NodeFilter.SHOW_TEXT, {
       acceptNode(node) {
-        if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+        if (!node.nodeValue) return NodeFilter.FILTER_REJECT;
         // Skip text inside <mark>, <script>, <style>, <button> (copy-btn labels etc.)
         let p = node.parentElement;
         while (p && p !== pane) {
@@ -66,42 +67,58 @@
     const re = buildRegex(query);
     if (!re) return [];
     const hits = [];
-    const textNodes = collectTextNodes(pane);
-    textNodes.forEach(textNode => {
-      const text = textNode.nodeValue;
-      // Reset lastIndex; matchAll handles /g for us but we use exec-style below.
-      const allMatches = Array.from(text.matchAll(re));
-      if (!allMatches.length) return;
-
-      const frag = document.createDocumentFragment();
-      let lastIdx = 0;
-      for (const m of allMatches) {
-        const start = m.index;
-        const end = start + m[0].length;
-        if (start > lastIdx) frag.appendChild(document.createTextNode(text.slice(lastIdx, start)));
-        const mark = document.createElement('mark');
-        mark.className = 'search-hit';
-        // textContent — never innerHTML — keeps user input inert.
-        mark.textContent = m[0];
-        frag.appendChild(mark);
-        hits.push(mark);
-        lastIdx = end;
-      }
-      if (lastIdx < text.length) frag.appendChild(document.createTextNode(text.slice(lastIdx)));
-      textNode.parentNode.replaceChild(frag, textNode);
+    // Group inline text by its closest block. A drop cap or emphasized span
+    // can split a phrase, but distinct paragraphs must never become one hit.
+    const groups = new Map();
+    collectTextNodes(pane).forEach(node => {
+      const block = node.parentElement.closest('p,h1,h2,h3,h4,li,div,section') || pane;
+      if (!groups.has(block)) groups.set(block, []);
+      groups.get(block).push(node);
+    });
+    groups.forEach(nodes => {
+      let text = '';
+      const spans = nodes.map(node => {
+        const start = text.length;
+        text += node.nodeValue;
+        return { node, start, end: text.length };
+      });
+      const found = Array.from(text.matchAll(re)).map(m => ({ start: m.index, end: m.index + m[0].length, marks: [] }));
+      spans.forEach(({ node, start, end }) => {
+        const overlaps = found.filter(hit => hit.start < end && hit.end > start);
+        if (!overlaps.length) return;
+        const fragment = document.createDocumentFragment();
+        let cursor = 0;
+        overlaps.forEach(hit => {
+          const from = Math.max(start, hit.start) - start;
+          const to = Math.min(end, hit.end) - start;
+          fragment.appendChild(document.createTextNode(node.nodeValue.slice(cursor, from)));
+          const mark = document.createElement('mark');
+          mark.className = 'search-hit';
+          mark.textContent = node.nodeValue.slice(from, to);
+          fragment.appendChild(mark);
+          hit.marks.push(mark);
+          cursor = to;
+        });
+        fragment.appendChild(document.createTextNode(node.nodeValue.slice(cursor)));
+        node.parentNode.replaceChild(fragment, node);
+      });
+      hits.push(...found.map(hit => hit.marks));
     });
     return hits;
   }
 
   function scrollMatchIntoView(mark) {
     const rect = mark.getBoundingClientRect();
-    const headerH = 132;
+    const headerH = JTC.scrollOffset();
     const targetY = rect.top + window.scrollY - headerH - 40;
     // Borrow scrollToId's suppress window so the hash observer doesn't fire
     // while we cross anchors on the way to the match.
-    JTC.suppressHashSync = true;
-    window.scrollTo({ top: targetY, behavior: 'smooth' });
-    setTimeout(() => { JTC.suppressHashSync = false; }, 1200);
+    JTC.scrollToPosition(targetY);
+    const passage = mark.closest('p[id],.anchor[id]');
+    if (passage) {
+      JTC.currentPassage = passage.id;
+      history.replaceState(null, '', '#' + encodeURIComponent(passage.id));
+    }
   }
 
   function activate(i) {
@@ -111,11 +128,11 @@
       return;
     }
     const wrapped = ((i % matches.length) + matches.length) % matches.length;
-    matches.forEach(m => m.classList.remove('search-hit--active'));
+    matches.flat().forEach(m => m.classList.remove('search-hit--active'));
     currentIndex = wrapped;
-    const mark = matches[currentIndex];
-    mark.classList.add('search-hit--active');
-    scrollMatchIntoView(mark);
+    const marks = matches[currentIndex];
+    marks.forEach(mark => mark.classList.add('search-hit--active'));
+    scrollMatchIntoView(marks[0]);
     updateCount();
   }
 
@@ -161,18 +178,22 @@
   function open() {
     if (!bar) return;
     if (JTC.openTool) JTC.openTool('search');
+    if (bar.hidden) searchTrigger = document.activeElement;
     bar.hidden = false;
     input.focus();
     input.select();
   }
 
   function close() {
-    if (!bar) return;
+    if (!bar || bar.hidden) return;
+    clearTimeout(debounceTimer);
+    const returnToTrigger = bar.contains(document.activeElement);
     clearHighlights();
     lastQuery = '';
     if (input) input.value = '';
     bar.hidden = true;
     updateCount();
+    if (returnToTrigger) JTC.returnFocus(searchTrigger);
   }
 
   function next() { if (matches.length) activate(currentIndex + 1); }

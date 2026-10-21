@@ -10,7 +10,7 @@
     let locales;
     try { locales = JSON.parse(root.dataset.locales || "[]"); } catch { return; }
     const current = root.dataset.currentLocale || "en";
-    if (locales.length < 2) return;
+    if (!Array.isArray(locales) || locales.length < 2 || locales.some(l => !l || !/^[a-z]{2}$/.test(l.code))) return;
 
     const btn = document.getElementById("lang-btn");
     const label = document.getElementById("lang-label");
@@ -28,8 +28,9 @@
 
     btn.addEventListener("click", () => {
       JTC.trackEvent('language_switched');
-      localStorage.setItem("jtc:lang", nextLocale.code);
-      location.href = "../" + nextLocale.code + "/" + location.hash;
+      JTC.storage.setItem("jtc:lang", nextLocale.code);
+      const hash = JTC.suppressHashSync || !JTC.readerReady ? location.hash : '#' + JTC.getReadingPassage();
+      location.href = "../" + nextLocale.code + "/" + hash;
     });
   }
 

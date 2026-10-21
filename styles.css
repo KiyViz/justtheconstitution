@@ -245,7 +245,7 @@
   /* Warm vellum paper, deep umber ink. Low-blue, eye-friendly in
      daylight. Body contrast ~12:1 — comfortable, not glaring. */
   --bg:#f0e6d0; --bg-elev:#f5ecd8; --bg-sunken:#e0d6ba;
-  --ink:#2a1c0a; --ink-soft:#5a4828; --ink-faint:#897856;
+  --ink:#2a1c0a; --ink-soft:#5a4828; --ink-faint:#6b5b3e;
   --rule:#d6c8a8; --rule-soft:#e2d7bc; --accent:#2a1c0a;
   --chip-bg:rgba(42,28,10,0.06); --chip-ink:#2a1c0a;
   --progress-track:rgba(42,28,10,0.07); --progress-seen:rgba(42,28,10,0.20);
@@ -257,7 +257,7 @@
   /* Warm off-white (not pure #fff — that fatigues), near-black ink.
      The everyday default; closest in spirit to the prior "Pure" theme. */
   --bg:#fafaf7; --bg-elev:#ffffff; --bg-sunken:#ededea;
-  --ink:#1a1a1a; --ink-soft:#4a4a4a; --ink-faint:#888888;
+  --ink:#1a1a1a; --ink-soft:#4a4a4a; --ink-faint:#666666;
   --rule:#e0e0dc; --rule-soft:#ededea; --accent:#1a1a1a;
   --chip-bg:rgba(26,26,26,0.04); --chip-ink:#1a1a1a;
   --progress-track:rgba(26,26,26,0.06); --progress-seen:rgba(26,26,26,0.20);
@@ -271,7 +271,7 @@
      Fe earth-tone R/W/B, not bunting-and-fireworks. The terracotta is the
      only non-monochrome colour in the entire theme system. */
   --bg:#f0e4cf; --bg-elev:#f6ead7; --bg-sunken:#e0d4ba;
-  --ink:#2c3a4f; --ink-soft:#4d5b72; --ink-faint:#8090a4;
+  --ink:#2c3a4f; --ink-soft:#4d5b72; --ink-faint:#4f5c70;
   --rule:#d4c8b0; --rule-soft:#e0d6c2; --accent:#b04a35;
   --chip-bg:rgba(176,74,53,0.08); --chip-ink:#b04a35;
   --progress-track:rgba(44,58,79,0.06); --progress-seen:rgba(176,74,53,0.28);
@@ -288,7 +288,7 @@
      ink is a softened cream rather than a saturated tan. Body contrast
      ~9:1 — sits in the Solarized/Gruvbox comfort zone for long sessions. */
   --bg:#1d1813; --bg-elev:#241e17; --bg-sunken:#13100b;
-  --ink:#d4c5a6; --ink-soft:#a89878; --ink-faint:#6e624e;
+  --ink:#d4c5a6; --ink-soft:#a89878; --ink-faint:#a89878;
   --rule:#2a2317; --rule-soft:#1d180f; --accent:#d4c5a6;
   --chip-bg:rgba(212,197,166,0.07); --chip-ink:#d4c5a6;
   --progress-track:rgba(212,197,166,0.08); --progress-seen:rgba(212,197,166,0.22);
@@ -300,7 +300,7 @@
   color-scheme: dark;
   /* Deep neutral gray, off-white ink. The standard dark mode. */
   --bg:#14161a; --bg-elev:#1c1f24; --bg-sunken:#0c0e11;
-  --ink:#ededed; --ink-soft:#b8b8b8; --ink-faint:#808080;
+  --ink:#ededed; --ink-soft:#b8b8b8; --ink-faint:#909090;
   --rule:#2a2d33; --rule-soft:#1c1f24; --accent:#ededed;
   --chip-bg:rgba(237,237,237,0.06); --chip-ink:#ededed;
   --progress-track:rgba(237,237,237,0.08); --progress-seen:rgba(237,237,237,0.22);
@@ -316,7 +316,7 @@
      colour and only appears on the five accent elements. Body contrast
      ~10:1 — comfortable for long reads; accent ~4.5:1 (passes AA for UI). */
   --bg:#161a22; --bg-elev:#1c2028; --bg-sunken:#0e1118;
-  --ink:#d4c8aa; --ink-soft:#a8a08a; --ink-faint:#756d5c;
+  --ink:#d4c8aa; --ink-soft:#a8a08a; --ink-faint:#a09882;
   --rule:#1f242e; --rule-soft:#161a22; --accent:#d5725b;
   --chip-bg:rgba(213,114,91,0.12); --chip-ink:#d5725b;
   --progress-track:rgba(212,200,170,0.08); --progress-seen:rgba(213,114,91,0.28);
@@ -328,7 +328,7 @@
 /* ===== OLED MODE — pure-black backgrounds, theme identity preserved ===== */
 [data-mode="oled"][data-theme="parchment"] {
   --bg:#000000; --bg-elev:#0a0700; --bg-sunken:#000000;
-  --ink:#ebd69a; --ink-soft:#baa777; --ink-faint:#7d6f4d;
+  --ink:#ebd69a; --ink-soft:#baa777; --ink-faint:#a08d64;
   --rule:#1a1408; --rule-soft:#0d0a04; --accent:#ebd69a;
   --chip-bg:rgba(235,214,154,0.07); --chip-ink:#ebd69a;
   --progress-track:rgba(235,214,154,0.08); --progress-seen:rgba(235,214,154,0.25);
@@ -352,7 +352,7 @@
   /* OLED Civic: terracotta brightens further to #e87053 to stay
      legible against pure black where contrast feels harsher. */
   --bg:#000000; --bg-elev:#080a0c; --bg-sunken:#000000;
-  --ink:#e8d9b4; --ink-soft:#b8a98c; --ink-faint:#80755e;
+  --ink:#e8d9b4; --ink-soft:#b8a98c; --ink-faint:#a09276;
   --rule:#15110a; --rule-soft:#0a0805; --accent:#e87053;
   --chip-bg:rgba(232,112,83,0.14); --chip-ink:#e87053;
   --progress-track:rgba(232,217,180,0.08); --progress-seen:rgba(232,112,83,0.30);
@@ -2579,4 +2579,13 @@ html { scrollbar-color: var(--rule) transparent; }
   [data-mode="oled"] .search-hit { background: rgba(255,255,255,0.12); }
   [data-mode="dark"] .search-hit--active,
   [data-mode="oled"] .search-hit--active { background: rgba(255,255,255,0.28); }
+}
+
+/* Keep every header action reachable at narrow widths and high zoom. */
+@media (max-width: 400px) {
+  .site-header .wordmark { min-width: 40px; flex: 1 1 40px; }
+  .site-header .wordmark__text { display: none; }
+  .site-header .wordmark:hover .wordmark__mark,
+  .site-header .wordmark:focus-visible .wordmark__mark { opacity: 1; }
+  .site-header__row { gap: 4px; padding-inline: 8px; }
 }

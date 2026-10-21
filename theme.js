@@ -6,6 +6,7 @@
   const MODES = ['light', 'dark', 'oled'];
   let saved = {};
   try { saved = JSON.parse(localStorage.getItem('jtc:tweaks') || '{}'); } catch (e) { /* private browsing */ }
+  if (!saved || typeof saved !== 'object' || Array.isArray(saved)) saved = {};
   const t = {
     mode: saved.mode || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'),
     theme: saved.theme || 'civic',
@@ -61,6 +62,10 @@
 
   // Locale detection for 404 page
   const isEs = /^\/es(\/|$)/.test(location.pathname);
+  if (document.querySelector('.page-404')) {
+    root.lang = isEs ? 'es' : 'en';
+    document.title = isEs ? 'Página no encontrada — justtheconstitution.org' : 'Page not found — justtheconstitution.org';
+  }
   document.querySelectorAll('[data-locale-es]').forEach(el => {
     el.textContent = isEs ? el.dataset.localeEs : el.textContent;
   });
