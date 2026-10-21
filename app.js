@@ -5,10 +5,12 @@
    Depends on: every other JTC module having loaded first. */
 (() => {
   const JTC = window.JTC;
+  // Capture before rendering, observers, or browser scroll restoration run.
+  const incomingHash = location.hash;
   const {
     renderText, renderToc, renderProgress, renderTweaks,
     updateProgress, updateActive, applyTweaks, initHashSync,
-    setCurrentPage, initImagePane, initLightbox,
+    initImagePane, initLightbox,
     openDrawer, closeDrawer, initShare,
     toggleMode, toggleReader, setTweak, getTweaks,
     scrollToId
@@ -19,14 +21,10 @@
     document.querySelectorAll(".toc.toc--inline").forEach(t => renderToc(t));
     renderProgress();
     renderTweaks();
-    // Wire URL-hash observer after .anchor elements exist.
-    initHashSync();
 
     // Initialize language system
     if (JTC.initLang) JTC.initLang();
 
-    // Image pane — initial
-    setCurrentPage(1, true);
 
     // Wiring
     // Menu button opens the TOC drawer — only surfaced on narrower viewports
@@ -43,11 +41,29 @@
     document.getElementById("pane-collapse").addEventListener("click", () => { const t = getTweaks(); setTweak("pane", t.pane === "open" ? "closed" : "open"); });
     document.getElementById("pane-expand").addEventListener("click", () => setTweak("pane", "open"));
     const tweaksEl = document.getElementById("tweaks");
+    let settingsTrigger;
+    const settingsButtons = ['tweaks-btn', 'reader-settings-btn'].map(id => document.getElementById(id)).filter(Boolean);
+    settingsButtons.forEach(btn => { btn.setAttribute('aria-controls', 'tweaks'); btn.setAttribute('aria-expanded', 'false'); });
+    tweaksEl.setAttribute('role', 'region');
     const openTweaks = () => {
+      if (tweaksEl.classList.contains('is-open')) return;
       if (JTC.openTool) JTC.openTool('settings');
+      settingsTrigger = document.activeElement;
       tweaksEl.classList.add("is-open");
+      settingsButtons.forEach(btn => btn.setAttribute('aria-expanded', 'true'));
+      JTC.focusFirst(tweaksEl);
     };
-    const closeTweaks = () => { tweaksEl.classList.remove("is-open"); };
+    const closeTweaks = () => {
+      if (!tweaksEl.classList.contains('is-open')) return;
+      const returnToTrigger = tweaksEl.contains(document.activeElement);
+      tweaksEl.classList.remove("is-open");
+      settingsButtons.forEach(btn => btn.setAttribute('aria-expanded', 'false'));
+      if (returnToTrigger) JTC.returnFocus(settingsTrigger);
+    };
+    JTC.closeTweaks = closeTweaks;
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && tweaksEl.classList.contains('is-open')) { e.preventDefault(); closeTweaks(); }
+    });
     const toggleTweaksPanel = () => {
       if (tweaksEl.classList.contains("is-open")) closeTweaks();
       else openTweaks();
@@ -91,7 +107,13 @@
       }
     }, { passive: true });
 
+    // Re-anchor only on width changes: phones fire height-only resizes when
+    // the address bar shows or hides, and snapping then jumps mid-paragraph.
+    let lastWidth = window.innerWidth;
     window.addEventListener("resize", () => {
+      const widthChanged = window.innerWidth !== lastWidth;
+      lastWidth = window.innerWidth;
+      if (widthChanged && JTC.readerReady && JTC.currentPassage && window.scrollY > 0) scrollToId(JTC.currentPassage, { behavior: 'instant' });
       renderProgress();
       updateProgress();
     });
@@ -106,14 +128,38 @@
     // Apply tweaks (theme, layout, fs)
     applyTweaks();
 
-    // Initial state
+    // Initial layout must settle before restoring a passage. An explicit link
+    // always takes precedence over local resume, even if the link is invalid.
+    initHashSync();
     updateProgress();
     updateActive();
-
-    // Deep link
-    if (location.hash) {
-      setTimeout(() => scrollToId(location.hash.slice(1)), 60);
-    }
+    let initialId = null;
+    try { initialId = incomingHash ? decodeURIComponent(incomingHash.slice(1)) : JTC.getSavedPassage(); } catch {}
+    const interrupt = () => { JTC.layoutPassage = null; };
+    const interruptKey = e => { if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '].includes(e.key)) interrupt(); };
+    window.addEventListener('wheel', interrupt, { passive: true });
+    window.addEventListener('touchmove', interrupt, { passive: true });
+    window.addEventListener('pointerdown', interrupt, { passive: true });
+    window.addEventListener('keydown', interruptKey);
+    if (initialId) scrollToId(initialId, { behavior: 'instant' });
+    const loaded = document.readyState === 'complete' ? Promise.resolve() : new Promise(resolve => window.addEventListener('load', resolve, { once: true }));
+    Promise.all([loaded, document.fonts ? document.fonts.ready : Promise.resolve()]).then(() => {
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        // A newer intentional navigation replaces the startup target. Manual
+        // scrolling cancels it, so late fonts never pull the reader backward.
+        if (JTC.layoutPassage) scrollToId(JTC.layoutPassage, { behavior: 'instant' });
+        JTC.layoutPassage = null;
+        JTC.readerReady = true;
+        renderProgress(); updateProgress(); updateActive();
+        window.removeEventListener('wheel', interrupt);
+        window.removeEventListener('touchmove', interrupt);
+        window.removeEventListener('pointerdown', interrupt);
+        window.removeEventListener('keydown', interruptKey);
+      }));
+    });
+    window.addEventListener('hashchange', () => {
+      try { scrollToId(decodeURIComponent(location.hash.slice(1))); } catch {}
+    });
 
     // Sticky footer expand/collapse
     const footerEl = document.getElementById('site-footer');

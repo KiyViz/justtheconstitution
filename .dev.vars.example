@@ -3,11 +3,19 @@
 #   npx wrangler secret put TURNSTILE_SECRET_KEY
 #   npx wrangler secret put WEB3FORMS_ACCESS_KEY
 
-# Turnstile always-passes test secret — accepts any token, any sitekey.
+# Turnstile always-passes test secret. Production secrets reject test tokens.
+# Hostname/action checks still apply; dummy verification metadata can fail them.
+# Use `node --test tests/security-contact.test.mjs` for fully mocked local tests.
 # Swap to 2x0000000000000000000000000000000AA to always fail verification.
 TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
 
 # Dummy by default so local submits can't send real email (the relay fails
-# with upstream_error, which still exercises the whole pipeline). Paste the
-# real key only for a deliberate end-to-end send test.
+# with upstream_error if verification passed). Keep real mail credentials out
+# of local/preview tests; all automated tests mock both upstream services.
 WEB3FORMS_ACCESS_KEY=local-dev-dummy
+
+# Local only: HTTP exception is limited to loopback request hosts. No token
+# validation bypass: the verified hostname must match the request hostname,
+# appear in this exact list, and have action "contact".
+CONTACT_LOCAL_DEVELOPMENT=true
+TURNSTILE_ALLOWED_HOSTNAMES=localhost,127.0.0.1,[::1]

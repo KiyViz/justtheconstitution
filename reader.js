@@ -78,7 +78,8 @@
   }
 
   function addCopyButton(host, getText, source, label) {
-    const ariaLabel = source && source.label ? `Copy — ${source.label}` : "Copy";
+    const action = JTC.t("copy.passage");
+    const ariaLabel = source && source.label ? `${action} — ${source.label}` : action;
     const btn = el("button", {
       class: "copy-btn",
       type: "button",
@@ -112,12 +113,13 @@
   // that lets the popover build platform-specific payloads (quote +
   // Bluebook citation + clause-level deep link).
   function addShareButton(host, getText, source) {
-    const ariaLabel = source && source.label ? `Share — ${source.label}` : "Share";
+    const action = JTC.t("btn.share");
+    const ariaLabel = source && source.label ? `${action} — ${source.label}` : action;
     const btn = el("button", {
       class: "share-btn-passage",
       type: "button",
       "aria-label": ariaLabel,
-      title: JTC.t("share.title") || "Share"
+      title: JTC.t("share.title") || action
     });
     btn.innerHTML = SHARE_SVG;
     btn.addEventListener("click", (e) => {

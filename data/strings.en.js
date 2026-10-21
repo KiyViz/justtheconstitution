@@ -4,6 +4,9 @@
 // client JS modules (via the JTC.STRINGS runtime object).
 
 module.exports = {
+  "footer.translation_link":  "Translation source",
+  "footer.translation":       "The Spanish text is the National Archives translation.",
+  "info.translation_archives": "National Archives: Spanish Constitution and amendments",
   // ── Accessibility ──
   "a11y.skip_to_content":     "Skip to the Constitution",
 
@@ -252,8 +255,15 @@ module.exports = {
   // ── Footer ──
   "footer.sources":           "Sources.",
   "footer.national_archives": "National Archives",
+  "footer.sources_pre":       "Transcription of Articles I–VII and signatures from the",
+  "footer.sources_post":      ", preserving the original spelling and punctuation as inscribed by Jacob Shallus on the parchment on display in the Rotunda of the National Archives Museum.",
+  "footer.sources_amend_pre": "Amendments I–XXVII from the",
+  "footer.ncc":               "National Constitution Center",
+  "footer.sources_compared":  "Both sources were compared; no substantive discrepancies were found.",
   "footer.images":            "Images.",
+  "footer.images_pre":        "Page scans are courtesy of the",
   "footer.images_link":       "National Archives \u2014 High Resolution Downloads",
+  "footer.images_post":       ". Full-resolution TIFF and JPEG files for print are available there.",
   "footer.tagline":           "The Constitution, line-by-line.",
   "footer.byline":            "A KiyViz project.",
   "footer.support":           "Support this project",
@@ -293,15 +303,15 @@ module.exports = {
   "info.faq_a6":              "Use the copy button on any paragraph to get a formatted citation in Bluebook, MLA, Chicago, Markdown, BibTeX, or plain text. The citation engine generates the reference automatically.",
   "info.faq_a6b":             "In the reader, use the settings (gear icon or shortcut key [,]) to select your preferred citation style.",
   "info.faq_q7":              "Why is Spanish supported? What about other languages?",
-  "info.faq_a7":              "Soy bilingüe y hablo español. La Constitución rige y protege a todos, sin importar el idioma que hablen. La traducción de la Constitución en este sitio se basa en traducciones publicadas por el Departamento de Estado de los EE. UU. y USCIS.",
+  "info.faq_a7":              "Soy bilingüe y hablo español. La Constitución rige y protege a todos, sin importar el idioma que hablen. El texto en español de la Constitución en este sitio es la traducción publicada por los Archivos Nacionales de los EE. UU., enlazada a continuación.",
   "info.faq_a7b":             "Mi ambición es ampliar la lista de idiomas disponibles con la ayuda de hablantes nativos.",
 
   "info.privacy_heading":     "Privacy",
-  "info.privacy_updated":     "Last updated July 2026.",
+  "info.privacy_updated": "Last updated October 2026.",
   "info.privacy_no_cookies":  "This site does not use cookies. We do not track you. We do not sell data.",
   "info.privacy_analytics":   "We use Cloudflare Web Analytics to monitor site performance. This collects anonymized, aggregated data (page views, country-level geography, referrer) with no personally identifiable information. It is cookie-free and EU-compliant.",
   "info.privacy_localstorage":"Your reading position and display preferences are saved in your browser’s local storage so you can pick up where you left off. This data never leaves your device.",
-  "info.privacy_contact":     "If you contact us through the form below, we use your email address solely to reply. We do not add you to any mailing list or share your information with third parties.",
+  "info.privacy_contact": "If you use the contact form, Cloudflare processes your submission and Web3Forms processes your email address, message, category and optional rating to deliver it to us. We use this information to respond to your feedback. We do not sell it or add you to a marketing list.",
   "info.privacy_web3forms_link": "See how Web3Forms handles your data.",
   "info.privacy_turnstile":   "The contact form is protected by Cloudflare Turnstile, a cookie-free bot check.",
 
@@ -351,7 +361,7 @@ module.exports = {
   "educators.link_14th":      "14th Amendment — Equal Protection",
   "educators.link_19th":      "19th Amendment — Women's Suffrage",
   "educators.cite_heading":   "How students should cite",
-  "educators.cite_p1":        "Every paragraph on the reading page has a copy button. Tap it to choose a citation format: Bluebook, MLA, Chicago, Markdown, or BibTeX.",
+  "educators.cite_p1": "Choose a citation style in Settings first: plain text, Bluebook, MLA, Chicago, Markdown, or BibTeX. Then use any paragraph’s copy button to copy it directly in that style.",
   "educators.cite_p2":        "The citation engine identifies the exact article, section, and clause automatically. No manual formatting required.",
   "educators.share_heading":  "Share with your class",
   "educators.share_p1":       "Copy and send this link to your students. It works on any device, requires no setup, and will never ask them to sign up for anything.",

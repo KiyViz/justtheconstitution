@@ -85,10 +85,12 @@ function validateLocaleData(en, locale, localeName) {
   en.articles.forEach((a, i) => {
     const la = locale.articles[i];
     if (!la) { errors.push(`Missing article ${a.id}`); return; }
+    if (la.id !== a.id) errors.push(`Article ID mismatch: ${a.id}`);
     if (la.sections.length !== a.sections.length)
       errors.push(`${a.id}: section count mismatch (en=${a.sections.length}, ${localeName}=${la.sections.length})`);
     a.sections.forEach((s, j) => {
       if (!la.sections[j]) { errors.push(`Missing section ${s.id}`); return; }
+      if (la.sections[j].id !== s.id) errors.push(`Section ID mismatch: ${s.id}`);
       if (la.sections[j].paragraphs.length !== s.paragraphs.length)
         errors.push(`${s.id}: paragraph count mismatch (en=${s.paragraphs.length}, ${localeName}=${la.sections[j].paragraphs.length})`);
     });
@@ -98,6 +100,8 @@ function validateLocaleData(en, locale, localeName) {
   en.amendments.forEach((am, i) => {
     const la = locale.amendments[i];
     if (!la) { errors.push(`Missing amendment ${am.id}`); return; }
+    if (la.id !== am.id || la.num !== am.num || la.year !== am.year)
+      errors.push(`Amendment metadata mismatch: ${am.id}`);
     if (la.paragraphs.length !== am.paragraphs.length)
       errors.push(`${am.id}: paragraph count mismatch (en=${am.paragraphs.length}, ${localeName}=${la.paragraphs.length})`);
   });
@@ -226,7 +230,6 @@ function renderContent(C, S, locale) {
 // ── Head injection (canonical, hreflang, OG, Twitter, JSON-LD) ──
 function renderHeadExtras(locale, S) {
   const localeUrl = `${SITE_URL}${locale}/`;
-  const buildDate = new Date().toISOString().slice(0, 10);
   const ogImage = `${SITE_URL}og-image.png`;
 
   // Legislation schema — describes the legal artifact and the digital edition.
@@ -242,7 +245,6 @@ function renderHeadExtras(locale, S) {
     legislationType: 'Constitution',
     inLanguage: locale,
     datePublished: '1787-09-17',
-    dateModified: buildDate,
     url: localeUrl,
     image: ogImage,
     author: {
@@ -320,6 +322,7 @@ function injectHead(html, extras) {
 const CLIENT_KEYS = [
   'toast.copied', 'toast.copy_failed', 'toast.link_copied',
   'copy.excerpt', 'copy.passage', 'copy.all', 'copy.to_clipboard',
+  'toc.download_aria', 'toc.download_title',
   'search.no_results', 'search.counter',
   'settings.switch_dark', 'settings.switch_dark_short',
   'settings.switch_oled', 'settings.switch_oled_short',
@@ -406,7 +409,7 @@ function renderScripts(locale, config) {
   }
   const dataPath = `../${config.data}`;
   const lines = [
-    `  <script defer src="strings.min.js"></script>`,
+    `  <script defer src="/${locale}/strings.min.js?v=${crypto.createHash('md5').update(buildRuntimeStrings(loadStrings(config.strings))).digest('hex').slice(0, 8)}"></script>`,
     `  <script defer src="${src(dataPath)}"></script>`,
     `  <script defer src="${src('../core.js')}"></script>`,
     `  <script defer src="${src('../citations.js')}"></script>`,
@@ -433,14 +436,7 @@ function localesMetaJson() {
 // ── Sitemap ──
 function renderLocaleSitemap(C, locale) {
   const base = `${SITE_URL}${locale}/`;
-  const lastmod = new Date().toISOString().slice(0, 10);
-  const anchors = [
-    'preamble',
-    ...C.articles.flatMap(a => [a.id, ...a.sections.map(s => s.id)]),
-    'signatures',
-    'amendments',
-    ...C.amendments.map(am => am.id)
-  ];
+  // No lastmod: a build timestamp is not a content modification date.
   const hreflangs = Object.keys(LOCALES).map(l =>
     `      <xhtml:link rel="alternate" hreflang="${l}" href="${SITE_URL}${l}/"/>`
   ).join('\n');
@@ -457,12 +453,9 @@ function renderLocaleSitemap(C, locale) {
   const eduDefaultHreflang = `      <xhtml:link rel="alternate" hreflang="x-default" href="${SITE_URL}en/for-educators/"/>`;
 
   const urls = [
-    `  <url>\n    <loc>${base}</loc>\n    <lastmod>${lastmod}</lastmod>\n${hreflangs}\n${defaultHreflang}\n  </url>`,
-    `  <url>\n    <loc>${base}info/</loc>\n    <lastmod>${lastmod}</lastmod>\n${infoHreflangs}\n${infoDefaultHreflang}\n  </url>`,
-    `  <url>\n    <loc>${base}for-educators/</loc>\n    <lastmod>${lastmod}</lastmod>\n${eduHreflangs}\n${eduDefaultHreflang}\n  </url>`,
-    ...anchors.map(id =>
-      `  <url>\n    <loc>${base}#${id}</loc>\n  </url>`
-    )
+    `  <url>\n    <loc>${base}</loc>\n${hreflangs}\n${defaultHreflang}\n  </url>`,
+    `  <url>\n    <loc>${base}info/</loc>\n${infoHreflangs}\n${infoDefaultHreflang}\n  </url>`,
+    `  <url>\n    <loc>${base}for-educators/</loc>\n${eduHreflangs}\n${eduDefaultHreflang}\n  </url>`
   ].join('\n');
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -473,9 +466,8 @@ ${urls}
 }
 
 function renderSitemapIndex() {
-  const lastmod = new Date().toISOString().slice(0, 10);
   const sitemaps = Object.keys(LOCALES).map(l =>
-    `  <sitemap>\n    <loc>${SITE_URL}${l}/sitemap.xml</loc>\n    <lastmod>${lastmod}</lastmod>\n  </sitemap>`
+    `  <sitemap>\n    <loc>${SITE_URL}${l}/sitemap.xml</loc>\n  </sitemap>`
   ).join('\n');
   return `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -747,9 +739,9 @@ function main() {
   // 404 page — root, language-neutral (theme.js handles locale detection)
   const fourOhFourTemplate = fs.readFileSync(path.join(ROOT, 'templates', '404.template.html'), 'utf8');
   let fourOhFour = fourOhFourTemplate;
-  fourOhFour = fourOhFour.replace('href="styles.css"', `href="styles.css?v=${subCssHash}"`);
-  fourOhFour = fourOhFour.replace('href="assets/favicon-we.svg"', `href="assets/favicon-we.svg?v=${subFaviconHash}"`);
-  fourOhFour = fourOhFour.replace(SCRIPTS_MARKER, `  <script defer src="theme.js?v=${themeHash}"></script>`);
+  fourOhFour = fourOhFour.replace('href="styles.css"', `href="/styles.css?v=${subCssHash}"`);
+  fourOhFour = fourOhFour.replace('href="assets/favicon-we.svg"', `href="/assets/favicon-we.svg?v=${subFaviconHash}"`);
+  fourOhFour = fourOhFour.replace(SCRIPTS_MARKER, `  <script defer src="/theme.js?v=${themeHash}"></script>`);
   fourOhFour = fourOhFour.replace(ANALYTICS_MARKER, renderAnalyticsBeacon());
   fs.writeFileSync(path.join(ROOT, '404.html'), fourOhFour);
   console.log(`  wrote 404.html`);
@@ -826,6 +818,7 @@ function main() {
       let h = fs.readFileSync(htmlFile, 'utf8');
       h = h.replace(/styles\.css\?v=[a-f0-9]+/g, `styles.min.css?v=${cssMinHash}`);
       h = h.replace(/(src=")([^"]*?)\.js\?v=[a-f0-9]+/g, (_, prefix, relPath) => {
+        if (relPath.endsWith('.min')) return `${prefix}${relPath}.js?v=${fileHash(path.join(ROOT, relPath.replace(/^\//, '') + '.js'))}`;
         const fromRoot = relPath.replace(/^(?:\.\.\/)+/, '');
         const minPath = path.join(ROOT, fromRoot + '.min.js');
         if (!fs.existsSync(minPath)) {

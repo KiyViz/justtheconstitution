@@ -48,27 +48,71 @@
     _toastTimer = setTimeout(() => { t.hidden = true; }, 1600);
   }
 
-  function scrollToId(id) {
+  // Storage can be unavailable even when reading the localStorage property.
+  // Keep a session copy so controls still work after denial or quota errors.
+  const memory = new Map();
+  const storage = {
+    getItem(key) {
+      if (memory.has(key)) return memory.get(key);
+      try { return window.localStorage.getItem(key); } catch { return null; }
+    },
+    setItem(key, value) {
+      memory.set(key, String(value));
+      try { window.localStorage.setItem(key, String(value)); } catch {}
+    },
+    removeItem(key) {
+      memory.set(key, null);
+      try { window.localStorage.removeItem(key); } catch {}
+    },
+    readJSON(key) {
+      try { return JSON.parse(this.getItem(key)); } catch { return null; }
+    }
+  };
+
+  function scrollOffset() {
+    return ['.site-header', '.progress'].reduce((bottom, selector) => {
+      const node = document.querySelector(selector);
+      return node && node.getClientRects().length
+        ? Math.max(bottom, node.getBoundingClientRect().bottom) : bottom;
+    }, 0) + 16;
+  }
+  let scrollTimer;
+  function scrollToPosition(top, behavior = 'smooth') {
+    window.JTC.layoutPassage = null;
+    window.JTC.suppressHashSync = true;
+    clearTimeout(scrollTimer);
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : behavior;
+    window.scrollTo({ top: Math.max(0, top), behavior: motion });
+    scrollTimer = setTimeout(() => {
+      window.JTC.suppressHashSync = false;
+      if (window.JTC.saveReadingPosition) window.JTC.saveReadingPosition();
+    }, motion === 'smooth' ? 1200 : 100);
+  }
+  function scrollToId(id, options = {}) {
     const target = document.getElementById(id);
     if (!target) return;
-    // Suppress the hash-sync observer for the duration of the smooth scroll,
-    // so the URL doesn't flicker through every anchor the scroll passes over.
-    window.JTC.suppressHashSync = true;
-    const headerH = 132;
-    const y = target.getBoundingClientRect().top + window.scrollY - headerH;
-    window.scrollTo({ top: y, behavior: "smooth" });
-    history.replaceState(null, "", `#${id}`);
-    setTimeout(() => { window.JTC.suppressHashSync = false; }, 1200);
+    window.JTC.currentPassage = id;
+    scrollToPosition(target.getBoundingClientRect().top + window.scrollY - scrollOffset(), options.behavior);
+    if (!window.JTC.readerReady) window.JTC.layoutPassage = id;
+    history.replaceState(null, "", `#${encodeURIComponent(id)}`);
+  }
+
+  function focusFirst(container) {
+    const first = Array.from(container.querySelectorAll('a[href],button,input,select,textarea,summary,[tabindex]'))
+      .find(node => !node.disabled && node.tabIndex >= 0 && node.getClientRects().length);
+    if (first) first.focus({ preventScroll: true });
+  }
+  function returnFocus(node) {
+    if (node && node.isConnected && node.getClientRects().length) node.focus({ preventScroll: true });
   }
 
   function trapFocus(container) {
     const focusable = 'a[href],button:not([disabled]),input:not([disabled]),select,textarea,[tabindex]:not([tabindex="-1"])';
     const prev = document.activeElement;
-    const first = container.querySelector(focusable);
-    if (first) first.focus();
+    focusFirst(container);
     function handler(e) {
       if (e.key !== 'Tab') return;
-      const els = Array.from(container.querySelectorAll(focusable));
+      const els = Array.from(container.querySelectorAll(focusable)).filter(node => node.getClientRects().length);
       if (!els.length) return;
       const last = els[els.length - 1];
       if (e.shiftKey && document.activeElement === els[0]) {
@@ -80,7 +124,7 @@
     container.addEventListener('keydown', handler);
     return function release() {
       container.removeEventListener('keydown', handler);
-      if (prev && prev.focus) prev.focus();
+      returnFocus(prev);
     };
   }
 
@@ -112,6 +156,12 @@
   JTC.copyText = copyText;
   JTC.showToast = showToast;
   JTC.scrollToId = scrollToId;
+  JTC.scrollToPosition = scrollToPosition;
+  JTC.scrollOffset = scrollOffset;
+  JTC.storage = storage;
+  JTC.focusFirst = focusFirst;
+  JTC.returnFocus = returnFocus;
+  JTC.readerReady = false;
   JTC.trapFocus = trapFocus;
   JTC.trackEvent = trackEvent;
   JTC.registerTool = registerTool;

@@ -16,15 +16,45 @@
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 
-/*.js
+# Single-segment placeholder: don't also match locale runtime strings.
+/:file.js
   Cache-Control: public, max-age=31536000, immutable
 
-/*.css
+/:file.css
   Cache-Control: public, max-age=31536000, immutable
 
-# Per-locale pages and runtime strings — short cache so new builds propagate quickly
-/en/*
+/data/*.js
+  Cache-Control: public, max-age=31536000, immutable
+
+# Runtime strings use ?v=<content hash>. Header rules cannot match the query;
+# both versioned and legacy unversioned URLs use one conservative cache policy.
+/en/strings.min.js
   Cache-Control: public, max-age=3600, must-revalidate
 
-/es/*
+/es/strings.min.js
+  Cache-Control: public, max-age=3600, must-revalidate
+
+# Page rules must not overlap JS rules: Cloudflare combines matching headers.
+/en/
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/es/
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/en/:page/
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/es/:page/
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/en/*.html
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/es/*.html
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/en/sitemap.xml
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/es/sitemap.xml
   Cache-Control: public, max-age=3600, must-revalidate

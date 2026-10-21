@@ -86,15 +86,14 @@
   // Lives on JTC so reader (page chips) and progress (updateActive) can touch it.
   JTC.manualImageMode = false;
 
-  // Intentionally `null` so the first setCurrentPage call is never treated as
-  // a no-op — app.js init calls setCurrentPage(1, true) and we need the img.src
-  // assignment (and .is-loading lifecycle) to actually run on that call.
+  // Track selection separately from loading: hidden panes must not fetch scans.
   let currentPage = null;
+  let loadedPage = null;
 
   function setCurrentPage(pageKey, auto = false) {
     // Ignore auto-tracking while the user has taken manual control of the pane.
     if (auto && JTC.manualImageMode) return;
-    if (currentPage === pageKey) return;
+    if (currentPage === pageKey) { refreshImagePane(); return; }
     currentPage = pageKey;
     const info = PAGE_IMAGES[pageKey] || PAGE_IMAGES[1];
     updateImageNavButtons();
@@ -102,8 +101,6 @@
     const tag = document.getElementById("img-label-tag");
     const caption = document.getElementById("img-caption");
     const src = document.getElementById("img-source");
-    const img = document.getElementById("page-img");
-    const placeholder = document.getElementById("img-placeholder");
 
     if (label) label.textContent = info.title;
     if (tag) tag.textContent = info.tag || (typeof pageKey === "number" ? JTC.t("image.page_tag_prefix").replace("0", pageKey) : "");
@@ -113,8 +110,18 @@
       src.appendChild(el("a", { href: info.download, target: "_blank", rel: "noopener" }, JTC.t("image.source_link")));
     }
 
-    const frame = document.getElementById("image-frame");
-    if (img && frame) {
+    refreshImagePane();
+  }
+
+  function refreshImagePane() {
+    const frame = document.getElementById('image-frame');
+    const img = document.getElementById('page-img');
+    const placeholder = document.getElementById('img-placeholder');
+    if (!currentPage || !frame || !img || !frame.getClientRects().length || loadedPage === currentPage) return;
+    const pageKey = currentPage;
+    const info = PAGE_IMAGES[pageKey] || PAGE_IMAGES[1];
+    loadedPage = pageKey;
+    {
       // Spinner on the frame, img hidden by CSS until it actually loads.
       frame.classList.add("is-loading");
       img.dataset.pageKey = pageKey;
@@ -185,8 +192,13 @@
     const sub = document.getElementById("lb-sub");
     title.textContent = info.title;
     sub.textContent = info.caption;
+    img.hidden = false;
+    img.onerror = () => {
+      img.onerror = () => { img.hidden = true; sub.textContent = info.caption + ' — ' + JTC.t('image.error_prefix'); };
+      if (info.fallback) img.src = info.fallback;
+      else { img.hidden = true; sub.textContent = info.caption + ' — ' + JTC.t('image.error_prefix'); }
+    };
     img.src = info.local;
-    img.onerror = () => { img.onerror = null; img.src = info.fallback; };
     if (lbBaseAlt === null) lbBaseAlt = img.getAttribute("alt") || "";
     img.alt = info.title ? `${lbBaseAlt} — ${info.title}` : lbBaseAlt;
     lbZoom = 1;
@@ -222,6 +234,7 @@
 
   // Event wiring split off so app.js init() stays thin.
   function initImagePane() {
+    window.addEventListener('resize', refreshImagePane);
     document.getElementById("img-zoom").addEventListener("click", openLightbox);
     document.getElementById("img-download").addEventListener("click", downloadCurrent);
     document.getElementById("img-prev").addEventListener("click", () => cycleImage(-1));
@@ -269,6 +282,7 @@
   JTC.PAGE_IMAGES = PAGE_IMAGES;
   JTC.PAGE_ORDER = PAGE_ORDER;
   JTC.setCurrentPage = setCurrentPage;
+  JTC.refreshImagePane = refreshImagePane;
   JTC.cycleImage = cycleImage;
   JTC.openLightbox = openLightbox;
   JTC.closeLightbox = closeLightbox;

@@ -1,2 +1,4 @@
 /info /en/info/ 302
 / /en/ 302
+# HTTPS is enforced by a zone Single Redirect, not this path-only file.
+# See docs/security-delivery-implementation.md (required production setup).

@@ -4,7 +4,9 @@
   "private": true,
   "description": "The U.S. Constitution — full text, no ads, no commentary.",
   "scripts": {
-    "build": "node build.js"
+    "build": "node build.js",
+    "test": "npm run build && node tests/build-regressions.cjs && node tests/reader-data-clipboard.cjs && node --test tests/security-contact.test.mjs",
+    "test:browser": "npm run build && node tests/reader-regressions.cjs && node tests/integration-browser.cjs"
   },
   "devDependencies": {
     "esbuild": "^0.25.0"
