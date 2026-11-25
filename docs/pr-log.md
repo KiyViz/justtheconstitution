@@ -17,6 +17,7 @@ gh pr list --state merged --limit 200 --json number,title,mergedAt \
 
 ---
 
+- **#61** (2026-11-25) — Use a standard share arrow for the share icon
 - **#60** (2026-10-21) — October review fix
 - **#59** (2026-08-29) — fix: stop contact-form abuse — Worker proxy + Turnstile
 - **#58** (2026-07-05) — feat: beta-announcement readiness — humanized About, 404 fix, README
